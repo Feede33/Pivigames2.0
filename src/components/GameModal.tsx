@@ -456,8 +456,8 @@ export default function GameModal({ game, onClose }: Props) {
                   <div className="flex gap-3 text-sm text-gray-300">
                     {steamData?.platforms ? (
                       <>
-                        {steamData.platforms.windows && <span title="Windows">🪟 Windows</span>}
-                        {steamData.platforms.mac && <span title="Mac">🍎 Mac</span>}
+                        {steamData.platforms.windows && <span title="Windows"> Windows</span>}
+                        {steamData.platforms.mac && <span title="Mac"> Mac</span>}
                         {steamData.platforms.linux && <span title="Linux">🐧 Linux</span>}
                       </>
                     ) : (
