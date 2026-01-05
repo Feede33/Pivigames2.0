@@ -434,6 +434,10 @@ export default function GameModal({ game, onClose }: Props) {
                       frameBorder="0"
                       width="646" 
                       height="190"
+                      style={{
+                        colorScheme: 'dark',
+                        borderRadius: '8px'
+                      }}
                     />
                   </div>
                 )}
