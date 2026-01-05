@@ -430,7 +430,7 @@ export default function GameModal({ game, onClose }: Props) {
                 {steamData && (
                   <div className="mt-8 bg-red-500 p-4">
                     <iframe 
-                      src={`https://store.steampowered.com/widget/${steamData.steam_appid}/`} 
+                      src={`https://store.steampowered.com/widget/${steamData.steam_appid}`} 
                       frameBorder="0"
                       width="646" 
                       height="190"
