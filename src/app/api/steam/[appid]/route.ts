@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { appid: string } }
+  { params }: { params: Promise<{ appid: string }> }
 ) {
-  const appid = params.appid;
+  const { appid } = await params;
 
   try {
     // Steam Store API - no requiere API key
