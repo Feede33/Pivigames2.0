@@ -425,18 +425,6 @@ export default function GameModal({ game, onClose }: Props) {
                     </div>
                   </div>
                 </div>
-
-                {/* Buy on Steam Widget */}
-                {steamData && (
-                  <div className="flex justify-center mt-8 w-full">
-                    <iframe 
-                      src={`https://store.steampowered.com/widget/${steamData.steam_appid}/`} 
-                      width="646" 
-                      height="190" 
-                      frameBorder="0"
-                    />
-                  </div>
-                )}
               </div>
 
               {/* Right column - Sidebar */}
@@ -556,6 +544,18 @@ export default function GameModal({ game, onClose }: Props) {
                 </div>
               </div>
             </div>
+
+            {/* Buy on Steam Widget - Full Width */}
+            {steamData && (
+              <div className="flex justify-center mt-8 px-6">
+                <iframe 
+                  src={`https://store.steampowered.com/widget/${steamData.steam_appid}/`} 
+                  width="646" 
+                  height="190" 
+                  frameBorder="0"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
