@@ -75,26 +75,45 @@ curl "https://store.steampowered.com/api/storesearch/?term=counter-strike&l=span
 
 Cuando agregas un `steam_appid` a un juego, el modal automáticamente carga:
 
-### Screenshots
+### Screenshots ✅
 - Imágenes en alta resolución
 - Thumbnails optimizados
 - Galería completa del juego
 
-### Videos/Trailers
+### Videos/Trailers ✅
 - Trailers oficiales
 - Videos de gameplay
 - Múltiples calidades (480p, 1080p, etc.)
 - Formatos WebM y MP4
 
+### Información del juego ✅
+- **Géneros**: Action, RPG, Strategy, etc.
+- **Categorías/Tags**: Single-player, Multiplayer, Co-op, etc.
+- **Desarrollador**: Nombre del estudio
+- **Publisher**: Nombre del publicador
+- **Fecha de lanzamiento**: Fecha oficial
+- **Rating Metacritic**: Score de críticos (si existe)
+- **Precio**: Precio actual o "Free"
+
+### Plataformas ✅
+- Windows 🪟
+- Mac 🍎
+- Linux 🐧
+
+### Idiomas ✅
+- Lista completa de idiomas soportados
+- Interface, audio, subtítulos
+
+### Requisitos del sistema ✅
+- Requisitos mínimos
+- Requisitos recomendados
+- Formateados automáticamente
+
 ### Otros datos disponibles (no implementados aún)
-- Descripción detallada
-- Requisitos del sistema
-- Precio actual
-- Descuentos
-- Fecha de lanzamiento
-- Desarrollador/Publisher
-- Tags/Categorías
-- Reviews/Ratings
+- Descuentos actuales
+- Reviews de usuarios
+- DLCs disponibles
+- Logros
 
 ## Uso en el código
 
@@ -138,7 +157,21 @@ const data = await response.json();
   screenshots: [...],
   videos: [...],
   header_image: "...",
-  background: "..."
+  background: "...",
+  genres: ["Action", "FPS"],
+  categories: ["Multi-player", "Online Co-Op", "Steam Achievements"],
+  languages: ["English", "Spanish", "French", ...],
+  platforms: { windows: true, mac: true, linux: true },
+  developers: ["Valve"],
+  publishers: ["Valve"],
+  release_date: "Sep 27, 2023",
+  metacritic: 81,
+  pc_requirements: {
+    minimum: "OS: Windows 10\nCPU: Intel Core i5...",
+    recommended: "OS: Windows 10\nCPU: Intel Core i7..."
+  },
+  price: "Free",
+  is_free: true
 }
 ```
 

@@ -50,13 +50,65 @@ export async function GET(
       },
     })) || [];
 
+    // Extraer géneros
+    const genres = gameData.genres?.map((g: any) => g.description) || [];
+
+    // Extraer categorías/tags
+    const categories = gameData.categories?.map((c: any) => c.description) || [];
+
+    // Extraer idiomas soportados
+    const languages = gameData.supported_languages
+      ?.replace(/<[^>]*>/g, '') // Remover HTML tags
+      .split(',')
+      .map((lang: string) => lang.trim())
+      .filter(Boolean) || [];
+
+    // Extraer plataformas
+    const platforms = {
+      windows: gameData.platforms?.windows || false,
+      mac: gameData.platforms?.mac || false,
+      linux: gameData.platforms?.linux || false,
+    };
+
+    // Extraer desarrolladores y publishers
+    const developers = gameData.developers || [];
+    const publishers = gameData.publishers || [];
+
+    // Extraer fecha de lanzamiento
+    const releaseDate = gameData.release_date?.date || null;
+
+    // Extraer Metacritic score (si existe)
+    const metacritic = gameData.metacritic?.score || null;
+
+    // Extraer requisitos del sistema
+    const pcRequirements = gameData.pc_requirements || {};
+
     return NextResponse.json({
       appid: gameData.steam_appid,
       name: gameData.name,
+      type: gameData.type,
+      description: gameData.short_description,
+      detailed_description: gameData.detailed_description,
+      about: gameData.about_the_game,
       screenshots,
       videos,
       header_image: gameData.header_image,
       background: gameData.background,
+      background_raw: gameData.background_raw,
+      genres,
+      categories,
+      languages,
+      platforms,
+      developers,
+      publishers,
+      release_date: releaseDate,
+      metacritic,
+      pc_requirements: {
+        minimum: pcRequirements.minimum?.replace(/<[^>]*>/g, '\n').trim() || null,
+        recommended: pcRequirements.recommended?.replace(/<[^>]*>/g, '\n').trim() || null,
+      },
+      price: gameData.is_free ? 'Free' : gameData.price_overview?.final_formatted || null,
+      is_free: gameData.is_free || false,
     });
   } catch (error) {
     console.error('Steam API Error:', error);
