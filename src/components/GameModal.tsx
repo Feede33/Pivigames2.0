@@ -38,7 +38,16 @@ type SteamData = {
     recommended: string | null;
   };
   price: string | null;
+  price_info: {
+    currency: string;
+    initial: number;
+    final: number;
+    discount_percent: number;
+    initial_formatted: string | null;
+    final_formatted: string | null;
+  } | null;
   is_free: boolean;
+  steam_appid: number;
 };
 
 type Props = {
@@ -416,6 +425,107 @@ export default function GameModal({ game, onClose }: Props) {
                     </div>
                   </div>
                 </div>
+
+                {/* Buy on Steam Section */}
+                {steamData && (
+                  <div className="mt-8 bg-gradient-to-r from-[#1b2838] to-[#2a475e] rounded-lg p-6 border border-[#3d5a73]">
+                    <div className="flex items-start gap-6">
+                      {/* Game Logo/Icon placeholder */}
+                      <div className="flex-shrink-0 w-32 h-32 bg-white rounded overflow-hidden">
+                        <img 
+                          src={game.image} 
+                          alt={game.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-3">
+                          <h3 className="text-white text-2xl font-bold">
+                            Buy {game.title} on Steam
+                          </h3>
+                          <img 
+                            src="https://store.cloudflare.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016" 
+                            alt="Steam"
+                            className="h-6 opacity-80"
+                          />
+                        </div>
+
+                        <p className="text-gray-300 text-sm leading-relaxed mb-4">
+                          {steamData.short_description || game.description}
+                        </p>
+
+                        {/* Platform icons */}
+                        <div className="flex gap-2 mb-4">
+                          {steamData.platforms.windows && (
+                            <div className="w-6 h-6 text-gray-400" title="Windows">
+                              <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M0,0 L10,0 L10,10 L0,10 Z M11,0 L24,0 L24,10 L11,10 Z M0,11 L10,11 L10,24 L0,24 Z M11,11 L24,11 L24,24 L11,24 Z"/>
+                              </svg>
+                            </div>
+                          )}
+                          {steamData.platforms.mac && (
+                            <div className="w-6 h-6 text-gray-400" title="Mac">
+                              <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18.71,19.5C17.88,20.74 17,21.95 15.66,21.97C14.32,22 13.89,21.18 12.37,21.18C10.84,21.18 10.37,21.95 9.1,22C7.79,22.05 6.8,20.68 5.96,19.47C4.25,17 2.94,12.45 4.7,9.39C5.57,7.87 7.13,6.91 8.82,6.88C10.1,6.86 11.32,7.75 12.11,7.75C12.89,7.75 14.37,6.68 15.92,6.84C16.57,6.87 18.39,7.1 19.56,8.82C19.47,8.88 17.39,10.1 17.41,12.63C17.44,15.65 20.06,16.66 20.09,16.67C20.06,16.74 19.67,18.11 18.71,19.5M13,3.5C13.73,2.67 14.94,2.04 15.94,2C16.07,3.17 15.6,4.35 14.9,5.19C14.21,6.04 13.07,6.7 11.95,6.61C11.8,5.46 12.36,4.26 13,3.5Z"/>
+                              </svg>
+                            </div>
+                          )}
+                          {steamData.platforms.linux && (
+                            <div className="w-6 h-6 text-gray-400" title="Linux">
+                              <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14.62,8.35C14.2,8.63 12.87,9.39 12.67,9.54C12.28,9.85 11.92,9.83 11.53,9.53C11.33,9.37 10,8.61 9.58,8.34C9.1,8.03 9.13,7.64 9.66,7.42C11.3,6.73 12.94,6.78 14.57,7.45C15.06,7.66 15.08,8.05 14.62,8.35M21.84,15.63C20.91,13.54 19.64,11.64 18,9.97C17.47,9.42 17.14,8.8 16.94,8.09C16.84,7.76 16.77,7.42 16.7,7.08C16.5,6.2 16.41,5.3 16,4.47C15.27,2.89 14,2.07 12.16,2C10.35,2.05 9.05,2.88 8.32,4.47C7.88,5.32 7.79,6.23 7.59,7.12C7.5,7.5 7.43,7.9 7.29,8.26C7.1,8.78 6.81,9.22 6.41,9.63C4.75,11.28 3.5,13.19 2.59,15.29C2.33,15.87 2.1,16.47 2.04,17.1C1.85,19.03 3.1,20.69 5.04,20.89C5.68,20.96 6.27,20.78 6.85,20.59C7.38,20.42 7.88,20.17 8.39,19.95C9.67,19.41 11,19.14 12.41,19.14C13.83,19.14 15.16,19.41 16.44,19.95C16.95,20.17 17.45,20.42 17.98,20.59C18.56,20.78 19.15,20.96 19.79,20.89C21.73,20.69 22.98,19.03 22.79,17.1C22.73,16.47 22.5,15.87 22.24,15.29C22.15,15.09 22,14.86 21.84,15.63M9.5,10.56C9.91,11 10.5,11.26 11.14,11.26C11.78,11.26 12.37,11 12.78,10.56C13.2,10.12 13.44,9.5 13.44,8.85C13.44,8.2 13.2,7.58 12.78,7.14C12.37,6.7 11.78,6.44 11.14,6.44C10.5,6.44 9.91,6.7 9.5,7.14C9.08,7.58 8.84,8.2 8.84,8.85C8.84,9.5 9.08,10.12 9.5,10.56Z"/>
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Price and Button */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            {steamData.is_free ? (
+                              <div className="text-2xl font-bold text-green-400">
+                                Free to Play
+                              </div>
+                            ) : steamData.price_info ? (
+                              <div className="flex items-center gap-3">
+                                {steamData.price_info.discount_percent > 0 && (
+                                  <div className="bg-[#4c6b22] text-[#beee11] px-2 py-1 text-sm font-bold">
+                                    -{steamData.price_info.discount_percent}%
+                                  </div>
+                                )}
+                                <div className="flex items-center gap-2">
+                                  {steamData.price_info.discount_percent > 0 && (
+                                    <span className="text-gray-500 line-through text-sm">
+                                      {steamData.price_info.initial_formatted}
+                                    </span>
+                                  )}
+                                  <span className="text-2xl font-bold text-[#beee11]">
+                                    {steamData.price_info.final_formatted}
+                                  </span>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="text-gray-400 text-sm">
+                                Price not available
+                              </div>
+                            )}
+                          </div>
+
+                          <a
+                            href={`https://store.steampowered.com/app/${steamData.steam_appid}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-[#5c7e10] hover:bg-[#6c9310] text-white px-8 py-3 rounded font-bold text-lg transition-colors flex items-center gap-2"
+                          >
+                            Buy on Steam
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Right column - Sidebar */}

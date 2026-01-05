@@ -92,6 +92,16 @@ export async function GET(
     // Extraer requisitos del sistema
     const pcRequirements = gameData.pc_requirements || {};
 
+    // Extraer información de precio detallada
+    const priceInfo = gameData.price_overview ? {
+      currency: gameData.price_overview.currency || 'USD',
+      initial: gameData.price_overview.initial || 0,
+      final: gameData.price_overview.final || 0,
+      discount_percent: gameData.price_overview.discount_percent || 0,
+      initial_formatted: gameData.price_overview.initial_formatted || null,
+      final_formatted: gameData.price_overview.final_formatted || null,
+    } : null;
+
     return NextResponse.json({
       appid: gameData.steam_appid,
       name: gameData.name,
@@ -119,7 +129,9 @@ export async function GET(
         recommended: pcRequirements.recommended?.replace(/<[^>]*>/g, '\n').trim() || null,
       },
       price: gameData.is_free ? 'Free' : gameData.price_overview?.final_formatted || null,
+      price_info: priceInfo,
       is_free: gameData.is_free || false,
+      steam_appid: gameData.steam_appid,
     });
   } catch (error) {
     console.error('Steam API Error:', error);
