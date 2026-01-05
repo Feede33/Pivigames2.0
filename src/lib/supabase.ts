@@ -18,6 +18,7 @@ export type Game = {
   trailer: string;
   links?: string; // Link único de descarga para cada juego
   screenshots?: string[];
+  steam_appid?: string; // ID de Steam para obtener datos dinámicos
   // Requisitos mínimos
   min_os?: string;
   min_cpu?: string;

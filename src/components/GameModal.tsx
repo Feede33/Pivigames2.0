@@ -8,6 +8,17 @@ import type { Game } from '@/lib/supabase';
 
 const VideoPlayer = dynamic(() => import('./VideoPlayer'), { ssr: false });
 
+type SteamData = {
+  screenshots: Array<{ id: number; thumbnail: string; full: string }>;
+  videos: Array<{
+    id: number;
+    name: string;
+    thumbnail: string;
+    webm: { 480?: string; max?: string };
+    mp4: { 480?: string; max?: string };
+  }>;
+};
+
 type Props = {
   game: Game | null;
   origin?: { x: number; y: number; width: number; height: number } | null;
@@ -21,11 +32,40 @@ export default function GameModal({ game, onClose }: Props) {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(0);
   const [showTrailer, setShowTrailer] = useState(false);
+  const [steamData, setSteamData] = useState<SteamData | null>(null);
+  const [loadingSteam, setLoadingSteam] = useState(false);
 
-  // Screenshots - usa los del game o el wallpaper como fallback
-  const screenshots = game?.screenshots?.length 
-    ? game.screenshots 
+  // Cargar datos de Steam si existe steam_appid
+  useEffect(() => {
+    if (game?.steam_appid) {
+      setLoadingSteam(true);
+      fetch(`/api/steam/${game.steam_appid}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.error) {
+            setSteamData(data);
+          }
+        })
+        .catch((err) => console.error('Error loading Steam data:', err))
+        .finally(() => setLoadingSteam(false));
+    }
+  }, [game?.steam_appid]);
+
+  // Screenshots - prioriza Steam, luego los del game, luego wallpaper
+  const screenshots = steamData?.screenshots?.length
+    ? steamData.screenshots.map((s) => s.full)
+    : game?.screenshots?.length
+    ? game.screenshots
     : [game?.wallpaper].filter(Boolean) as string[];
+
+  // Videos - prioriza Steam, luego el trailer del game
+  const videos = steamData?.videos?.length
+    ? steamData.videos
+    : game?.trailer
+    ? [{ name: 'Trailer', mp4: { max: game.trailer } as { max: string } }]
+    : [];
+
+  const currentVideo = videos[0]; // Por ahora mostramos el primer video
 
   useEffect(() => {
     setReady(true);
@@ -109,10 +149,13 @@ export default function GameModal({ game, onClose }: Props) {
             
             {/* Video de YouTube con ReactPlayer */}
             <div className={`absolute inset-0 transition-opacity duration-500 ${
-              showTrailer && game.trailer ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              showTrailer && currentVideo ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}>
-              {showTrailer && game.trailer && (
-                <VideoPlayer url={game.trailer} playing={showTrailer} />
+              {showTrailer && currentVideo && (
+                <VideoPlayer 
+                  url={currentVideo.mp4?.max || (currentVideo.mp4 as any)?.['480'] || game.trailer || ''} 
+                  playing={showTrailer} 
+                />
               )}
             </div>
 
@@ -133,13 +176,15 @@ export default function GameModal({ game, onClose }: Props) {
                     Download
                   </a>
                 )}
-                <button 
-                  onClick={() => setShowTrailer(true)}
-                  className="px-7 py-2.5 rounded-full bg-gray-500/70 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors"
-                >
-                  <Play className="w-[18px] h-[18px]" />
-                  Trailer
-                </button>
+                {(currentVideo || game.trailer) && (
+                  <button 
+                    onClick={() => setShowTrailer(true)}
+                    className="px-7 py-2.5 rounded-full bg-gray-500/70 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors"
+                  >
+                    <Play className="w-[18px] h-[18px]" />
+                    Trailer
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -162,13 +207,15 @@ export default function GameModal({ game, onClose }: Props) {
                     Download
                   </a>
                 )}
-                <button 
-                  onClick={() => setShowTrailer(false)}
-                  className="px-7 py-2.5 rounded-full bg-red-600 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-red-700 transition-colors"
-                >
-                  <X className="w-[18px] h-[18px]" />
-                  Cerrar Trailer
-                </button>
+                {(currentVideo || game.trailer) && (
+                  <button 
+                    onClick={() => setShowTrailer(false)}
+                    className="px-7 py-2.5 rounded-full bg-red-600 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-red-700 transition-colors"
+                  >
+                    <X className="w-[18px] h-[18px]" />
+                    Cerrar Trailer
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -228,7 +275,11 @@ export default function GameModal({ game, onClose }: Props) {
 
                 {/* Screenshots section with slider */}
                 <div className="mb-6">
-                  <h3 className="text-white font-semibold mb-3">Screenshots</h3>
+                  <h3 className="text-white font-semibold mb-3">
+                    Screenshots
+                    {loadingSteam && <span className="text-gray-500 text-sm ml-2">(Cargando desde Steam...)</span>}
+                    {steamData && <span className="text-green-500 text-sm ml-2">✓ Steam</span>}
+                  </h3>
                   <div className="relative">
                     {/* Slider container */}
                     <div className="overflow-hidden rounded-lg">
