@@ -77,9 +77,17 @@ export async function GET(
 
     // Extraer fecha de lanzamiento
     const releaseDate = gameData.release_date?.date || null;
+    const releaseYear = releaseDate ? new Date(releaseDate).getFullYear() : null;
 
     // Extraer Metacritic score (si existe)
     const metacritic = gameData.metacritic?.score || null;
+
+    // Extraer edad requerida (ESRB/PEGI)
+    const requiredAge = gameData.required_age || 0;
+
+    // Extraer descripción corta
+    const shortDescription = gameData.short_description || null;
+    const detailedDescription = gameData.detailed_description?.replace(/<[^>]*>/g, '') || null;
 
     // Extraer requisitos del sistema
     const pcRequirements = gameData.pc_requirements || {};
@@ -88,8 +96,8 @@ export async function GET(
       appid: gameData.steam_appid,
       name: gameData.name,
       type: gameData.type,
-      description: gameData.short_description,
-      detailed_description: gameData.detailed_description,
+      short_description: shortDescription,
+      detailed_description: detailedDescription,
       about: gameData.about_the_game,
       screenshots,
       videos,
@@ -103,7 +111,9 @@ export async function GET(
       developers,
       publishers,
       release_date: releaseDate,
+      release_year: releaseYear,
       metacritic,
+      required_age: requiredAge,
       pc_requirements: {
         minimum: pcRequirements.minimum?.replace(/<[^>]*>/g, '\n').trim() || null,
         recommended: pcRequirements.recommended?.replace(/<[^>]*>/g, '\n').trim() || null,

@@ -28,7 +28,11 @@ type SteamData = {
   developers: string[];
   publishers: string[];
   release_date: string | null;
+  release_year: number | null;
   metacritic: number | null;
+  required_age: number;
+  short_description: string | null;
+  detailed_description: string | null;
   pc_requirements: {
     minimum: string | null;
     recommended: string | null;
@@ -244,11 +248,15 @@ export default function GameModal({ game, onClose }: Props) {
             {/* Info badges */}
             <div className="flex gap-3 items-center mb-4">
               <span className="text-green-500 font-bold text-[15px]">
-                {Math.round(game.rating * 10)}% Match
+                {steamData?.metacritic 
+                  ? `${steamData.metacritic}% Match` 
+                  : `${Math.round(game.rating * 10)}% Match`}
               </span>
-              <span className="text-gray-400 text-sm">2024</span>
+              <span className="text-gray-400 text-sm">
+                {steamData?.release_year || '2024'}
+              </span>
               <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
-                18+
+                {steamData?.required_age ? `${steamData.required_age}+` : '18+'}
               </span>
               <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
                 HD
@@ -263,31 +271,41 @@ export default function GameModal({ game, onClose }: Props) {
               {/* Left column */}
               <div>
                 <p className="text-gray-200 leading-relaxed text-base mb-6">
-                  {game.description}
+                  {steamData?.short_description || game.description}
                 </p>
 
                 {/* Features section */}
                 <div className="mb-6">
                   <h3 className="text-white font-semibold mb-3">Game Features</h3>
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="flex items-center gap-2 text-gray-300 text-sm">
-                      <span className="text-green-500">✓</span> Single Player Campaign
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300 text-sm">
-                      <span className="text-green-500">✓</span> Online Multiplayer
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300 text-sm">
-                      <span className="text-green-500">✓</span> Cross-Platform Play
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300 text-sm">
-                      <span className="text-green-500">✓</span> Cloud Saves
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300 text-sm">
-                      <span className="text-green-500">✓</span> Controller Support
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300 text-sm">
-                      <span className="text-green-500">✓</span> Achievements
-                    </div>
+                    {steamData?.categories?.length ? (
+                      steamData.categories.slice(0, 6).map((category, index) => (
+                        <div key={index} className="flex items-center gap-2 text-gray-300 text-sm">
+                          <span className="text-green-500">✓</span> {category}
+                        </div>
+                      ))
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-2 text-gray-300 text-sm">
+                          <span className="text-green-500">✓</span> Single Player Campaign
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-300 text-sm">
+                          <span className="text-green-500">✓</span> Online Multiplayer
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-300 text-sm">
+                          <span className="text-green-500">✓</span> Cross-Platform Play
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-300 text-sm">
+                          <span className="text-green-500">✓</span> Cloud Saves
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-300 text-sm">
+                          <span className="text-green-500">✓</span> Controller Support
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-300 text-sm">
+                          <span className="text-green-500">✓</span> Achievements
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
 
