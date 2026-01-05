@@ -428,10 +428,9 @@ export default function GameModal({ game, onClose }: Props) {
 
                 {/* Buy on Steam Widget */}
                 {steamData && (
-                  <div>
+                  <div className='bg-black'>
                     <iframe 
-                      src={`https://store.steampowered.com/widget/${steamData.steam_appid}/`}
-                      frameBorder="0" 
+                      src={`https://store.steampowered.com/widget/${steamData.steam_appid}/`} 
                       width="100%" 
                       height="190"
                       className="rounded-sm"
