@@ -1,0 +1,462 @@
+'use client';
+
+import { createPortal } from 'react-dom';
+import { useEffect, useState } from 'react';
+import { X, Play, ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import type { Game } from '@/lib/supabase';
+
+const VideoPlayer = dynamic(() => import('./VideoPlayer'), { ssr: false });
+
+type Props = {
+  game: Game | null;
+  origin?: { x: number; y: number; width: number; height: number } | null;
+  onClose: () => void;
+};
+
+export default function GameModal({ game, onClose }: Props) {
+  const [ready, setReady] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [screenshotIndex, setScreenshotIndex] = useState(0);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerIndex, setViewerIndex] = useState(0);
+  const [showTrailer, setShowTrailer] = useState(false);
+
+  // Screenshots - usa los del game o el wallpaper como fallback
+  const screenshots = game?.screenshots?.length 
+    ? game.screenshots 
+    : [game?.wallpaper].filter(Boolean) as string[];
+
+  useEffect(() => {
+    setReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (game) {
+      requestAnimationFrame(() => setVisible(true));
+    } else {
+      setVisible(false);
+    }
+  }, [game]);
+
+  if (!game || !ready) return null;
+
+  const handleClose = () => {
+    setVisible(false);
+    setTimeout(onClose, 200);
+  };
+
+  const openViewer = (index: number) => {
+    setViewerIndex(index);
+    setViewerOpen(true);
+  };
+
+  const closeViewer = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setViewerOpen(false);
+  };
+
+  const nextScreenshot = () => {
+    setScreenshotIndex((prev) => (prev + 1) % Math.max(1, screenshots.length - 2));
+  };
+
+  const prevScreenshot = () => {
+    setScreenshotIndex((prev) => (prev - 1 + Math.max(1, screenshots.length - 2)) % Math.max(1, screenshots.length - 2));
+  };
+
+  const nextViewerImage = () => {
+    setViewerIndex((prev) => (prev + 1) % screenshots.length);
+  };
+
+  const prevViewerImage = () => {
+    setViewerIndex((prev) => (prev - 1 + screenshots.length) % screenshots.length);
+  };
+
+  return createPortal(
+    <div
+      onClick={handleClose}
+      className={`fixed inset-0 flex items-center justify-center z-[9999] transition-all duration-200 ${
+        visible ? 'bg-black/85' : 'bg-black/0'
+      }`}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={`w-[1100px] min-h-[850px] bg-[#181818] rounded-lg overflow-hidden transition-all duration-200 ${
+          visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        }`}
+      >
+        {/* Botón cerrar */}
+        <button
+          onClick={handleClose}
+          className="absolute top-3 right-3 bg-black/60 border-none rounded-full w-9 h-9 flex items-center justify-center cursor-pointer z-10 hover:bg-black/80 transition-colors"
+        >
+          <X className="text-white w-5 h-5" />
+        </button>
+
+        <div className="max-h-[85vh] overflow-y-auto">
+          {/* Hero Image / Trailer */}
+          <div className="h-[350px] relative overflow-hidden">
+            {/* Wallpaper - siempre presente pero con fade */}
+            <div
+              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-500 ${
+                showTrailer ? 'opacity-0' : 'opacity-100'
+              }`}
+              style={{ backgroundImage: `url(${game.wallpaper})` }}
+            />
+            <div className={`absolute inset-0 bg-gradient-to-t from-[#181818] to-transparent transition-opacity duration-500 ${
+              showTrailer ? 'opacity-0' : 'opacity-100'
+            }`} />
+            
+            {/* Video de YouTube con ReactPlayer */}
+            <div className={`absolute inset-0 transition-opacity duration-500 ${
+              showTrailer && game.trailer ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}>
+              {showTrailer && game.trailer && (
+                <VideoPlayer url={game.trailer} playing={showTrailer} />
+              )}
+            </div>
+
+            {/* Título y botones sobre el wallpaper */}
+            <div className={`absolute bottom-5 left-6 right-6 z-10 transition-all duration-500 ${
+              showTrailer ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
+            }`}>
+              <h2 className="text-4xl font-bold text-white mb-3">{game.title}</h2>
+              <div className="flex gap-3">
+                {game.links && (
+                  <a 
+                    href={game.links}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-7 py-2.5 rounded-full bg-white text-black border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-200 transition-colors"
+                  >
+                    <Download className="w-[18px] h-[18px]" />
+                    Download
+                  </a>
+                )}
+                <button 
+                  onClick={() => setShowTrailer(true)}
+                  className="px-7 py-2.5 rounded-full bg-gray-500/70 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors"
+                >
+                  <Play className="w-[18px] h-[18px]" />
+                  Trailer
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Título y botones cuando el trailer está activo */}
+          <div className={`overflow-hidden transition-all duration-500 ease-out ${
+            showTrailer ? 'max-h-[120px] opacity-100' : 'max-h-0 opacity-0'
+          }`}>
+            <div className="px-6 py-4 bg-[#181818]">
+              <h2 className="text-4xl font-bold text-white mb-3">{game.title}</h2>
+              <div className="flex gap-3">
+                {game.links && (
+                  <a 
+                    href={game.links}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-7 py-2.5 rounded-full bg-white text-black border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-200 transition-colors"
+                  >
+                    <Download className="w-[18px] h-[18px]" />
+                    Download
+                  </a>
+                )}
+                <button 
+                  onClick={() => setShowTrailer(false)}
+                  className="px-7 py-2.5 rounded-full bg-red-600 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-red-700 transition-colors"
+                >
+                  <X className="w-[18px] h-[18px]" />
+                  Cerrar Trailer
+                </button>
+              </div>
+            </div>
+          </div>
+
+         
+          {/* Detalles */}
+          <div className="p-6">
+            {/* Info badges */}
+            <div className="flex gap-3 items-center mb-4">
+              <span className="text-green-500 font-bold text-[15px]">
+                {Math.round(game.rating * 10)}% Match
+              </span>
+              <span className="text-gray-400 text-sm">2024</span>
+              <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
+                18+
+              </span>
+              <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
+                HD
+              </span>
+              <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
+                5.1
+              </span>
+            </div>
+
+            {/* Main content grid */}
+            <div className="grid grid-cols-[2fr_1fr] gap-8">
+              {/* Left column */}
+              <div>
+                <p className="text-gray-200 leading-relaxed text-base mb-6">
+                  {game.description}
+                </p>
+
+                {/* Features section */}
+                <div className="mb-6">
+                  <h3 className="text-white font-semibold mb-3">Game Features</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center gap-2 text-gray-300 text-sm">
+                      <span className="text-green-500">✓</span> Single Player Campaign
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-300 text-sm">
+                      <span className="text-green-500">✓</span> Online Multiplayer
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-300 text-sm">
+                      <span className="text-green-500">✓</span> Cross-Platform Play
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-300 text-sm">
+                      <span className="text-green-500">✓</span> Cloud Saves
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-300 text-sm">
+                      <span className="text-green-500">✓</span> Controller Support
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-300 text-sm">
+                      <span className="text-green-500">✓</span> Achievements
+                    </div>
+                  </div>
+                </div>
+
+                {/* Screenshots section with slider */}
+                <div className="mb-6">
+                  <h3 className="text-white font-semibold mb-3">Screenshots</h3>
+                  <div className="relative">
+                    {/* Slider container */}
+                    <div className="overflow-hidden rounded-lg">
+                      <div 
+                        className="flex gap-2 transition-transform duration-300"
+                        style={{ transform: `translateX(-${screenshotIndex * 33.33}%)` }}
+                      >
+                        {screenshots.map((src, index) => (
+                          <div 
+                            key={index}
+                            className="flex-shrink-0 w-[calc(33.33%-5px)] aspect-video bg-gray-700 rounded overflow-hidden cursor-pointer"
+                            onClick={() => openViewer(index)}
+                          >
+                            <div 
+                              className="w-full h-full bg-cover bg-center hover:scale-110 transition-transform duration-300"
+                              style={{ backgroundImage: `url(${src})` }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Navigation arrows */}
+                    {screenshots.length > 3 && (
+                      <>
+                        <button 
+                          onClick={prevScreenshot}
+                          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+                        >
+                          <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <button 
+                          onClick={nextScreenshot}
+                          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+                        >
+                          <ChevronRight className="w-5 h-5" />
+                        </button>
+                      </>
+                    )}
+
+                    {/* Dots indicator */}
+                    <div className="flex justify-center gap-1.5 mt-3">
+                      {Array.from({ length: Math.max(1, screenshots.length - 2) }).map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setScreenshotIndex(index)}
+                          className={`w-2 h-2 rounded-full transition-colors ${
+                            index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* System Requirements */}
+                <div>
+                  <h3 className="text-white font-semibold mb-3">System Requirements</h3>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="bg-[#222] rounded-lg p-4">
+                      <h4 className="text-gray-400 text-sm mb-2">MINIMUM</h4>
+                      <div className="space-y-1 text-sm">
+                        <p className="text-gray-300"><span className="text-gray-500">OS:</span> Windows 10</p>
+                        <p className="text-gray-300"><span className="text-gray-500">CPU:</span> Intel i5-6600</p>
+                        <p className="text-gray-300"><span className="text-gray-500">RAM:</span> 8 GB</p>
+                        <p className="text-gray-300"><span className="text-gray-500">GPU:</span> GTX 1060</p>
+                        <p className="text-gray-300"><span className="text-gray-500">Storage:</span> 50 GB</p>
+                      </div>
+                    </div>
+                    <div className="bg-[#222] rounded-lg p-4">
+                      <h4 className="text-gray-400 text-sm mb-2">RECOMMENDED</h4>
+                      <div className="space-y-1 text-sm">
+                        <p className="text-gray-300"><span className="text-gray-500">OS:</span> Windows 11</p>
+                        <p className="text-gray-300"><span className="text-gray-500">CPU:</span> Intel i7-10700</p>
+                        <p className="text-gray-300"><span className="text-gray-500">RAM:</span> 16 GB</p>
+                        <p className="text-gray-300"><span className="text-gray-500">GPU:</span> RTX 3070</p>
+                        <p className="text-gray-300"><span className="text-gray-500">Storage:</span> 50 GB SSD</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right column - Sidebar */}
+              <div className="space-y-6">
+                {/* Game info */}
+                <div className="space-y-3">
+                  <p className="text-gray-500 text-sm">
+                    <span>Genre: </span>
+                    <span className="text-white">{game.genre}</span>
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    <span>Rating: </span>
+                    <span className="text-white">⭐ {game.rating}/10</span>
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    <span>Developer: </span>
+                    <span className="text-white">Pivigames Studio</span>
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    <span>Publisher: </span>
+                    <span className="text-white">Pivigames Inc.</span>
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    <span>Release: </span>
+                    <span className="text-white">Dec 15, 2024</span>
+                  </p>
+                </div>
+
+                {/* Platforms */}
+                <div>
+                  <h4 className="text-gray-400 text-sm mb-2">Available on</h4>
+                  <div className="flex gap-3 text-2xl bg-red">
+                    <span title="PC">PC</span>
+                  </div>
+                </div>
+
+                {/* Tags */}
+                <div>
+                  <h4 className="text-gray-400 text-sm mb-2">Tags</h4>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Action</span>
+                    <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Adventure</span>
+                    <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Open World</span>
+                    <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">RPG</span>
+                    <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Story Rich</span>
+                    <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Multiplayer</span>
+                  </div>
+                </div>
+
+                {/* Languages */}
+                <div>
+                  <h4 className="text-gray-400 text-sm mb-2">Languages</h4>
+                  <p className="text-gray-300 text-sm">English, Spanish, French, German, Japanese, Korean, Chinese</p>
+                </div>
+
+                {/* Social */}
+                <div>
+                  <h4 className="text-gray-400 text-sm mb-2">Share</h4>
+                  <div className="flex gap-3">
+                    <button className="bg-[#333] hover:bg-[#444] text-white px-3 py-1.5 rounded text-sm transition-colors">
+                      Discord
+                    </button>
+                    <button className="bg-[#333] hover:bg-[#444] text-white px-3 py-1.5 rounded text-sm transition-colors">
+                      Facebook
+                    </button>
+                    <button className="bg-[#333] hover:bg-[#444] text-white px-3 py-1.5 rounded text-sm transition-colors">
+                      Copy Link
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Fullscreen Image Viewer */}
+      {viewerOpen && (
+        <div 
+          className="fixed inset-0 bg-black/95 z-[10000] flex items-center justify-center"
+          onClick={(e) => {
+            e.stopPropagation();
+            setViewerOpen(false);
+          }}
+        >
+          {/* Close button */}
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              setViewerOpen(false);
+            }}
+            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center transition-colors"
+          >
+            <X className="text-white w-6 h-6" />
+          </button>
+
+          {/* Image counter */}
+          <div className="absolute top-4 left-4 text-white/70 text-sm">
+            {viewerIndex + 1} / {screenshots.length}
+          </div>
+
+          {/* Main image */}
+          <div 
+            className="max-w-[90vw] max-h-[85vh] rounded-lg overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img 
+              src={screenshots[viewerIndex]} 
+              alt={`Screenshot ${viewerIndex + 1}`}
+              className="max-w-full max-h-[85vh] object-contain"
+            />
+          </div>
+
+          {/* Navigation arrows */}
+          <button 
+            onClick={(e) => { e.stopPropagation(); prevViewerImage(); }}
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors"
+          >
+            <ChevronLeft className="w-8 h-8" />
+          </button>
+          <button 
+            onClick={(e) => { e.stopPropagation(); nextViewerImage(); }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors"
+          >
+            <ChevronRight className="w-8 h-8" />
+          </button>
+
+          {/* Thumbnails */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+            {screenshots.map((src, index) => (
+              <button
+                key={index}
+                onClick={(e) => { e.stopPropagation(); setViewerIndex(index); }}
+                className={`w-16 h-10 rounded overflow-hidden transition-all ${
+                  index === viewerIndex ? 'ring-2 ring-white scale-110' : 'opacity-50 hover:opacity-100'
+                }`}
+              >
+                <div 
+                  className="w-full h-full bg-cover bg-center"
+                  style={{ backgroundImage: `url(${src})` }}
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>,
+    document.body
+  );
+}

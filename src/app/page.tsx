@@ -1,65 +1,415 @@
-import Image from "next/image";
+'use client';
+import { useTheme } from "next-themes"
+
+import { useState, useEffect } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Bell, ChevronLeft, ChevronRight, Play, Info } from 'lucide-react';
+import { Moon, Sun } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import GameModal from "@/components/GameModal"
+import { getGames, type Game } from "@/lib/supabase"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function Home() {
+  const [hoveredGame, setHoveredGame] = useState<number | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [modalGame, setModalGame] = useState<Game | null>(null);
+  const [modalOrigin, setModalOrigin] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
+  const { setTheme } = useTheme()
+  const [games, setGames] = useState<Game[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Cargar juegos desde Supabase
+  useEffect(() => {
+    async function loadGames() {
+      setLoading(true);
+      const data = await getGames();
+      setGames(data);
+      setLoading(false);
+    }
+    loadGames();
+  }, []);
+
+  // Organizar juegos por categorías
+  const trendingGames = games.slice(0, 6);
+  const actionGames = games.filter(g => g.genre.toLowerCase().includes('action')).slice(0, 4);
+  const adventureGames = games.filter(g => g.genre.toLowerCase().includes('adventure')).slice(0, 4);
+  const sportsGames = games.filter(g => g.genre.toLowerCase().includes('sport')).slice(0, 4);
+
+  const heroGames = trendingGames.length > 0 ? trendingGames : [];
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroGames.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + heroGames.length) % heroGames.length);
+  };
+
+  const handleGameClick = (game: Game, event: React.MouseEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setModalOrigin({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+      width: rect.width,
+      height: rect.height
+    });
+    setModalGame(game);
+  };
+
+  const closeModal = () => {
+    setModalGame(null);
+    setModalOrigin(null);
+  };
+
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Navigation */}
+      <nav className="fixed top-0 z-50 w-full bg-gradient-to-b from-background to-transparent px-8 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            <h1 className="text-3xl font-bold text-brand">Pivigames2.0</h1>
+            <div className="hidden md:flex gap-6 text-sm">
+              <a href="#" className="hover:text-muted-foreground transition">Home</a>
+              <a href="#" className="hover:text-muted-foreground transition">Games</a>
+              <a href="#" className="hover:text-muted-foreground transition">New & Popular</a>
+              <a href="#" className="hover:text-muted-foreground transition">My List</a>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-7">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+                  <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                  <span className="sr-only">Toggle theme</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setTheme("light")}>
+                  Light
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                  Dark
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("system")}>
+                  System
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Bell className="text-foreground" strokeWidth={1} />
+            <Avatar onClick={() => alert("Clickado")}>
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+
+
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </nav>
+
+      {/* Hero Slider Section */}
+      {loading ? (
+        <div className="relative h-[80vh] flex items-center justify-center">
+          <div className="text-2xl text-muted-foreground">Cargando juegos...</div>
         </div>
-      </main>
+      ) : heroGames.length === 0 ? (
+        <div className="relative h-[80vh] flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold mb-4">No hay juegos disponibles</h2>
+            <p className="text-muted-foreground">Agrega juegos en tu base de datos de Supabase</p>
+          </div>
+        </div>
+      ) : (
+        <div className="relative h-[100vh] flex items-center overflow-hidden bg-black">
+          {/* Gradiente desde la izquierda */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/10 to-transparent z-10 pointer-events-none" />
+          {/* Gradiente inferior suave hacia el fondo de la página */}
+          <div className="absolute inset-0 z-10 pointer-events-none" />
+          <div
+            className="absolute inset-0 bg-contain bg-center bg-no-repeat transition-all duration-700"
+            style={{
+              backgroundImage: `url(${heroGames[currentSlide].wallpaper})`,
+              backgroundSize: '100% auto',
+              backgroundPosition: 'center',
+              maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)'
+            }}
+          />
+
+          {/* Navigation Arrows */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-4 z-30 bg-background/50 hover:bg-background/80 p-3 rounded-full transition"
+          >
+            <ChevronLeft className="w-8 h-8" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-4 z-30 bg-background/50 hover:bg-background/80 p-3 rounded-full transition"
+          >
+            <ChevronRight className="w-8 h-8" />
+          </button>
+
+          {/* Slide Indicators */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-2">
+            {heroGames.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`h-1 rounded-full transition-all ${index === currentSlide ? 'w-8 bg-primary' : 'w-4 bg-muted-foreground/50'
+                  }`}
+              />
+            ))}
+          </div>
+
+          <div className="relative z-20 px-8 pl-20 max-w-2xl">
+            <h2 className="text-6xl font-bold mb-4">{heroGames[currentSlide].title}</h2>
+            <div className="flex items-center gap-4 mb-4">
+              <span className="text-success font-bold">{Math.round(heroGames[currentSlide].rating * 10)}% Match</span>
+              <span className="border border-border px-2 py-1 text-sm">18+</span>
+              <span className="text-muted-foreground">2024</span>
+              <span className="border border-border px-2 py-1 text-sm">4K</span>
+            </div>
+            <p className="text-lg mb-6 text-muted-foreground">
+              {heroGames[currentSlide].description}
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => handleGameClick(heroGames[currentSlide], { currentTarget: { getBoundingClientRect: () => ({ left: window.innerWidth / 2 - 100, top: window.innerHeight / 2 - 100, width: 200, height: 200 }) } } as React.MouseEvent<HTMLDivElement>)}
+                className="bg-primary text-primary-foreground px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-primary/90 transition cursor-pointer">
+                <Play className="w-5 h-5" />
+                Play
+              </button>
+              <button
+
+                className="bg-secondary text-secondary-foreground px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-secondary/80 transition cursor-pointer"
+              >
+                <Info className="w-5 h-5" />
+                Report
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Game Categories */}
+      {!loading && games.length > 0 && (
+        <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">
+          {/* Trending Now */}
+          {trendingGames.length > 0 && (
+            <section>
+              <h3 className="text-2xl font-bold mb-4">Trending Now</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {trendingGames.map((game) => (
+                  <div
+                    key={game.id}
+                    className="relative group cursor-pointer transition-transform duration-300 hover:scale-105"
+                    onMouseEnter={() => setHoveredGame(game.id)}
+                    onMouseLeave={() => setHoveredGame(null)}
+                    onClick={(e) => handleGameClick(game, e)}
+                  >
+                    <div className="aspect-[2/3] bg-game-card rounded-lg overflow-hidden">
+                      <img
+                        src={game.image}
+                        alt={game.title}
+                        className="w-full h-full object-cover object-center"
+                      />
+                    </div>
+                    {hoveredGame === game.id && (
+                      <div className="absolute inset-0 bg-background/90 rounded-lg p-4 flex flex-col justify-end">
+                        <h4 className="font-bold text-lg mb-1">{game.title}</h4>
+                        <p className="text-sm text-muted-foreground mb-2">{game.genre}</p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-warning">⭐</span>
+                          <span className="text-sm">{game.rating}</span>
+                        </div>
+                        <div className="flex gap-2 mt-3">
+                          <button className="w-full bg-primary text-primary-foreground px-4 py-2 rounded text-sm font-bold hover:bg-primary/90 flex items-center justify-center gap-1">
+                            <Play className="w-4 h-4" />
+                            Play
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Action Games */}
+          {actionGames.length > 0 && (
+            <section>
+              <h3 className="text-2xl font-bold mb-4">Action & Thrillers</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {actionGames.map((game) => (
+                  <div
+                    key={game.id}
+                    className="relative group cursor-pointer transition-transform duration-300 hover:scale-105"
+                    onMouseEnter={() => setHoveredGame(game.id)}
+                    onMouseLeave={() => setHoveredGame(null)}
+                    onClick={(e) => handleGameClick(game, e)}
+                  >
+                    <div className="aspect-video bg-game-action rounded-lg overflow-hidden">
+                      <img
+                        src={game.cover_image}
+                        alt={game.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    {hoveredGame === game.id && (
+                      <div className="absolute inset-0 bg-background/90 rounded-lg p-3 flex flex-col justify-end">
+                        <h4 className="font-bold mb-1">{game.title}</h4>
+                        <p className="text-xs text-muted-foreground mb-1">{game.genre}</p>
+                        <div className="flex items-center gap-1 text-sm mb-2">
+                          <span className="text-warning">⭐</span>
+                          <span>{game.rating}</span>
+                        </div>
+                        <button className="w-full bg-primary text-primary-foreground px-3 py-1.5 rounded text-xs font-bold hover:bg-primary/90 flex items-center justify-center gap-1">
+                          <Play className="w-3 h-3" />
+                          Play
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Adventure Games */}
+          {adventureGames.length > 0 && (
+            <section>
+              <h3 className="text-2xl font-bold mb-4">Epic Adventures</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {adventureGames.map((game) => (
+                  <div
+                    key={game.id}
+                    className="relative group cursor-pointer transition-transform duration-300 hover:scale-105"
+                    onMouseEnter={() => setHoveredGame(game.id)}
+                    onMouseLeave={() => setHoveredGame(null)}
+                    onClick={(e) => handleGameClick(game, e)}
+                  >
+                    <div className="aspect-video bg-game-adventure rounded-lg overflow-hidden">
+                      <img
+                        src={game.cover_image}
+                        alt={game.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    {hoveredGame === game.id && (
+                      <div className="absolute inset-0 bg-background/90 rounded-lg p-3 flex flex-col justify-end">
+                        <h4 className="font-bold mb-1">{game.title}</h4>
+                        <p className="text-xs text-muted-foreground mb-1">{game.genre}</p>
+                        <div className="flex items-center gap-1 text-sm mb-2">
+                          <span className="text-warning">⭐</span>
+                          <span>{game.rating}</span>
+                        </div>
+                        <button className="w-full bg-primary text-primary-foreground px-3 py-1.5 rounded text-xs font-bold hover:bg-primary/90 flex items-center justify-center gap-1">
+                          <Play className="w-3 h-3" />
+                          Play
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Sports Games */}
+          {sportsGames.length > 0 && (
+            <section>
+              <h3 className="text-2xl font-bold mb-4">Sports & Racing</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {sportsGames.map((game) => (
+                  <div
+                    key={game.id}
+                    className="relative group cursor-pointer transition-transform duration-300 hover:scale-105"
+                    onMouseEnter={() => setHoveredGame(game.id)}
+                    onMouseLeave={() => setHoveredGame(null)}
+                    onClick={(e) => handleGameClick(game, e)}
+                  >
+                    <div className="aspect-video bg-game-sports rounded-lg overflow-hidden">
+                      <img
+                        src={game.cover_image}
+                        alt={game.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    {hoveredGame === game.id && (
+                      <div className="absolute inset-0 bg-background/90 rounded-lg p-3 flex flex-col justify-end">
+                        <h4 className="font-bold mb-1">{game.title}</h4>
+                        <p className="text-xs text-muted-foreground mb-1">{game.genre}</p>
+                        <div className="flex items-center gap-1 text-sm mb-2">
+                          <span className="text-warning">⭐</span>
+                          <span>{game.rating}</span>
+                        </div>
+                        <button className="w-full bg-primary text-primary-foreground px-3 py-1.5 rounded text-xs font-bold hover:bg-primary/90 flex items-center justify-center gap-1">
+                          <Play className="w-3 h-3" />
+                          Play
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      )}
+
+      {/* Modal del juego - Componente separado */}
+      <GameModal game={modalGame} origin={modalOrigin} onClose={closeModal} />
+
+      {/* Footer */}
+      <footer className="border-border px-8 py-12 bg-black">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <h4 className="font-bold mb-3">Company</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><a href="#" className="hover:text-foreground">About Us</a></li>
+                <li><a href="#" className="hover:text-foreground">Careers</a></li>
+                <li><a href="#" className="hover:text-foreground">Press</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold mb-3">Support</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><a href="#" className="hover:text-foreground">Help Center</a></li>
+                <li><a href="#" className="hover:text-foreground">Contact Us</a></li>
+                <li><a href="#" className="hover:text-foreground">FAQ</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold mb-3">Legal</h4>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><a href="#" className="hover:text-foreground">Privacy</a></li>
+                <li><a href="#" className="hover:text-foreground">Terms</a></li>
+                <li><a href="#" className="hover:text-foreground">Cookies</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold mb-3">Social</h4>
+              <div className="flex gap-4 text-2xl">
+                <a href="#" className="hover:text-muted-foreground">📘</a>
+                <a href="#" className="hover:text-muted-foreground">🐦</a>
+                <a href="#" className="hover:text-muted-foreground">📷</a>
+              </div>
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground text-center">© 2024 GameFlix. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 }

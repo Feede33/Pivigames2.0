@@ -1,26 +1,414 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --animate-shine: shine var(--duration) infinite linear;
+  @keyframes shine {
+  0% {
+    background-position: 0% 0%;
+    }
+  50% {
+    background-position: 100% 100%;
+    }
+  to {
+    background-position: 0% 0%;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Custom game colors */
+  --brand-primary: oklch(0.55 0.22 25);
+  --brand-hover: oklch(0.45 0.18 25);
+  --success: oklch(0.65 0.18 145);
+  --warning: oklch(0.75 0.15 85);
+  --game-card-from: oklch(0.25 0.02 0);
+  --game-card-to: oklch(0.18 0.02 0);
+  --game-action-from: oklch(0.35 0.08 25);
+  --game-action-to: oklch(0.18 0.02 0);
+  --game-adventure-from: oklch(0.35 0.08 250);
+  --game-adventure-to: oklch(0.18 0.02 0);
+  --game-sports-from: oklch(0.35 0.08 145);
+  --game-sports-to: oklch(0.18 0.02 0);
+  --hero-gradient-from: oklch(0.25 0.08 290 / 0.2);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+
+  /* Custom game colors - dark mode */
+  --brand-primary: oklch(0.55 0.22 25);
+  --brand-hover: oklch(0.65 0.18 25);
+  --success: oklch(0.65 0.18 145);
+  --warning: oklch(0.75 0.15 85);
+  --game-card-from: oklch(0.25 0.02 0);
+  --game-card-to: oklch(0.18 0.02 0);
+  --game-action-from: oklch(0.35 0.08 25);
+  --game-action-to: oklch(0.18 0.02 0);
+  --game-adventure-from: oklch(0.35 0.08 250);
+  --game-adventure-to: oklch(0.18 0.02 0);
+  --game-sports-from: oklch(0.35 0.08 145);
+  --game-sports-to: oklch(0.18 0.02 0);
+  --hero-gradient-from: oklch(0.25 0.08 290 / 0.2);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Performance optimizations */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* COMENTADO: will-change puede romper position fixed en elementos hijos
+  .transition-transform,
+  .transition-all,
+  .transition {
+    will-change: transform;
+  }
+  */
+
+  /* Smooth scrolling with GPU acceleration */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* IMPORTANTE: No usar transform en body porque rompe position: fixed */
+  /* body {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  } */
+}
+
+@layer utilities {
+  .text-brand {
+    color: var(--brand-primary);
+  }
+  .hover\:text-brand-hover:hover {
+    color: var(--brand-hover);
+  }
+  .text-success {
+    color: var(--success);
+  }
+  .text-warning {
+    color: var(--warning);
+  }
+  .bg-game-card {
+    background: linear-gradient(to bottom right, var(--game-card-from), var(--game-card-to));
+  }
+  .bg-game-action {
+    background: linear-gradient(to bottom right, var(--game-action-from), var(--game-action-to));
+  }
+  .bg-game-adventure {
+    background: linear-gradient(to bottom right, var(--game-adventure-from), var(--game-adventure-to));
+  }
+  .bg-game-sports {
+    background: linear-gradient(to bottom right, var(--game-sports-from), var(--game-sports-to));
+  }
+  .bg-hero-gradient {
+    background: radial-gradient(circle at center, var(--hero-gradient-from), var(--background), var(--background));
+  }
+}
+
+/* Plyr Custom Styles - Modern Circular Design */
+.plyr-wrapper {
+  --plyr-color-main: #e50914;
+  --plyr-video-control-color: #fff;
+  --plyr-video-control-color-hover: #fff;
+  --plyr-video-control-background-hover: rgba(255, 255, 255, 0.1);
+  --plyr-range-fill-background: #e50914;
+  --plyr-range-thumb-background: #fff;
+  --plyr-range-thumb-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  --plyr-range-track-height: 4px;
+  --plyr-range-thumb-height: 14px;
+  --plyr-control-spacing: 12px;
+  --plyr-font-size-base: 14px;
+  --plyr-font-size-small: 12px;
+  --plyr-video-background: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fondo blur para las barras negras */
+.plyr-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: inherit;
+  filter: blur(30px) brightness(0.5);
+  z-index: 0;
+  transform: scale(1.1);
+}
+
+.plyr-wrapper .plyr {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+/* Video con fondo blur */
+.plyr-wrapper .plyr__video-wrapper {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(20px);
+}
+
+.plyr-wrapper .plyr iframe {
+  background: transparent;
+}
+
+.plyr-wrapper .plyr__controls {
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 20px 16px 12px;
+  border-radius: 0;
+}
+
+/* Botones circulares */
+.plyr-wrapper .plyr__control {
+  border-radius: 50%;
+  padding: 8px;
+  transition: all 0.2s ease;
+}
+
+.plyr-wrapper .plyr__control:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.1);
+}
+
+/* Botón de play grande central - SIN ANIMACIÓN */
+.plyr-wrapper .plyr__control--overlaid {
+  background: rgba(229, 9, 20, 0.9);
+  border-radius: 50%;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  transition: none !important;
+  animation: none !important;
+}
+
+.plyr-wrapper .plyr__control--overlaid:hover {
+  background: #e50914;
+  transform: none !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Quitar animación de fade del botón central */
+.plyr-wrapper .plyr--playing .plyr__control--overlaid {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.1s ease, visibility 0.1s ease !important;
+}
+
+.plyr-wrapper .plyr--paused .plyr__control--overlaid {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.1s ease, visibility 0.1s ease !important;
+}
+
+.plyr-wrapper .plyr__control--overlaid svg {
+  width: 28px;
+  height: 28px;
+  margin-left: 4px;
+}
+
+/* Barra de progreso moderna */
+.plyr-wrapper .plyr__progress__container {
+  flex: 1;
+}
+
+.plyr-wrapper .plyr__progress input[type="range"] {
+  height: 4px;
+  border-radius: 4px;
+}
+
+.plyr-wrapper .plyr__progress input[type="range"]::-webkit-slider-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease;
+}
+
+.plyr-wrapper .plyr__progress input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scale(1.3);
+}
+
+/* Volumen slider */
+.plyr-wrapper .plyr__volume input[type="range"] {
+  height: 4px;
+  border-radius: 4px;
+}
+
+/* Tiempo */
+.plyr-wrapper .plyr__time {
+  font-weight: 500;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* Menu de settings */
+.plyr-wrapper .plyr__menu__container {
+  background: rgba(20, 20, 20, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.plyr-wrapper .plyr__menu__container .plyr__control {
+  border-radius: 8px;
+}
+
+.plyr-wrapper .plyr__menu__container .plyr__control:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Tooltip */
+.plyr-wrapper .plyr__tooltip {
+  background: rgba(20, 20, 20, 0.95);
+  border-radius: 6px;
+  font-size: 12px;
+  padding: 6px 10px;
+}
+
+/* Fullscreen */
+.plyr-wrapper .plyr--fullscreen-active {
+  border-radius: 0;
+}
+
+/* Controles siempre visibles */
+.plyr-wrapper .plyr__controls {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateY(0) !important;
+}
+
+.plyr-wrapper .plyr--hide-controls .plyr__controls {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* Double click para fullscreen ya está habilitado por defecto en Plyr */
+
+/* Ocultar botón de play central de Plyr */
+.plyr-wrapper .plyr__control--overlaid {
+  display: none !important;
+}
+
+/* Ocultar botón de play de YouTube embebido */
+.plyr-wrapper .plyr__poster {
+  display: none !important;
 }
