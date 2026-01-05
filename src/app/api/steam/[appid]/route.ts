@@ -59,6 +59,7 @@ export async function GET(
     // Extraer idiomas soportados
     const languages = gameData.supported_languages
       ?.replace(/<[^>]*>/g, '') // Remover HTML tags
+      .replace(/\*/g, '') // Remover asteriscos
       .split(',')
       .map((lang: string) => lang.trim())
       .filter(Boolean) || [];
