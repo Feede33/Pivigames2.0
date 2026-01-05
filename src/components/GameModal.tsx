@@ -428,9 +428,9 @@ export default function GameModal({ game, onClose }: Props) {
 
                 {/* Buy on Steam Widget */}
                 {steamData && (
-                  <div className="mt-8 bg-[#1a1a1a] rounded-lg p-4">
+                  <div className="mt-8">
                     <iframe 
-                      src={`https://store.steampowered.com/widget/${steamData.steam_appid}/`} 
+                      src={`https://store.steampowered.com/widget/${steamData.steam_appid}/?t=dark`} 
                       frameBorder="0"
                       width="100%" 
                       height="190"
