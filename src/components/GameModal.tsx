@@ -355,37 +355,44 @@ export default function GameModal({ game, onClose }: Props) {
 
                 {/* System Requirements */}
                 <div>
-                  <h3 className="text-white font-semibold mb-3">System Requirements</h3>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="bg-[#222] rounded-lg p-4">
-                      <h4 className="text-gray-400 text-sm mb-2">MINIMUM</h4>
+                  <h3 className="text-white font-semibold mb-4 text-lg">REQUISITOS DEL SISTEMA</h3>
+                  <div className="grid grid-cols-2 gap-8">
+                    {/* MÍNIMO */}
+                    <div>
+                      <h4 className="text-gray-400 text-sm font-semibold mb-3">MÍNIMO:</h4>
                       {steamData?.pc_requirements?.minimum ? (
-                        <div className="text-sm text-gray-300 whitespace-pre-line">
-                          {steamData.pc_requirements.minimum}
+                        <div className="space-y-2 text-sm text-gray-300">
+                          {steamData.pc_requirements.minimum.split('\n').filter(Boolean).map((line, index) => (
+                            <p key={index} className="leading-relaxed">{line}</p>
+                          ))}
                         </div>
                       ) : (
-                        <div className="space-y-1 text-sm">
-                          <p className="text-gray-300"><span className="text-gray-500">OS:</span> {game.min_os || 'Windows 10'}</p>
-                          <p className="text-gray-300"><span className="text-gray-500">CPU:</span> {game.min_cpu || 'Intel i5-6600'}</p>
-                          <p className="text-gray-300"><span className="text-gray-500">RAM:</span> {game.min_ram || '8 GB'}</p>
-                          <p className="text-gray-300"><span className="text-gray-500">GPU:</span> {game.min_gpu || 'GTX 1060'}</p>
-                          <p className="text-gray-300"><span className="text-gray-500">Storage:</span> {game.min_storage || '50 GB'}</p>
+                        <div className="space-y-2 text-sm text-gray-300">
+                          <p><span className="text-gray-400">SO:</span> {game.min_os || 'Windows 10'}</p>
+                          <p><span className="text-gray-400">PROCESADOR:</span> {game.min_cpu || 'Intel i5-6600'}</p>
+                          <p><span className="text-gray-400">MEMORIA:</span> {game.min_ram || '8 GB de RAM'}</p>
+                          <p><span className="text-gray-400">GRÁFICOS:</span> {game.min_gpu || 'GTX 1060'}</p>
+                          <p><span className="text-gray-400">ALMACENAMIENTO:</span> {game.min_storage || '50 GB'}</p>
                         </div>
                       )}
                     </div>
-                    <div className="bg-[#222] rounded-lg p-4">
-                      <h4 className="text-gray-400 text-sm mb-2">RECOMMENDED</h4>
+                    
+                    {/* RECOMENDADO */}
+                    <div>
+                      <h4 className="text-gray-400 text-sm font-semibold mb-3">RECOMENDADO:</h4>
                       {steamData?.pc_requirements?.recommended ? (
-                        <div className="text-sm text-gray-300 whitespace-pre-line">
-                          {steamData.pc_requirements.recommended}
+                        <div className="space-y-2 text-sm text-gray-300">
+                          {steamData.pc_requirements.recommended.split('\n').filter(Boolean).map((line, index) => (
+                            <p key={index} className="leading-relaxed">{line}</p>
+                          ))}
                         </div>
                       ) : (
-                        <div className="space-y-1 text-sm">
-                          <p className="text-gray-300"><span className="text-gray-500">OS:</span> {game.rec_os || 'Windows 11'}</p>
-                          <p className="text-gray-300"><span className="text-gray-500">CPU:</span> {game.rec_cpu || 'Intel i7-10700'}</p>
-                          <p className="text-gray-300"><span className="text-gray-500">RAM:</span> {game.rec_ram || '16 GB'}</p>
-                          <p className="text-gray-300"><span className="text-gray-500">GPU:</span> {game.rec_gpu || 'RTX 3070'}</p>
-                          <p className="text-gray-300"><span className="text-gray-500">Storage:</span> {game.rec_storage || '50 GB SSD'}</p>
+                        <div className="space-y-2 text-sm text-gray-300">
+                          <p><span className="text-gray-400">SO:</span> {game.rec_os || 'Windows 11'}</p>
+                          <p><span className="text-gray-400">PROCESADOR:</span> {game.rec_cpu || 'Intel i7-10700'}</p>
+                          <p><span className="text-gray-400">MEMORIA:</span> {game.rec_ram || '16 GB de RAM'}</p>
+                          <p><span className="text-gray-400">GRÁFICOS:</span> {game.rec_gpu || 'RTX 3070'}</p>
+                          <p><span className="text-gray-400">ALMACENAMIENTO:</span> {game.rec_storage || '50 GB SSD'}</p>
                         </div>
                       )}
                     </div>
