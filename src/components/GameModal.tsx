@@ -495,7 +495,7 @@ export default function GameModal({ game, onClose }: Props) {
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="text-gray-400 text-sm font-semibold">PRECIO</h4>
                       {userLocation && (
-                        <span className="flex justify center items center text-xs text-green-400 bg-green-900/40 px-2 py-1 rounded--full">
+                        <span className="flex justify center items center text-xs text-green-400 bg-green-900/40 px-2 py-1 rounded-full">
                           <MapPinCheck/> {userLocation.country}
                         </span>
                       )}
