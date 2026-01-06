@@ -74,6 +74,8 @@ export default function GameModal({ game, onClose }: Props) {
         .then((res) => res.json())
         .then((data) => {
           if (!data.error) {
+            console.log('Steam data loaded:', data);
+            console.log('Videos from Steam:', data.videos);
             setSteamData(data);
           }
         })
@@ -97,6 +99,9 @@ export default function GameModal({ game, onClose }: Props) {
     : [];
 
   const currentVideo = videos[0]; // Por ahora mostramos el primer video
+  
+  console.log('Videos array:', videos);
+  console.log('Current video:', currentVideo);
 
   useEffect(() => {
     setReady(true);
@@ -256,66 +261,94 @@ export default function GameModal({ game, onClose }: Props) {
           <div className="p-6">
             {/* Info badges */}
             <div className="flex gap-3 items-center mb-4">
-              <span className="text-green-500 font-bold text-[15px]">
-                {steamData?.metacritic 
-                  ? `${steamData.metacritic}% Match` 
-                  : `${Math.round(game.rating * 10)}% Match`}
-              </span>
-              <span className="text-gray-400 text-sm">
-                {steamData?.release_year || '2024'}
-              </span>
-              <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
-                {steamData?.required_age ? `${steamData.required_age}+` : '18+'}
-              </span>
-              <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
-                HD
-              </span>
-              <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
-                5.1
-              </span>
+              {loadingSteam ? (
+                <>
+                  <div className="h-5 w-20 bg-gray-700 animate-pulse rounded" />
+                  <div className="h-4 w-12 bg-gray-700 animate-pulse rounded" />
+                  <div className="h-6 w-8 bg-gray-700 animate-pulse rounded" />
+                  <div className="h-6 w-8 bg-gray-700 animate-pulse rounded" />
+                  <div className="h-6 w-8 bg-gray-700 animate-pulse rounded" />
+                </>
+              ) : (
+                <>
+                  <span className="text-green-500 font-bold text-[15px]">
+                    {steamData?.metacritic 
+                      ? `${steamData.metacritic}% Match` 
+                      : `${Math.round(game.rating * 10)}% Match`}
+                  </span>
+                  <span className="text-gray-400 text-sm">
+                    {steamData?.release_year || '2024'}
+                  </span>
+                  <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
+                    {steamData?.required_age ? `${steamData.required_age}+` : '18+'}
+                  </span>
+                  <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
+                    HD
+                  </span>
+                  <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
+                    5.1
+                  </span>
+                </>
+              )}
             </div>
 
             {/* Main content grid */}
             <div className="grid grid-cols-[2fr_1fr] gap-8">
               {/* Left column */}
               <div>
-                <p className="text-gray-200 leading-relaxed text-base mb-6">
-                  {steamData?.short_description || game.description}
-                </p>
+                {loadingSteam ? (
+                  <div className="space-y-2 mb-6">
+                    <div className="h-4 bg-gray-700 animate-pulse rounded w-full" />
+                    <div className="h-4 bg-gray-700 animate-pulse rounded w-full" />
+                    <div className="h-4 bg-gray-700 animate-pulse rounded w-3/4" />
+                  </div>
+                ) : (
+                  <p className="text-gray-200 leading-relaxed text-base mb-6">
+                    {steamData?.short_description || game.description}
+                  </p>
+                )}
 
                 {/* Features section */}
                 <div className="mb-6">
                   <h3 className="text-white font-semibold mb-3">Game Features</h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    {steamData?.categories?.length ? (
-                      steamData.categories.slice(0, 6).map((category, index) => (
-                        <div key={index} className="flex items-center gap-2 text-gray-300 text-sm">
-                          <span className="text-green-500">✓</span> {category}
-                        </div>
-                      ))
-                    ) : (
-                      <>
-                        <div className="flex items-center gap-2 text-gray-300 text-sm">
-                          <span className="text-green-500">✓</span> Single Player Campaign
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-300 text-sm">
-                          <span className="text-green-500">✓</span> Online Multiplayer
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-300 text-sm">
-                          <span className="text-green-500">✓</span> Cross-Platform Play
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-300 text-sm">
-                          <span className="text-green-500">✓</span> Cloud Saves
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-300 text-sm">
-                          <span className="text-green-500">✓</span> Controller Support
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-300 text-sm">
-                          <span className="text-green-500">✓</span> Achievements
-                        </div>
-                      </>
-                    )}
-                  </div>
+                  {loadingSteam ? (
+                    <div className="grid grid-cols-2 gap-3">
+                      {[...Array(6)].map((_, i) => (
+                        <div key={i} className="h-5 bg-gray-700 animate-pulse rounded" />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {steamData?.categories?.length ? (
+                        steamData.categories.slice(0, 6).map((category, index) => (
+                          <div key={index} className="flex items-center gap-2 text-gray-300 text-sm">
+                            <span className="text-green-500">✓</span> {category}
+                          </div>
+                        ))
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                            <span className="text-green-500">✓</span> Single Player Campaign
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                            <span className="text-green-500">✓</span> Online Multiplayer
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                            <span className="text-green-500">✓</span> Cross-Platform Play
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                            <span className="text-green-500">✓</span> Cloud Saves
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                            <span className="text-green-500">✓</span> Controller Support
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                            <span className="text-green-500">✓</span> Achievements
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Screenshots section with slider */}
@@ -430,101 +463,127 @@ export default function GameModal({ game, onClose }: Props) {
               {/* Right column - Sidebar */}
               <div className="space-y-6">
                 {/* Game info */}
-                <div className="space-y-3">
-                  <p className="text-gray-500 text-sm">
-                    <span>Genre: </span>
-                    <span className="text-white">
-                      {steamData?.genres?.length 
-                        ? steamData.genres.join(', ') 
-                        : game.genre}
-                    </span>
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    <span>Rating: </span>
-                    <span className="text-white">
-                      {steamData?.metacritic 
-                        ? `⭐ ${steamData.metacritic}/100 (Metacritic)` 
-                        : `⭐ ${game.rating}/10`}
-                    </span>
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    <span>Developer: </span>
-                    <span className="text-white">
-                      {steamData?.developers?.length 
-                        ? steamData.developers.join(', ') 
-                        : 'Pivigames Studio'}
-                    </span>
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    <span>Publisher: </span>
-                    <span className="text-white">
-                      {steamData?.publishers?.length 
-                        ? steamData.publishers.join(', ') 
-                        : 'Pivigames Inc.'}
-                    </span>
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    <span>Release: </span>
-                    <span className="text-white">
-                      {steamData?.release_date || 'Dec 15, 2024'}
-                    </span>
-                  </p>
-                  {steamData?.price && (
+                {loadingSteam ? (
+                  <div className="space-y-3">
+                    {[...Array(6)].map((_, i) => (
+                      <div key={i} className="h-5 bg-gray-700 animate-pulse rounded" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
                     <p className="text-gray-500 text-sm">
-                      <span>Price: </span>
-                      <span className="text-white">{steamData.price}</span>
+                      <span>Genre: </span>
+                      <span className="text-white">
+                        {steamData?.genres?.length 
+                          ? steamData.genres.join(', ') 
+                          : game.genre}
+                      </span>
                     </p>
-                  )}
-                  
-                </div>
+                    <p className="text-gray-500 text-sm">
+                      <span>Rating: </span>
+                      <span className="text-white">
+                        {steamData?.metacritic 
+                          ? `⭐ ${steamData.metacritic}/100 (Metacritic)` 
+                          : `⭐ ${game.rating}/10`}
+                      </span>
+                    </p>
+                    <p className="text-gray-500 text-sm">
+                      <span>Developer: </span>
+                      <span className="text-white">
+                        {steamData?.developers?.length 
+                          ? steamData.developers.join(', ') 
+                          : 'Pivigames Studio'}
+                      </span>
+                    </p>
+                    <p className="text-gray-500 text-sm">
+                      <span>Publisher: </span>
+                      <span className="text-white">
+                        {steamData?.publishers?.length 
+                          ? steamData.publishers.join(', ') 
+                          : 'Pivigames Inc.'}
+                      </span>
+                    </p>
+                    <p className="text-gray-500 text-sm">
+                      <span>Release: </span>
+                      <span className="text-white">
+                        {steamData?.release_date || 'Dec 15, 2024'}
+                      </span>
+                    </p>
+                    {steamData?.price && (
+                      <p className="text-gray-500 text-sm">
+                        <span>Price: </span>
+                        <span className="text-white">{steamData.price}</span>
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {/* Platforms */}
                 <div>
                   <h4 className="text-gray-400 text-sm mb-2">Available on</h4>
-                  <div className="flex gap-3 text-sm text-gray-300">
-                    {steamData?.platforms ? (
-                      <>
-                        {steamData.platforms.windows && <span title="Windows">Windows</span>}
-                        {steamData.platforms.mac && <span title="Mac">Mac</span>}
-                        {steamData.platforms.linux && <span title="Linux">Linux</span>}
-                      </>
-                    ) : (
-                      <span>PC</span>
-                    )}
-                  </div>
+                  {loadingSteam ? (
+                    <div className="h-5 w-24 bg-gray-700 animate-pulse rounded" />
+                  ) : (
+                    <div className="flex gap-3 text-sm text-gray-300">
+                      {steamData?.platforms ? (
+                        <>
+                          {steamData.platforms.windows && <span title="Windows">Windows</span>}
+                          {steamData.platforms.mac && <span title="Mac">Mac</span>}
+                          {steamData.platforms.linux && <span title="Linux">Linux</span>}
+                        </>
+                      ) : (
+                        <span>PC</span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Tags */}
                 <div>
                   <h4 className="text-gray-400 text-sm mb-2">Tags</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {steamData?.categories?.length ? (
-                      steamData.categories.slice(0, 8).map((category, index) => (
-                        <span key={index} className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">
-                          {category}
-                        </span>
-                      ))
-                    ) : (
-                      <>
-                        <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Action</span>
-                        <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Adventure</span>
-                        <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Open World</span>
-                        <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">RPG</span>
-                        <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Story Rich</span>
-                        <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Multiplayer</span>
-                      </>
-                    )}
-                  </div>
+                  {loadingSteam ? (
+                    <div className="flex flex-wrap gap-2">
+                      {[...Array(6)].map((_, i) => (
+                        <div key={i} className="h-6 w-16 bg-gray-700 animate-pulse rounded" />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {steamData?.categories?.length ? (
+                        steamData.categories.slice(0, 8).map((category, index) => (
+                          <span key={index} className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">
+                            {category}
+                          </span>
+                        ))
+                      ) : (
+                        <>
+                          <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Action</span>
+                          <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Adventure</span>
+                          <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Open World</span>
+                          <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">RPG</span>
+                          <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Story Rich</span>
+                          <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Multiplayer</span>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Languages */}
                 <div>
                   <h4 className="text-gray-400 text-sm mb-2">Languages</h4>
-                  <p className="text-gray-300 text-sm">
-                    {steamData?.languages?.length 
-                      ? steamData.languages.slice(0, 10).join(', ') 
-                      : 'English, Spanish, French, German, Japanese, Korean, Chinese'}
-                  </p>
+                  {loadingSteam ? (
+                    <div className="space-y-2">
+                      <div className="h-4 bg-gray-700 animate-pulse rounded w-full" />
+                      <div className="h-4 bg-gray-700 animate-pulse rounded w-2/3" />
+                    </div>
+                  ) : (
+                    <p className="text-gray-300 text-sm">
+                      {steamData?.languages?.length 
+                        ? steamData.languages.slice(0, 10).join(', ') 
+                        : 'English, Spanish, French, German, Japanese, Korean, Chinese'}
+                    </p>
+                  )}
                 </div>
 
                 {/* Social */}
