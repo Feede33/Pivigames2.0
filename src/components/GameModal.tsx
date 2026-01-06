@@ -491,12 +491,17 @@ export default function GameModal({ game, onClose }: Props) {
               <div className="space-y-6">
                 {/* Price Card - Destacado */}
                 {steamData?.price && (
-                  <div className="bg-gradient-to-br from-green-900/30 to-green-800/20 border border-green-700/50 rounded-full p-8">
-                    <div className="flex items-center">
-                      <h4 className="text-gray-400 text-sm font-semibold">PRECIO</h4>
+                  <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500/10 via-green-500/5 to-teal-500/10 border border-green-400/30 rounded-3xl p-8 backdrop-blur-sm">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-green-500/5 to-transparent"></div>
+                    <div className="relative flex items-center justify-between gap-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-1 h-8 bg-gradient-to-b from-green-400 to-emerald-500 rounded-full"></div>
+                        <h4 className="text-gray-300 text-xs font-bold tracking-wider uppercase">Precio</h4>
+                      </div>
                       {userLocation && (
-                        <span className="flex justify center items center text-xs text-green-400 bg-green-900/40 px-2 py-1 rounded-full">
-                          <MapPinCheck/> {userLocation.country}
+                        <span className="flex items-center gap-2 text-xs text-emerald-400 bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-4 py-2 rounded-full border border-green-400/20 backdrop-blur-sm shadow-lg shadow-green-500/10">
+                          <MapPinCheck className="w-3.5 h-3.5"/> 
+                          <span className="font-medium">{userLocation.country}</span>
                         </span>
                       )}
                     </div>
