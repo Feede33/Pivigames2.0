@@ -227,7 +227,7 @@ export default function GameModal({ game, onClose }: Props) {
                     className="px-7 py-2.5 rounded-full bg-white text-black border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-200 transition-colors"
                   >
                     <Download className="w-[18px] h-[18px]" />
-                    Download
+                    Download Free
                   </a>
                 )}
                 {(currentVideo || game.trailer) && (
@@ -514,7 +514,7 @@ export default function GameModal({ game, onClose }: Props) {
                           </div>
                         ) : (
                           <div className="text-3xl font-bold text-white">
-                            {steamData.price}
+                            {steamData.price_info.final_formatted || steamData.price}
                           </div>
                         )}
                       </div>
@@ -524,9 +524,9 @@ export default function GameModal({ game, onClose }: Props) {
                       </div>
                     )}
                     
-                    {userLocation && (
+                    {steamData.price_info && (
                       <p className="text-xs text-gray-400 mt-2">
-                        Precio en {userLocation.currency || 'USD'}
+                        Precio en {steamData.price_info.currency}
                       </p>
                     )}
                   </div>
