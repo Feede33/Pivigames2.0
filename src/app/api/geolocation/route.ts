@@ -6,16 +6,20 @@ export async function GET(request: NextRequest) {
     const forwarded = request.headers.get('x-forwarded-for');
     const ip = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip');
 
-    // Usar ipapi.co para obtener información del país
+    // Intentar con ip-api.com (sin límites estrictos para uso personal)
     const geoResponse = await fetch(
-      ip ? `https://ipapi.co/${ip}/json/` : 'https://ipapi.co/json/'
+      `http://ip-api.com/json/${ip || ''}?fields=status,message,country,countryCode,region,city,currency,query`
     );
     
     if (!geoResponse.ok) {
-      return NextResponse.json({ error: 'Geolocation service unavailable' }, { status: 503 });
+      throw new Error('Geolocation service unavailable');
     }
 
     const geoData = await geoResponse.json();
+
+    if (geoData.status === 'fail') {
+      throw new Error(geoData.message || 'Geolocation failed');
+    }
 
     // Mapear código de país a código de Steam
     const countryToSteam: Record<string, string> = {
@@ -26,12 +30,12 @@ export async function GET(request: NextRequest) {
       'TR': 'tr', 'PL': 'pl', 'CA': 'ca',
     };
 
-    const countryCode = geoData.country_code || 'US';
+    const countryCode = geoData.countryCode || 'US';
     const steamCountryCode = countryToSteam[countryCode] || 'us';
 
     return NextResponse.json({
-      ip: geoData.ip || ip,
-      country: geoData.country_name,
+      ip: geoData.query || ip,
+      country: geoData.country,
       country_code: countryCode,
       currency: geoData.currency,
       steam_country_code: steamCountryCode,
@@ -40,6 +44,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Geolocation Error:', error);
+    // Sin ubicación, no cargar precios
     return NextResponse.json({ error: 'Failed to detect location' }, { status: 500 });
   }
 }
