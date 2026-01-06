@@ -6,6 +6,8 @@ import { X, Play, ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import type { Game } from '@/lib/supabase';
 import { MapPinCheck } from 'lucide-react';
+import Snowfall from 'react-snowfall';
+
 
 const VideoPlayer = dynamic(() => import('./VideoPlayer'), { ssr: false });
 
@@ -492,6 +494,8 @@ export default function GameModal({ game, onClose }: Props) {
                 {/* Price Card - Destacado */}
                 {steamData?.price && (
                   <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500/10 via-green-500/5 to-teal-500/10 border border-green-400/30 rounded-3xl p-8 backdrop-blur-sm">
+                          <Snowfall />
+
                     <div className="absolute inset-0 bg-gradient-to-tr from-green-500/5 to-transparent"></div>
                     <div className="relative flex items-center justify-between gap-6">
                       <div className="flex items-center gap-3">

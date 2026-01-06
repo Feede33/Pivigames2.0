@@ -8,6 +8,8 @@ import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import GameModal from "@/components/GameModal"
 import { getGames, type Game } from "@/lib/supabase"
+import Snowfall from 'react-snowfall';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
