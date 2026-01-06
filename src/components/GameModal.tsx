@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { X, Play, ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import type { Game } from '@/lib/supabase';
+import { MapPinCheck } from 'lucide-react';
 
 const VideoPlayer = dynamic(() => import('./VideoPlayer'), { ssr: false });
 
@@ -266,7 +267,7 @@ export default function GameModal({ game, onClose }: Props) {
                     className="px-7 py-2.5 rounded-full bg-white text-black border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-200 transition-colors"
                   >
                     <Download className="w-[18px] h-[18px]" />
-                    Download
+                    Download Free
                   </a>
                 )}
                 {(currentVideo || game.trailer) && (
@@ -495,7 +496,7 @@ export default function GameModal({ game, onClose }: Props) {
                       <h4 className="text-gray-400 text-sm font-semibold">PRECIO</h4>
                       {userLocation && (
                         <span className="text-xs text-green-400 bg-green-900/40 px-2 py-1 rounded">
-                          📍 {userLocation.country}
+                          <MapPinCheck/> {userLocation.country}
                         </span>
                       )}
                     </div>
