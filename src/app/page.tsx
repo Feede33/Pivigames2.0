@@ -7,7 +7,7 @@ import { Bell, ChevronLeft, ChevronRight, Play, Info } from 'lucide-react';
 import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import GameModal from "@/components/GameModal"
-import { getGames, type GameWithSteamData } from "@/lib/supabase"
+import { getGames, enrichGameWithSteamData, type GameWithSteamData } from "@/lib/supabase"
 import Snowfall from 'react-snowfall';
 
 import {
@@ -26,13 +26,34 @@ export default function Home() {
   const [games, setGames] = useState<GameWithSteamData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Cargar juegos desde Supabase
+  // Cargar juegos desde Supabase y enriquecerlos con datos de Steam
   useEffect(() => {
     async function loadGames() {
       setLoading(true);
-      const data = await getGames();
-      setGames(data);
-      setLoading(false);
+      try {
+        // Primero obtener los juegos de la DB
+        const gamesFromDB = await getGames();
+        console.log('Games from DB:', gamesFromDB);
+        
+        if (gamesFromDB.length === 0) {
+          setGames([]);
+          setLoading(false);
+          return;
+        }
+        
+        // Luego enriquecer cada juego con datos de Steam
+        const enrichedGames = await Promise.all(
+          gamesFromDB.map(game => enrichGameWithSteamData(game))
+        );
+        
+        console.log('Enriched games:', enrichedGames);
+        setGames(enrichedGames);
+      } catch (error) {
+        console.error('Error loading games:', error);
+        setGames([]);
+      } finally {
+        setLoading(false);
+      }
     }
     loadGames();
   }, []);
