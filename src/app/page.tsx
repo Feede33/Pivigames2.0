@@ -80,6 +80,7 @@ export default function Home() {
               <a href="#" className="hover:text-muted-foreground transition">Games</a>
               <a href="#" className="hover:text-muted-foreground transition">New & Popular</a>
               <a href="#" className="hover:text-muted-foreground transition">My List</a>
+              <a href="#" className="hover:text-muted-foreground transition">Ofertas e Historial de Precios</a>
             </div>
           </div>
 
