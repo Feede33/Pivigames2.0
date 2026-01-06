@@ -2,72 +2,44 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    // Obtener IP del usuario
+    // Obtener IP del usuario desde headers de Vercel
     const forwarded = request.headers.get('x-forwarded-for');
-    const ip = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip') || '127.0.0.1';
+    const ip = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip');
 
-    // En desarrollo, usar una IP de prueba
-    const testIp = process.env.NODE_ENV === 'development' ? '8.8.8.8' : ip;
-
-    // Usar ipapi.co para obtener información del país (gratis, sin API key)
-    const geoResponse = await fetch(`https://ipapi.co/${testIp}/json/`);
+    // Usar ipapi.co para obtener información del país
+    const geoResponse = await fetch(
+      ip ? `https://ipapi.co/${ip}/json/` : 'https://ipapi.co/json/'
+    );
     
     if (!geoResponse.ok) {
-      throw new Error('Failed to fetch geolocation');
+      return NextResponse.json({ error: 'Geolocation service unavailable' }, { status: 503 });
     }
 
     const geoData = await geoResponse.json();
 
-    // Mapear código de país a código de moneda de Steam
-    const countryToCurrency: Record<string, string> = {
-      'US': 'us',
-      'AR': 'ar',
-      'MX': 'mx',
-      'BR': 'br',
-      'CL': 'cl',
-      'CO': 'co',
-      'PE': 'pe',
-      'UY': 'uy',
-      'ES': 'es',
-      'GB': 'uk',
-      'DE': 'de',
-      'FR': 'fr',
-      'IT': 'it',
-      'RU': 'ru',
-      'CN': 'cn',
-      'JP': 'jp',
-      'KR': 'kr',
-      'AU': 'au',
-      'NZ': 'nz',
-      'IN': 'in',
-      'TR': 'tr',
-      'PL': 'pl',
-      'CA': 'ca',
+    // Mapear código de país a código de Steam
+    const countryToSteam: Record<string, string> = {
+      'US': 'us', 'AR': 'ar', 'MX': 'mx', 'BR': 'br', 'CL': 'cl',
+      'CO': 'co', 'PE': 'pe', 'UY': 'uy', 'ES': 'es', 'GB': 'uk',
+      'DE': 'de', 'FR': 'fr', 'IT': 'it', 'RU': 'ru', 'CN': 'cn',
+      'JP': 'jp', 'KR': 'kr', 'AU': 'au', 'NZ': 'nz', 'IN': 'in',
+      'TR': 'tr', 'PL': 'pl', 'CA': 'ca',
     };
 
     const countryCode = geoData.country_code || 'US';
-    const steamCountryCode = countryToCurrency[countryCode] || 'us';
+    const steamCountryCode = countryToSteam[countryCode] || 'us';
 
     return NextResponse.json({
-      ip: testIp,
-      country: geoData.country_name || 'United States',
+      ip: geoData.ip || ip,
+      country: geoData.country_name,
       country_code: countryCode,
-      currency: geoData.currency || 'USD',
+      currency: geoData.currency,
       steam_country_code: steamCountryCode,
       city: geoData.city,
       region: geoData.region,
     });
   } catch (error) {
     console.error('Geolocation Error:', error);
-    // Fallback a US si hay error
-    return NextResponse.json({
-      ip: '0.0.0.0',
-      country: 'United States',
-      country_code: 'US',
-      currency: 'USD',
-      steam_country_code: 'us',
-      city: 'Unknown',
-      region: 'Unknown',
-    });
+    return NextResponse.json({ error: 'Failed to detect location' }, { status: 500 });
   }
 }

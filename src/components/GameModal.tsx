@@ -75,8 +75,15 @@ export default function GameModal({ game, onClose }: Props) {
   // Obtener ubicación del usuario
   useEffect(() => {
     fetch('/api/geolocation')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error('Geolocation failed');
+        return res.json();
+      })
       .then((data) => {
+        if (data.error) {
+          console.warn('Geolocation error:', data.error);
+          return;
+        }
         console.log('User location:', data);
         setUserLocation(data);
       })
@@ -90,12 +97,13 @@ export default function GameModal({ game, onClose }: Props) {
       fetch(`/api/steam/${game.steam_appid}?cc=${userLocation.steam_country_code}`)
         .then((res) => res.json())
         .then((data) => {
-          if (!data.error) {
-            console.log('Steam data loaded:', data);
-            console.log('Videos from Steam:', data.videos);
-            console.log('Price for', userLocation.country, ':', data.price);
-            setSteamData(data);
+          if (data.error) {
+            console.warn('Steam API error:', data.error);
+            return;
           }
+          console.log('Steam data loaded:', data);
+          console.log('Price info:', data.price_info);
+          setSteamData(data);
         })
         .catch((err) => console.error('Error loading Steam data:', err))
         .finally(() => setLoadingSteam(false));
