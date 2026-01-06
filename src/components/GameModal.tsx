@@ -68,9 +68,9 @@ export default function GameModal({ game, onClose }: Props) {
   const [showTrailer, setShowTrailer] = useState(false);
   const [steamData, setSteamData] = useState<SteamData | null>(null);
   const [loadingSteam, setLoadingSteam] = useState(false);
-  const [userLocation, setUserLocation] = useState<{ 
-    country: string; 
-    country_code: string; 
+  const [userLocation, setUserLocation] = useState<{
+    country: string;
+    country_code: string;
     steam_country_code: string;
     currency?: string;
   } | null>(null);
@@ -117,18 +117,18 @@ export default function GameModal({ game, onClose }: Props) {
   const screenshots = steamData?.screenshots?.length
     ? steamData.screenshots.map((s) => s.full)
     : game?.screenshots?.length
-    ? game.screenshots
-    : [game?.wallpaper].filter(Boolean) as string[];
+      ? game.screenshots
+      : [game?.wallpaper].filter(Boolean) as string[];
 
   // Videos - prioriza Steam, luego el trailer del game
   const videos = steamData?.videos?.length
     ? steamData.videos
     : game?.trailer
-    ? [{ name: 'Trailer', mp4: { max: game.trailer } as { max: string } }]
-    : [];
+      ? [{ name: 'Trailer', mp4: { max: game.trailer } as { max: string } }]
+      : [];
 
   const currentVideo = videos[0]; // Por ahora mostramos el primer video
-  
+
   console.log('Videos array:', videos);
   console.log('Current video:', currentVideo);
 
@@ -180,15 +180,13 @@ export default function GameModal({ game, onClose }: Props) {
   return createPortal(
     <div
       onClick={handleClose}
-      className={`fixed inset-0 flex items-center justify-center z-[9999] transition-all duration-200 ${
-        visible ? 'bg-black/85' : 'bg-black/0'
-      }`}
+      className={`fixed inset-0 flex items-center justify-center z-[9999] transition-all duration-200 ${visible ? 'bg-black/85' : 'bg-black/0'
+        }`}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`w-[1100px] min-h-[850px] bg-[#181818] rounded-lg overflow-hidden transition-all duration-200 ${
-          visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-        }`}
+        className={`w-[1100px] min-h-[850px] bg-[#181818] rounded-lg overflow-hidden transition-all duration-200 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+          }`}
       >
         {/* Botón cerrar */}
         <button
@@ -203,35 +201,31 @@ export default function GameModal({ game, onClose }: Props) {
           <div className="h-[350px] relative overflow-hidden">
             {/* Wallpaper - siempre presente pero con fade */}
             <div
-              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-500 ${
-                showTrailer ? 'opacity-0' : 'opacity-100'
-              }`}
+              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-500 ${showTrailer ? 'opacity-0' : 'opacity-100'
+                }`}
               style={{ backgroundImage: `url(${game.wallpaper})` }}
             />
-            <div className={`absolute inset-0 bg-gradient-to-t from-[#181818] to-transparent transition-opacity duration-500 ${
-              showTrailer ? 'opacity-0' : 'opacity-100'
-            }`} />
-            
+            <div className={`absolute inset-0 bg-gradient-to-t from-[#181818] to-transparent transition-opacity duration-500 ${showTrailer ? 'opacity-0' : 'opacity-100'
+              }`} />
+
             {/* Video de YouTube con ReactPlayer */}
-            <div className={`absolute inset-0 transition-opacity duration-500 ${
-              showTrailer && currentVideo ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}>
+            <div className={`absolute inset-0 transition-opacity duration-500 ${showTrailer && currentVideo ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              }`}>
               {showTrailer && currentVideo && (
-                <VideoPlayer 
-                  url={currentVideo.mp4?.max || (currentVideo.mp4 as any)?.['480'] || game.trailer || ''} 
-                  playing={showTrailer} 
+                <VideoPlayer
+                  url={currentVideo.mp4?.max || (currentVideo.mp4 as any)?.['480'] || game.trailer || ''}
+                  playing={showTrailer}
                 />
               )}
             </div>
 
             {/* Título y botones sobre el wallpaper */}
-            <div className={`absolute bottom-5 left-6 right-6 z-10 transition-all duration-500 ${
-              showTrailer ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
-            }`}>
+            <div className={`absolute bottom-5 left-6 right-6 z-10 transition-all duration-500 ${showTrailer ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
+              }`}>
               <h2 className="text-4xl font-bold text-white mb-3">{game.title}</h2>
               <div className="flex gap-3">
                 {game.links && (
-                  <a 
+                  <a
                     href={game.links}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -242,7 +236,7 @@ export default function GameModal({ game, onClose }: Props) {
                   </a>
                 )}
                 {(currentVideo || game.trailer) && (
-                  <button 
+                  <button
                     onClick={() => setShowTrailer(true)}
                     className="px-7 py-2.5 rounded-full bg-gray-500/70 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors"
                   >
@@ -255,14 +249,13 @@ export default function GameModal({ game, onClose }: Props) {
           </div>
 
           {/* Título y botones cuando el trailer está activo */}
-          <div className={`overflow-hidden transition-all duration-500 ease-out ${
-            showTrailer ? 'max-h-[120px] opacity-100' : 'max-h-0 opacity-0'
-          }`}>
+          <div className={`overflow-hidden transition-all duration-500 ease-out ${showTrailer ? 'max-h-[120px] opacity-100' : 'max-h-0 opacity-0'
+            }`}>
             <div className="px-6 py-4 bg-[#181818]">
               <h2 className="text-4xl font-bold text-white mb-3">{game.title}</h2>
               <div className="flex gap-3">
                 {game.links && (
-                  <a 
+                  <a
                     href={game.links}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -273,7 +266,7 @@ export default function GameModal({ game, onClose }: Props) {
                   </a>
                 )}
                 {(currentVideo || game.trailer) && (
-                  <button 
+                  <button
                     onClick={() => setShowTrailer(false)}
                     className="px-7 py-2.5 rounded-full bg-red-600 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-red-700 transition-colors"
                   >
@@ -285,7 +278,7 @@ export default function GameModal({ game, onClose }: Props) {
             </div>
           </div>
 
-         
+
           {/* Detalles */}
           <div className="p-6">
             {/* Info badges */}
@@ -301,8 +294,8 @@ export default function GameModal({ game, onClose }: Props) {
               ) : (
                 <>
                   <span className="text-green-500 font-bold text-[15px]">
-                    {steamData?.metacritic 
-                      ? `${steamData.metacritic}% Match` 
+                    {steamData?.metacritic
+                      ? `${steamData.metacritic}% Match`
                       : `${Math.round(game.rating * 10)}% Match`}
                   </span>
                   <span className="text-gray-400 text-sm">
@@ -390,17 +383,17 @@ export default function GameModal({ game, onClose }: Props) {
                   <div className="relative">
                     {/* Slider container */}
                     <div className="overflow-hidden rounded-lg">
-                      <div 
+                      <div
                         className="flex gap-2 transition-transform duration-300"
                         style={{ transform: `translateX(-${screenshotIndex * 33.33}%)` }}
                       >
                         {screenshots.map((src, index) => (
-                          <div 
+                          <div
                             key={index}
                             className="flex-shrink-0 w-[calc(33.33%-5px)] aspect-video bg-gray-700 rounded overflow-hidden cursor-pointer"
                             onClick={() => openViewer(index)}
                           >
-                            <div 
+                            <div
                               className="w-full h-full bg-cover bg-center hover:scale-110 transition-transform duration-300"
                               style={{ backgroundImage: `url(${src})` }}
                             />
@@ -408,17 +401,17 @@ export default function GameModal({ game, onClose }: Props) {
                         ))}
                       </div>
                     </div>
-                    
+
                     {/* Navigation arrows */}
                     {screenshots.length > 3 && (
                       <>
-                        <button 
+                        <button
                           onClick={prevScreenshot}
                           className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
                         >
                           <ChevronLeft className="w-5 h-5" />
                         </button>
-                        <button 
+                        <button
                           onClick={nextScreenshot}
                           className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
                         >
@@ -433,9 +426,8 @@ export default function GameModal({ game, onClose }: Props) {
                         <button
                           key={index}
                           onClick={() => setScreenshotIndex(index)}
-                          className={`w-2 h-2 rounded-full transition-colors ${
-                            index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
-                          }`}
+                          className={`w-2 h-2 rounded-full transition-colors ${index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
+                            }`}
                         />
                       ))}
                     </div>
@@ -465,7 +457,7 @@ export default function GameModal({ game, onClose }: Props) {
                         </div>
                       )}
                     </div>
-                    
+
                     {/* RECOMENDADO */}
                     <div>
                       <h4 className="text-gray-400 text-sm font-semibold mb-3">RECOMENDADO:</h4>
@@ -494,7 +486,12 @@ export default function GameModal({ game, onClose }: Props) {
                 {/* Price Card - Destacado */}
                 {steamData?.price && (
                   <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500/10 via-green-500/5 to-teal-500/10 border border-green-400/30 rounded-3xl p-8 backdrop-blur-sm">
-                          <Snowfall />
+                    <Snowfall
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        zIndex: 0
+                      }} />
 
                     <div className="absolute inset-0 bg-gradient-to-tr from-green-500/5 to-transparent"></div>
                     <div className="relative flex items-center justify-between gap-6">
@@ -504,12 +501,12 @@ export default function GameModal({ game, onClose }: Props) {
                       </div>
                       {userLocation && (
                         <span className="flex items-center gap-2 text-xs text-emerald-400 bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-4 py-2 rounded-full border border-green-400/20 backdrop-blur-sm shadow-lg shadow-green-500/10">
-                          <MapPinCheck className="w-3.5 h-3.5"/> 
+                          <MapPinCheck className="w-3.5 h-3.5" />
                           <span className="font-medium">{userLocation.country}</span>
                         </span>
                       )}
                     </div>
-                    
+
                     {steamData.is_free ? (
                       <div className="text-3xl font-bold text-green-400">
                         GRATIS
@@ -541,7 +538,7 @@ export default function GameModal({ game, onClose }: Props) {
                         {steamData.price}
                       </div>
                     )}
-                    
+
                     {steamData.price_info && (
                       <p className="text-xs text-gray-400 mt-2">
                         Precio en {steamData.price_info.currency}
@@ -562,32 +559,32 @@ export default function GameModal({ game, onClose }: Props) {
                     <p className="text-gray-500 text-sm">
                       <span>Genre: </span>
                       <span className="text-white">
-                        {steamData?.genres?.length 
-                          ? steamData.genres.join(', ') 
+                        {steamData?.genres?.length
+                          ? steamData.genres.join(', ')
                           : game.genre}
                       </span>
                     </p>
                     <p className="text-gray-500 text-sm">
                       <span>Rating: </span>
                       <span className="text-white">
-                        {steamData?.metacritic 
-                          ? `⭐ ${steamData.metacritic}/100 (Metacritic)` 
+                        {steamData?.metacritic
+                          ? `⭐ ${steamData.metacritic}/100 (Metacritic)`
                           : `⭐ ${game.rating}/10`}
                       </span>
                     </p>
                     <p className="text-gray-500 text-sm">
                       <span>Developer: </span>
                       <span className="text-white">
-                        {steamData?.developers?.length 
-                          ? steamData.developers.join(', ') 
+                        {steamData?.developers?.length
+                          ? steamData.developers.join(', ')
                           : 'Pivigames Studio'}
                       </span>
                     </p>
                     <p className="text-gray-500 text-sm">
                       <span>Publisher: </span>
                       <span className="text-white">
-                        {steamData?.publishers?.length 
-                          ? steamData.publishers.join(', ') 
+                        {steamData?.publishers?.length
+                          ? steamData.publishers.join(', ')
                           : 'Pivigames Inc.'}
                       </span>
                     </p>
@@ -661,8 +658,8 @@ export default function GameModal({ game, onClose }: Props) {
                     </div>
                   ) : (
                     <p className="text-gray-300 text-sm">
-                      {steamData?.languages?.length 
-                        ? steamData.languages.slice(0, 10).join(', ') 
+                      {steamData?.languages?.length
+                        ? steamData.languages.slice(0, 10).join(', ')
                         : 'English, Spanish, French, German, Japanese, Korean, Chinese'}
                     </p>
                   )}
@@ -689,10 +686,10 @@ export default function GameModal({ game, onClose }: Props) {
             {/* Buy on Steam Widget - Full Width */}
             {steamData && (
               <div className="flex justify-center mt-8 px-6">
-                <iframe 
-                  src={`https://store.steampowered.com/widget/${steamData.steam_appid}/`} 
-                  width="646" 
-                  height="190" 
+                <iframe
+                  src={`https://store.steampowered.com/widget/${steamData.steam_appid}/`}
+                  width="646"
+                  height="190"
                   frameBorder="0"
                 />
               </div>
@@ -703,7 +700,7 @@ export default function GameModal({ game, onClose }: Props) {
 
       {/* Fullscreen Image Viewer */}
       {viewerOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/95 z-[10000] flex items-center justify-center"
           onClick={(e) => {
             e.stopPropagation();
@@ -711,7 +708,7 @@ export default function GameModal({ game, onClose }: Props) {
           }}
         >
           {/* Close button */}
-          <button 
+          <button
             onClick={(e) => {
               e.stopPropagation();
               setViewerOpen(false);
@@ -727,25 +724,25 @@ export default function GameModal({ game, onClose }: Props) {
           </div>
 
           {/* Main image */}
-          <div 
+          <div
             className="max-w-[90vw] max-h-[85vh] rounded-lg overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <img 
-              src={screenshots[viewerIndex]} 
+            <img
+              src={screenshots[viewerIndex]}
               alt={`Screenshot ${viewerIndex + 1}`}
               className="max-w-full max-h-[85vh] object-contain"
             />
           </div>
 
           {/* Navigation arrows */}
-          <button 
+          <button
             onClick={(e) => { e.stopPropagation(); prevViewerImage(); }}
             className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors"
           >
             <ChevronLeft className="w-8 h-8" />
           </button>
-          <button 
+          <button
             onClick={(e) => { e.stopPropagation(); nextViewerImage(); }}
             className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors"
           >
@@ -758,11 +755,10 @@ export default function GameModal({ game, onClose }: Props) {
               <button
                 key={index}
                 onClick={(e) => { e.stopPropagation(); setViewerIndex(index); }}
-                className={`w-16 h-10 rounded overflow-hidden transition-all ${
-                  index === viewerIndex ? 'ring-2 ring-white scale-110' : 'opacity-50 hover:opacity-100'
-                }`}
+                className={`w-16 h-10 rounded overflow-hidden transition-all ${index === viewerIndex ? 'ring-2 ring-white scale-110' : 'opacity-50 hover:opacity-100'
+                  }`}
               >
-                <div 
+                <div
                   className="w-full h-full bg-cover bg-center"
                   style={{ backgroundImage: `url(${src})` }}
                 />
