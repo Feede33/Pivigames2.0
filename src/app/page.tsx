@@ -7,7 +7,7 @@ import { Bell, ChevronLeft, ChevronRight, Play, Info } from 'lucide-react';
 import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import GameModal from "@/components/GameModal"
-import { getGames, type Game } from "@/lib/supabase"
+import { getGames, type GameWithSteamData } from "@/lib/supabase"
 import Snowfall from 'react-snowfall';
 
 import {
@@ -20,10 +20,10 @@ import {
 export default function Home() {
   const [hoveredGame, setHoveredGame] = useState<number | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [modalGame, setModalGame] = useState<Game | null>(null);
+  const [modalGame, setModalGame] = useState<GameWithSteamData | null>(null);
   const [modalOrigin, setModalOrigin] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const { setTheme } = useTheme()
-  const [games, setGames] = useState<Game[]>([]);
+  const [games, setGames] = useState<GameWithSteamData[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Cargar juegos desde Supabase
@@ -53,7 +53,7 @@ export default function Home() {
     setCurrentSlide((prev) => (prev - 1 + heroGames.length) % heroGames.length);
   };
 
-  const handleGameClick = (game: Game, event: React.MouseEvent<HTMLDivElement>) => {
+  const handleGameClick = (game: GameWithSteamData, event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
     setModalOrigin({
       x: rect.left + rect.width / 2,

@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { useEffect, useState } from 'react';
 import { X, Play, ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import type { Game } from '@/lib/supabase';
+import type { GameWithSteamData } from '@/lib/supabase';
 import { MapPinCheck } from 'lucide-react';
 import Snowfall from 'react-snowfall';
 
@@ -54,7 +54,7 @@ type SteamData = {
 };
 
 type Props = {
-  game: Game | null;
+  game: GameWithSteamData | null;
   origin?: { x: number; y: number; width: number; height: number } | null;
   onClose: () => void;
 };
@@ -113,24 +113,17 @@ export default function GameModal({ game, onClose }: Props) {
     }
   }, [game?.steam_appid, userLocation]);
 
-  // Screenshots - prioriza Steam, luego los del game, luego wallpaper
-  const screenshots = steamData?.screenshots?.length
-    ? steamData.screenshots.map((s) => s.full)
-    : game?.screenshots?.length
-      ? game.screenshots
-      : [game?.wallpaper].filter(Boolean) as string[];
+  // Screenshots - usa los que vienen del game (ya cargados desde Steam)
+  const screenshots = game?.screenshots?.length
+    ? game.screenshots
+    : [game?.wallpaper].filter(Boolean) as string[];
 
-  // Videos - prioriza Steam, luego el trailer del game
-  const videos = steamData?.videos?.length
-    ? steamData.videos
-    : game?.trailer
-      ? [{ name: 'Trailer', mp4: { max: game.trailer } as { max: string } }]
-      : [];
+  // Videos - usa el trailer que viene del game
+  const videos = game?.trailer
+    ? [{ name: 'Trailer', mp4: { max: game.trailer } as { max: string } }]
+    : [];
 
-  const currentVideo = videos[0]; // Por ahora mostramos el primer video
-
-  console.log('Videos array:', videos);
-  console.log('Current video:', currentVideo);
+  const currentVideo = videos[0];
 
   useEffect(() => {
     setReady(true);
@@ -449,11 +442,7 @@ export default function GameModal({ game, onClose }: Props) {
                         </div>
                       ) : (
                         <div className="space-y-2 text-sm text-gray-300">
-                          <p><span className="text-gray-400">SO:</span> {game.min_os || 'Windows 10'}</p>
-                          <p><span className="text-gray-400">PROCESADOR:</span> {game.min_cpu || 'Intel i5-6600'}</p>
-                          <p><span className="text-gray-400">MEMORIA:</span> {game.min_ram || '8 GB de RAM'}</p>
-                          <p><span className="text-gray-400">GRÁFICOS:</span> {game.min_gpu || 'GTX 1060'}</p>
-                          <p><span className="text-gray-400">ALMACENAMIENTO:</span> {game.min_storage || '50 GB'}</p>
+                          <p className="text-gray-500">No hay información de requisitos mínimos disponible</p>
                         </div>
                       )}
                     </div>
@@ -469,11 +458,7 @@ export default function GameModal({ game, onClose }: Props) {
                         </div>
                       ) : (
                         <div className="space-y-2 text-sm text-gray-300">
-                          <p><span className="text-gray-400">SO:</span> {game.rec_os || 'Windows 11'}</p>
-                          <p><span className="text-gray-400">PROCESADOR:</span> {game.rec_cpu || 'Intel i7-10700'}</p>
-                          <p><span className="text-gray-400">MEMORIA:</span> {game.rec_ram || '16 GB de RAM'}</p>
-                          <p><span className="text-gray-400">GRÁFICOS:</span> {game.rec_gpu || 'RTX 3070'}</p>
-                          <p><span className="text-gray-400">ALMACENAMIENTO:</span> {game.rec_storage || '50 GB SSD'}</p>
+                          <p className="text-gray-500">No hay información de requisitos recomendados disponible</p>
                         </div>
                       )}
                     </div>
