@@ -7,9 +7,13 @@ export async function GET(
   const { appid } = await params;
 
   try {
-    // Steam Store API - no requiere API key
+    // Obtener el código de país desde query params (enviado desde el cliente)
+    const searchParams = request.nextUrl.searchParams;
+    const countryCode = searchParams.get('cc') || 'us';
+
+    // Steam Store API con código de país para precios regionales
     const response = await fetch(
-      `https://store.steampowered.com/api/appdetails?appids=${appid}&l=spanish`,
+      `https://store.steampowered.com/api/appdetails?appids=${appid}&l=spanish&cc=${countryCode}`,
       { next: { revalidate: 3600 } } // Cache por 1 hora
     );
 

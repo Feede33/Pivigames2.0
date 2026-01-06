@@ -65,24 +65,42 @@ export default function GameModal({ game, onClose }: Props) {
   const [showTrailer, setShowTrailer] = useState(false);
   const [steamData, setSteamData] = useState<SteamData | null>(null);
   const [loadingSteam, setLoadingSteam] = useState(false);
+  const [userLocation, setUserLocation] = useState<{ 
+    country: string; 
+    country_code: string; 
+    steam_country_code: string;
+    currency?: string;
+  } | null>(null);
 
-  // Cargar datos de Steam si existe steam_appid
+  // Obtener ubicación del usuario
   useEffect(() => {
-    if (game?.steam_appid) {
+    fetch('/api/geolocation')
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('User location:', data);
+        setUserLocation(data);
+      })
+      .catch((err) => console.error('Error loading location:', err));
+  }, []);
+
+  // Cargar datos de Steam si existe steam_appid y tenemos la ubicación
+  useEffect(() => {
+    if (game?.steam_appid && userLocation) {
       setLoadingSteam(true);
-      fetch(`/api/steam/${game.steam_appid}`)
+      fetch(`/api/steam/${game.steam_appid}?cc=${userLocation.steam_country_code}`)
         .then((res) => res.json())
         .then((data) => {
           if (!data.error) {
             console.log('Steam data loaded:', data);
             console.log('Videos from Steam:', data.videos);
+            console.log('Price for', userLocation.country, ':', data.price);
             setSteamData(data);
           }
         })
         .catch((err) => console.error('Error loading Steam data:', err))
         .finally(() => setLoadingSteam(false));
     }
-  }, [game?.steam_appid]);
+  }, [game?.steam_appid, userLocation]);
 
   // Screenshots - prioriza Steam, luego los del game, luego wallpaper
   const screenshots = steamData?.screenshots?.length
@@ -462,6 +480,58 @@ export default function GameModal({ game, onClose }: Props) {
 
               {/* Right column - Sidebar */}
               <div className="space-y-6">
+                {/* Price Card - Destacado */}
+                {steamData?.price && (
+                  <div className="bg-gradient-to-br from-green-900/30 to-green-800/20 border border-green-700/50 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-gray-400 text-sm font-semibold">PRECIO</h4>
+                      {userLocation && (
+                        <span className="text-xs text-green-400 bg-green-900/40 px-2 py-1 rounded">
+                          📍 {userLocation.country}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {steamData.is_free ? (
+                      <div className="text-3xl font-bold text-green-400">
+                        GRATIS
+                      </div>
+                    ) : steamData.price_info ? (
+                      <div>
+                        {steamData.price_info.discount_percent > 0 ? (
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-3">
+                              <span className="bg-green-600 text-white px-2 py-1 rounded font-bold text-sm">
+                                -{steamData.price_info.discount_percent}%
+                              </span>
+                              <span className="text-gray-400 line-through text-lg">
+                                {steamData.price_info.initial_formatted}
+                              </span>
+                            </div>
+                            <div className="text-3xl font-bold text-green-400">
+                              {steamData.price_info.final_formatted}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-3xl font-bold text-white">
+                            {steamData.price}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-2xl font-bold text-white">
+                        {steamData.price}
+                      </div>
+                    )}
+                    
+                    {userLocation && (
+                      <p className="text-xs text-gray-400 mt-2">
+                        Precio en {userLocation.currency || 'USD'}
+                      </p>
+                    )}
+                  </div>
+                )}
+
                 {/* Game info */}
                 {loadingSteam ? (
                   <div className="space-y-3">
@@ -509,12 +579,6 @@ export default function GameModal({ game, onClose }: Props) {
                         {steamData?.release_date || 'Dec 15, 2024'}
                       </span>
                     </p>
-                    {steamData?.price && (
-                      <p className="text-gray-500 text-sm">
-                        <span>Price: </span>
-                        <span className="text-white">{steamData.price}</span>
-                      </p>
-                    )}
                   </div>
                 )}
 
