@@ -491,7 +491,7 @@ export default function GameModal({ game, onClose }: Props) {
               <div className="space-y-6">
                 {/* Price Card - Destacado */}
                 {steamData?.price && (
-                  <div className="bg-gradient-to-br from-green-900/30 to-green-800/20 border border-green-700/50 rounded-full p-4">
+                  <div className="bg-gradient-to-br from-green-900/30 to-green-800/20 border border-green-700/50 rounded-full p-8">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="text-gray-400 text-sm font-semibold">PRECIO</h4>
                       {userLocation && (
