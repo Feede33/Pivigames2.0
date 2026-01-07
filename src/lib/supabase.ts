@@ -27,10 +27,12 @@ export type GameWithSteamData = Game & {
 };
 
 // Función para obtener solo los juegos de la DB (sin datos de Steam)
+// SOLO muestra juegos que tienen link de descarga (links IS NOT NULL)
 export async function getGames(): Promise<Game[]> {
   const { data, error } = await supabase
     .from('games')
     .select('*')
+    .not('links', 'is', null) // Filtrar solo juegos con link de descarga
     .order('id', { ascending: false });
 
   if (error) {
