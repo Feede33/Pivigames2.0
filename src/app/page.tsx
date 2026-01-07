@@ -107,35 +107,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex items-center gap-7">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                  <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-                  <span className="sr-only">Toggle theme</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                  Light
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                  Dark
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                  System
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Bell className="text-foreground" strokeWidth={1} />
-            <Avatar onClick={() => alert("Clickado")}>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-
-
-          </div>
+          
         </div>
       </nav>
 
@@ -153,20 +125,19 @@ export default function Home() {
         </div>
       ) : (
         <div className="relative h-[100vh] flex items-center overflow-hidden bg-black">
-          {/* Gradiente desde la izquierda */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/10 to-transparent z-10 pointer-events-none" />
-          {/* Gradiente inferior suave hacia el fondo de la página */}
-          <div className="absolute inset-0 z-10 pointer-events-none" />
+          {/* Imagen de fondo del wallpaper */}
           <div
-            className="absolute inset-0 bg-contain bg-center bg-no-repeat transition-all duration-700"
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
             style={{
               backgroundImage: `url(${heroGames[currentSlide].wallpaper})`,
-              backgroundSize: '100% auto',
-              backgroundPosition: 'center',
-              maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
-              WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)'
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
             }}
           />
+          {/* Gradiente oscuro desde la izquierda para legibilidad del texto */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10 pointer-events-none" />
+          {/* Gradiente inferior suave hacia el fondo de la página */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent z-10 pointer-events-none" />
 
           {/* Navigation Arrows */}
           <button
