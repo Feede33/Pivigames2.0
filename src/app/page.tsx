@@ -124,7 +124,7 @@ export default function Home() {
           </div>
         </div>
       ) : (
-        <div className="relative h-[100vh] flex items-center overflow-hidden bg-black">
+        <div className="relative h-[90vh] flex items-center overflow-hidden bg-black">
           {/* Wallpaper que cubre toda la pantalla manteniendo aspect ratio */}
           <div
             className="absolute inset-0 bg-center bg-no-repeat transition-all duration-700"
