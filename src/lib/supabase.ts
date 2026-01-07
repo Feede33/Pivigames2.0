@@ -68,12 +68,16 @@ export async function enrichGameWithSteamData(game: Game): Promise<GameWithSteam
     
     console.log(`Wallpaper URL for ${steamData.name}:`, wallpaperUrl);
     
+    // Obtener la imagen de portada vertical (mejor para grids)
+    // Steam proporciona diferentes tamaños de imágenes
+    const verticalCover = `https://cdn.cloudflare.steamstatic.com/steam/apps/${game.steam_appid}/library_600x900.jpg`;
+    
     return {
       ...game,
       title: steamData.name || 'Unknown Game',
       genre: steamData.genres?.join(', ') || 'Unknown',
-      image: steamData.header_image || '',
-      cover_image: steamData.header_image || '',
+      image: verticalCover, // Portada vertical para grids
+      cover_image: steamData.header_image || '', // Header horizontal para carruseles
       rating: steamData.metacritic ? steamData.metacritic / 10 : 7.5,
       wallpaper: wallpaperUrl,
       description: steamData.short_description || '',
