@@ -83,6 +83,7 @@ export async function GET(request: Request) {
 
     // Obtener 20 App IDs aleatorios
     const randomAppIds = getRandomAppIds(20);
+    console.log('Random App IDs selected:', randomAppIds.length);
     
     const results = {
       total: randomAppIds.length,
@@ -95,8 +96,11 @@ export async function GET(request: Request) {
     // Insertar cada App ID en Supabase (solo si no existe)
     for (const appId of randomAppIds) {
       try {
+        console.log(`Processing App ID: ${appId}`);
+        
         // Verificar si ya existe
         const exists = await appIdExists(appId);
+        console.log(`App ID ${appId} exists:`, exists);
         
         if (exists) {
           results.skipped++;
@@ -118,8 +122,12 @@ export async function GET(request: Request) {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error(`Error inserting App ID ${appId}:`, error);
+          throw error;
+        }
 
+        console.log(`Successfully inserted App ID ${appId}`);
         results.inserted++;
         results.details.push({
           appId,
@@ -127,6 +135,7 @@ export async function GET(request: Request) {
           id: data.id
         });
       } catch (error) {
+        console.error(`Failed to process App ID ${appId}:`, error);
         results.errors++;
         results.details.push({
           appId,
@@ -135,6 +144,8 @@ export async function GET(request: Request) {
         });
       }
     }
+    
+    console.log('Final results:', results);
 
     return NextResponse.json({
       success: true,
