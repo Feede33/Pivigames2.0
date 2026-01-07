@@ -237,8 +237,8 @@ export default function Home() {
                       <h4 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition">
                         {game.title}
                       </h4>
-                      <p className="text-sm font-bold">
-                        {game.rating = 'Free'}
+                      <p className="text-sm font-bold text-green-500">
+                        FREE
                       </p>
                     </div>
                   </div>
@@ -276,10 +276,13 @@ export default function Home() {
                       <h4 className="font-semibold text-base line-clamp-1 group-hover:text-primary transition">
                         {game.title}
                       </h4>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>⭐ {game.rating}</span>
-                        <span>•</span>
-                        <span>{game.genre}</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <span>⭐ {game.rating}</span>
+                          <span>•</span>
+                          <span>{game.genre}</span>
+                        </div>
+                        <span className="text-sm font-bold text-green-500">FREE</span>
                       </div>
                     </div>
                   </div>
@@ -325,8 +328,8 @@ export default function Home() {
                       <h4 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition">
                         {game.title}
                       </h4>
-                      <p className="text-sm font-bold">
-                        Free
+                      <p className="text-sm font-bold text-green-500">
+                        FREE
                       </p>
                     </div>
                   </div>
@@ -371,7 +374,7 @@ export default function Home() {
                       </h4>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">{game.genre}</span>
-                        <span className="text-sm font-bold">$29.99</span>
+                        <span className="text-sm font-bold text-green-500">FREE</span>
                       </div>
                     </div>
                   </div>
