@@ -152,7 +152,7 @@ export default function VideoPlayer({ url }: Props) {
         
         {/* Controles de calidad personalizados */}
         {availableQualities.length > 0 && (
-          <div className="absolute bottom-14 right-4 z-20">
+          <div className="absolute bottom-5 right-30 z-20">
             {/* Menú de calidad */}
             {showQualityMenu && (
               <div className="mb-2 bg-black/90 rounded-lg overflow-hidden backdrop-blur-sm">
