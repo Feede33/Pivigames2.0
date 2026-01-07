@@ -56,7 +56,7 @@ export async function enrichGameWithSteamData(game: Game): Promise<GameWithSteam
       image: steamData.header_image || '',
       cover_image: steamData.header_image || '',
       rating: steamData.metacritic ? steamData.metacritic / 10 : 7.5,
-      wallpaper: steamData.background || steamData.header_image || '',
+      wallpaper: steamData.background_raw || steamData.background || steamData.header_image || '',
       description: steamData.short_description || '',
       trailer: steamData.videos?.[0]?.mp4?.max || steamData.videos?.[0]?.mp4?.['480'] || '',
       screenshots: steamData.screenshots?.map((s: any) => s.full) || []
