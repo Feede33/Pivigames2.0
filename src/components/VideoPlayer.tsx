@@ -39,7 +39,7 @@ export default function VideoPlayer({ url }: Props) {
   const [availableQualities, setAvailableQualities] = useState<Array<{ level: number; height: number; bitrate: number }>>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
-  
+
   const videoId = getYouTubeId(url);
   const isDirectVideo = isDirectVideoUrl(url);
   const isHLS = isHLSUrl(url);
@@ -63,13 +63,13 @@ export default function VideoPlayer({ url }: Props) {
         enableWorker: true,
         lowLatencyMode: false,
       });
-      
+
       hls.loadSource(url);
       hls.attachMedia(videoRef.current);
-      
+
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         console.log('HLS manifest parsed, levels:', hls.levels);
-        
+
         // Guardar las calidades disponibles
         const qualities = hls.levels.map((level, index) => ({
           level: index,
@@ -149,19 +149,18 @@ export default function VideoPlayer({ url }: Props) {
           playsInline
           style={{ objectFit: 'contain' }}
         />
-        
+
         {/* Controles de calidad personalizados */}
         {availableQualities.length > 0 && (
-          <div className="absolute bottom-5 right-30 z-20 w-2 h-1">
+          <div className="absolute bottom-2 right-16 z-20">
             {/* Menú de calidad */}
             {showQualityMenu && (
               <div className="mb-2 bg-black/90 rounded-lg overflow-hidden backdrop-blur-sm">
                 <div className="py-2">
                   <button
                     onClick={() => changeQuality(-1)}
-                    className={`w-full px-4 py-2 text-left text-sm hover:bg-white/10 transition-colors ${
-                      currentQuality === -1 ? 'text-red-500 font-bold' : 'text-white'
-                    }`}
+                    className={`w-full px-4 py-2 text-left text-sm hover:bg-white/10 transition-colors ${currentQuality === -1 ? 'text-red-500 font-bold' : 'text-white'
+                      }`}
                   >
                     Auto
                   </button>
@@ -171,9 +170,8 @@ export default function VideoPlayer({ url }: Props) {
                       <button
                         key={quality.level}
                         onClick={() => changeQuality(quality.level)}
-                        className={`w-full px-4 py-2 text-left text-sm hover:bg-white/10 transition-colors ${
-                          currentQuality === quality.level ? 'text-red-500 font-bold' : 'text-white'
-                        }`}
+                        className={`w-full px-4 py-2 text-left text-sm hover:bg-white/10 transition-colors ${currentQuality === quality.level ? 'text-red-500 font-bold' : 'text-white'
+                          }`}
                       >
                         {quality.height}p
                       </button>
@@ -181,7 +179,7 @@ export default function VideoPlayer({ url }: Props) {
                 </div>
               </div>
             )}
-            
+
             {/* Botón de calidad */}
             <button
               onClick={() => setShowQualityMenu(!showQualityMenu)}
@@ -302,7 +300,7 @@ export default function VideoPlayer({ url }: Props) {
   const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 
   return (
-    <div 
+    <div
       className="plyr-wrapper w-full h-full relative"
       style={{
         backgroundImage: `url(${thumbnailUrl})`,
