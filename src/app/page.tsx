@@ -1,13 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Play, Info } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Info, Star } from 'lucide-react';
 import GameModal from "@/components/GameModal"
 import UserProfile from "@/components/UserProfile"
 import WallpaperImage from "@/components/WallpaperImage"
 import { getGames, enrichGameWithSteamData, type GameWithSteamData } from "@/lib/supabase"
 import { proxySteamImage } from "@/lib/image-proxy"
-import { Star } from 'lucide-react';
 
 
 export default function Home() {
@@ -431,7 +430,10 @@ export default function Home() {
                         {game.title}
                       </h4>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">⭐ {game.rating}</span>
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Star fill="yellow" stroke="yellow" strokeWidth={0.5} size={14} />
+                          {game.rating}
+                        </span>
                         <span className="text-sm font-bold text-green-500">FREE</span>
                       </div>
                     </div>

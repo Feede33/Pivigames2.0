@@ -2,7 +2,7 @@
 
 import { createPortal } from 'react-dom';
 import { useEffect, useState } from 'react';
-import { X, Play, ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { X, Play, ChevronLeft, ChevronRight, Download, Star } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import type { GameWithSteamData } from '@/lib/supabase';
 import { MapPinCheck } from 'lucide-react';
@@ -738,10 +738,11 @@ export default function GameModal({ game, onClose }: Props) {
                     </p>
                     <p className="text-gray-500 text-sm">
                       <span>Rating: </span>
-                      <span className="text-white">
+                      <span className="text-white flex items-center gap-1">
+                        <Star fill="yellow" stroke="yellow" strokeWidth={0.5} size={16} />
                         {steamData?.metacritic
-                          ? `⭐ ${steamData.metacritic}/100 (Metacritic)`
-                          : `⭐ ${game.rating}/10`}
+                          ? `${steamData.metacritic}/100 (Metacritic)`
+                          : `${game.rating}/10`}
                       </span>
                     </p>
                     <p className="text-gray-500 text-sm">
