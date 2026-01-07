@@ -390,46 +390,7 @@ export default function Home() {
       {/* User Profile - Discord Style */}
       <UserProfile />
 
-      {/* Footer */}
-      <footer className="border-border px-8 py-12 bg-black">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h4 className="font-bold mb-3">Company</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">About Us</a></li>
-                <li><a href="#" className="hover:text-foreground">Careers</a></li>
-                <li><a href="#" className="hover:text-foreground">Press</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-3">Support</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">Help Center</a></li>
-                <li><a href="#" className="hover:text-foreground">Contact Us</a></li>
-                <li><a href="#" className="hover:text-foreground">FAQ</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-3">Legal</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">Privacy</a></li>
-                <li><a href="#" className="hover:text-foreground">Terms</a></li>
-                <li><a href="#" className="hover:text-foreground">Cookies</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-3">Social</h4>
-              <div className="flex gap-4 text-2xl">
-                <a href="#" className="hover:text-muted-foreground">📘</a>
-                <a href="#" className="hover:text-muted-foreground">🐦</a>
-                <a href="#" className="hover:text-muted-foreground">📷</a>
-              </div>
-            </div>
-          </div>
-          <p className="text-sm text-muted-foreground text-center">© 2024 GameFlix. All rights reserved.</p>
-        </div>
-      </footer>
+     
     </div>
   );
 }

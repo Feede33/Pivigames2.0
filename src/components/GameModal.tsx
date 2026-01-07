@@ -240,12 +240,28 @@ export default function GameModal({ game, onClose }: Props) {
         <div className="max-h-[85vh] overflow-y-auto">
           {/* Hero Image / Trailer */}
           <div className="h-[350px] relative overflow-hidden">
+            {/* Skeleton para el trailer/wallpaper cuando está cargando */}
+            {loadingSteam && !showTrailer && (
+              <div className="absolute inset-0 bg-gray-800 animate-pulse">
+                <div className="absolute inset-0 bg-gradient-to-t from-[#181818] to-transparent" />
+                <div className="absolute bottom-5 left-6 right-6 z-10">
+                  <div className="h-10 w-3/4 bg-gray-700 animate-pulse rounded mb-3" />
+                  <div className="flex gap-3">
+                    <div className="h-11 w-40 bg-gray-700 animate-pulse rounded-full" />
+                    <div className="h-11 w-32 bg-gray-700 animate-pulse rounded-full" />
+                  </div>
+                </div>
+              </div>
+            )}
+            
             {/* Wallpaper - siempre presente pero con fade */}
-            <div
-              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-500 ${showTrailer ? 'opacity-0' : 'opacity-100'
-                }`}
-              style={{ backgroundImage: `url(${game.wallpaper})` }}
-            />
+            {!loadingSteam && (
+              <div
+                className={`absolute inset-0 bg-cover bg-center transition-opacity duration-500 ${showTrailer ? 'opacity-0' : 'opacity-100'
+                  }`}
+                style={{ backgroundImage: `url(${game.wallpaper})` }}
+              />
+            )}
             <div className={`absolute inset-0 bg-gradient-to-t from-[#181818] to-transparent transition-opacity duration-500 ${showTrailer ? 'opacity-0' : 'opacity-100'
               }`} />
 
@@ -271,32 +287,34 @@ export default function GameModal({ game, onClose }: Props) {
             )}
 
             {/* Título y botones sobre el wallpaper */}
-            <div className={`absolute bottom-5 left-6 right-6 z-10 transition-all duration-500 ${showTrailer ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
-              }`}>
-              <h2 className="text-4xl font-bold text-white mb-3">{game.title}</h2>
-              <div className="flex gap-3">
-                {game.links && (
-                  <a
-                    href={game.links}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-7 py-2.5 rounded-full bg-white text-black border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-200 transition-colors"
-                  >
-                    <Download className="w-[18px] h-[18px]" />
-                    Download Free
-                  </a>
-                )}
-                {(hasValidVideo || game.trailer) && (
-                  <button
-                    onClick={() => setShowTrailer(true)}
-                    className="px-7 py-2.5 rounded-full bg-gray-500/70 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors"
-                  >
-                    <Play className="w-[18px] h-[18px]" />
-                    Trailer
-                  </button>
-                )}
+            {!loadingSteam && (
+              <div className={`absolute bottom-5 left-6 right-6 z-10 transition-all duration-500 ${showTrailer ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
+                }`}>
+                <h2 className="text-4xl font-bold text-white mb-3">{game.title}</h2>
+                <div className="flex gap-3">
+                  {game.links && (
+                    <a
+                      href={game.links}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-7 py-2.5 rounded-full bg-white text-black border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-200 transition-colors"
+                    >
+                      <Download className="w-[18px] h-[18px]" />
+                      Download Free
+                    </a>
+                  )}
+                  {(hasValidVideo || game.trailer) && (
+                    <button
+                      onClick={() => setShowTrailer(true)}
+                      className="px-7 py-2.5 rounded-full bg-gray-500/70 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors"
+                    >
+                      <Play className="w-[18px] h-[18px]" />
+                      Trailer
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Título y botones cuando el trailer está activo */}
@@ -431,96 +449,139 @@ export default function GameModal({ game, onClose }: Props) {
                     {loadingSteam && <span className="text-gray-500 text-sm ml-2">(Cargando desde Steam...)</span>}
                     {steamData && <span className="text-green-500 text-sm ml-2">✓ Steam</span>}
                   </h3>
-                  <div className="relative">
-                    {/* Slider container */}
-                    <div className="overflow-hidden rounded-lg">
-                      <div
-                        className="flex gap-2 transition-transform duration-300"
-                        style={{ transform: `translateX(-${screenshotIndex * 33.33}%)` }}
-                      >
-                        {screenshots.map((src, index) => (
-                          <div
-                            key={index}
-                            className="flex-shrink-0 w-[calc(33.33%-5px)] aspect-video bg-gray-700 rounded overflow-hidden cursor-pointer"
-                            onClick={() => openViewer(index)}
-                          >
+                  {loadingSteam ? (
+                    <div className="relative">
+                      <div className="overflow-hidden rounded-lg">
+                        <div className="flex gap-2">
+                          {[...Array(3)].map((_, i) => (
                             <div
-                              className="w-full h-full bg-cover bg-center hover:scale-110 transition-transform duration-300"
-                              style={{ backgroundImage: `url(${src})` }}
+                              key={i}
+                              className="flex-shrink-0 w-[calc(33.33%-5px)] aspect-video bg-gray-700 animate-pulse rounded"
                             />
-                          </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex justify-center gap-1.5 mt-3">
+                        {[...Array(3)].map((_, i) => (
+                          <div key={i} className="w-2 h-2 rounded-full bg-gray-700 animate-pulse" />
                         ))}
                       </div>
                     </div>
-
-                    {/* Navigation arrows */}
-                    {screenshots.length > 3 && (
-                      <>
-                        <button
-                          onClick={prevScreenshot}
-                          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+                  ) : (
+                    <div className="relative">
+                      {/* Slider container */}
+                      <div className="overflow-hidden rounded-lg">
+                        <div
+                          className="flex gap-2 transition-transform duration-300"
+                          style={{ transform: `translateX(-${screenshotIndex * 33.33}%)` }}
                         >
-                          <ChevronLeft className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={nextScreenshot}
-                          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
-                        >
-                          <ChevronRight className="w-5 h-5" />
-                        </button>
-                      </>
-                    )}
+                          {screenshots.map((src, index) => (
+                            <div
+                              key={index}
+                              className="flex-shrink-0 w-[calc(33.33%-5px)] aspect-video bg-gray-700 rounded overflow-hidden cursor-pointer"
+                              onClick={() => openViewer(index)}
+                            >
+                              <div
+                                className="w-full h-full bg-cover bg-center hover:scale-110 transition-transform duration-300"
+                                style={{ backgroundImage: `url(${src})` }}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
 
-                    {/* Dots indicator */}
-                    <div className="flex justify-center gap-1.5 mt-3">
-                      {Array.from({ length: Math.max(1, screenshots.length - 2) }).map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setScreenshotIndex(index)}
-                          className={`w-2 h-2 rounded-full transition-colors ${index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
-                            }`}
-                        />
-                      ))}
+                      {/* Navigation arrows */}
+                      {screenshots.length > 3 && (
+                        <>
+                          <button
+                            onClick={prevScreenshot}
+                            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+                          >
+                            <ChevronLeft className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={nextScreenshot}
+                            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+                          >
+                            <ChevronRight className="w-5 h-5" />
+                          </button>
+                        </>
+                      )}
+
+                      {/* Dots indicator */}
+                      <div className="flex justify-center gap-1.5 mt-3">
+                        {Array.from({ length: Math.max(1, screenshots.length - 2) }).map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setScreenshotIndex(index)}
+                            className={`w-2 h-2 rounded-full transition-colors ${index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
+                              }`}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* System Requirements */}
                 <div>
                   <h3 className="text-white font-semibold mb-4 text-lg">REQUISITOS DEL SISTEMA</h3>
-                  <div className="grid grid-cols-2 gap-8">
-                    {/* MÍNIMO */}
-                    <div>
-                      <h4 className="text-gray-400 text-sm font-semibold mb-3">MÍNIMO:</h4>
-                      {steamData?.pc_requirements?.minimum ? (
-                        <div className="space-y-2 text-sm text-gray-300">
-                          {steamData.pc_requirements.minimum.split('\n').filter(Boolean).map((line, index) => (
-                            <p key={index} className="leading-relaxed">{line}</p>
+                  {loadingSteam ? (
+                    <div className="grid grid-cols-2 gap-8">
+                      {/* MÍNIMO Skeleton */}
+                      <div>
+                        <h4 className="text-gray-400 text-sm font-semibold mb-3">MÍNIMO:</h4>
+                        <div className="space-y-2">
+                          {[...Array(5)].map((_, i) => (
+                            <div key={i} className="h-4 bg-gray-700 animate-pulse rounded w-full" />
                           ))}
                         </div>
-                      ) : (
-                        <div className="space-y-2 text-sm text-gray-300">
-                          <p className="text-gray-500">No hay información de requisitos mínimos disponible</p>
+                      </div>
+                      {/* RECOMENDADO Skeleton */}
+                      <div>
+                        <h4 className="text-gray-400 text-sm font-semibold mb-3">RECOMENDADO:</h4>
+                        <div className="space-y-2">
+                          {[...Array(5)].map((_, i) => (
+                            <div key={i} className="h-4 bg-gray-700 animate-pulse rounded w-full" />
+                          ))}
                         </div>
-                      )}
+                      </div>
                     </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-8">
+                      {/* MÍNIMO */}
+                      <div>
+                        <h4 className="text-gray-400 text-sm font-semibold mb-3">MÍNIMO:</h4>
+                        {steamData?.pc_requirements?.minimum ? (
+                          <div className="space-y-2 text-sm text-gray-300">
+                            {steamData.pc_requirements.minimum.split('\n').filter(Boolean).map((line, index) => (
+                              <p key={index} className="leading-relaxed">{line}</p>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="space-y-2 text-sm text-gray-300">
+                            <p className="text-gray-500">No hay información de requisitos mínimos disponible</p>
+                          </div>
+                        )}
+                      </div>
 
-                    {/* RECOMENDADO */}
-                    <div>
-                      <h4 className="text-gray-400 text-sm font-semibold mb-3">RECOMENDADO:</h4>
-                      {steamData?.pc_requirements?.recommended ? (
-                        <div className="space-y-2 text-sm text-gray-300">
-                          {steamData.pc_requirements.recommended.split('\n').filter(Boolean).map((line, index) => (
-                            <p key={index} className="leading-relaxed">{line}</p>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="space-y-2 text-sm text-gray-300">
-                          <p className="text-gray-500">No hay información de requisitos recomendados disponible</p>
-                        </div>
-                      )}
+                      {/* RECOMENDADO */}
+                      <div>
+                        <h4 className="text-gray-400 text-sm font-semibold mb-3">RECOMENDADO:</h4>
+                        {steamData?.pc_requirements?.recommended ? (
+                          <div className="space-y-2 text-sm text-gray-300">
+                            {steamData.pc_requirements.recommended.split('\n').filter(Boolean).map((line, index) => (
+                              <p key={index} className="leading-relaxed">{line}</p>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="space-y-2 text-sm text-gray-300">
+                            <p className="text-gray-500">No hay información de requisitos recomendados disponible</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
