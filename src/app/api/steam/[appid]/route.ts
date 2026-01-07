@@ -46,6 +46,11 @@ export async function GET(
         id: movie.id,
         name: movie.name,
         thumbnail: movie.thumbnail,
+        // Steam ahora usa HLS y DASH en lugar de MP4/WebM directo
+        hls: movie.hls_h264 || null,
+        dash: movie.dash_h264 || null,
+        dash_av1: movie.dash_av1 || null,
+        // Mantener compatibilidad con formato antiguo si existe
         webm: movie.webm || {},
         mp4: movie.mp4 || {},
       };

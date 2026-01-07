@@ -25,6 +25,7 @@
     "plyr": "^3.8.3",
     "plyr-react": "^6.0.0",
     "react": "19.2.3",
+    "react-custom-scrollbars-2": "^4.5.0",
     "react-dom": "19.2.3",
     "react-player": "^3.4.0",
     "react-snowfall": "^2.4.0",

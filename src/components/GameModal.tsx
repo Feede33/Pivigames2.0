@@ -137,41 +137,27 @@ export default function GameModal({ game, onClose }: Props) {
     }
     
     console.log('currentVideo structure:', JSON.stringify(currentVideo, null, 2));
-    console.log('currentVideo.mp4:', currentVideo.mp4);
-    console.log('currentVideo.webm:', currentVideo.webm);
     
+    // Steam ahora usa HLS (M3U8) y DASH (MPD) en lugar de MP4/WebM directo
+    // Prioridad: HLS > DASH > MP4 > WebM > trailer del juego
+    const hlsUrl = currentVideo.hls;
+    const dashUrl = currentVideo.dash;
     const mp4Max = currentVideo.mp4?.max;
     const mp4_480 = currentVideo.mp4?.['480'];
     const webmMax = currentVideo.webm?.max;
     const webm480 = currentVideo.webm?.['480'];
     const trailerUrl = game?.trailer;
     
+    console.log('hlsUrl:', hlsUrl);
+    console.log('dashUrl:', dashUrl);
     console.log('mp4Max:', mp4Max);
     console.log('mp4_480:', mp4_480);
     console.log('webmMax:', webmMax);
     console.log('webm480:', webm480);
     console.log('trailerUrl:', trailerUrl);
     
-    // Intentar con todas las posibles propiedades
-    const allMp4Keys = currentVideo.mp4 ? Object.keys(currentVideo.mp4) : [];
-    const allWebmKeys = currentVideo.webm ? Object.keys(currentVideo.webm) : [];
-    console.log('All mp4 keys:', allMp4Keys);
-    console.log('All webm keys:', allWebmKeys);
-    
-    // Intentar obtener cualquier valor de mp4 o webm
-    if (allMp4Keys.length > 0) {
-      const firstMp4Key = allMp4Keys[0];
-      console.log(`First mp4 value (${firstMp4Key}):`, currentVideo.mp4[firstMp4Key]);
-      return currentVideo.mp4[firstMp4Key] || '';
-    }
-    
-    if (allWebmKeys.length > 0) {
-      const firstWebmKey = allWebmKeys[0];
-      console.log(`First webm value (${firstWebmKey}):`, currentVideo.webm[firstWebmKey]);
-      return currentVideo.webm[firstWebmKey] || '';
-    }
-    
-    return mp4Max || mp4_480 || webmMax || webm480 || trailerUrl || '';
+    // HLS es el formato más compatible con navegadores modernos
+    return hlsUrl || dashUrl || mp4Max || mp4_480 || webmMax || webm480 || trailerUrl || '';
   };
   
   const videoUrl = getVideoUrl();
