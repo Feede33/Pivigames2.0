@@ -2,7 +2,8 @@
 
 import { Plyr } from 'plyr-react';
 import 'plyr/dist/plyr.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import Hls from 'hls.js';
 
 type Props = {
   url: string;
@@ -33,6 +34,8 @@ function isDASHUrl(url: string): boolean {
 
 export default function VideoPlayer({ url }: Props) {
   const [isLoading, setIsLoading] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const hlsRef = useRef<Hls | null>(null);
   
   const videoId = getYouTubeId(url);
   const isDirectVideo = isDirectVideoUrl(url);
@@ -48,6 +51,54 @@ export default function VideoPlayer({ url }: Props) {
     return () => clearTimeout(timer);
   }, [url]);
 
+  // Configurar HLS.js para videos HLS
+  useEffect(() => {
+    if (isHLS && videoRef.current && Hls.isSupported()) {
+      const hls = new Hls({
+        maxBufferLength: 30,
+        maxMaxBufferLength: 60,
+        enableWorker: true,
+        lowLatencyMode: false,
+      });
+      
+      hls.loadSource(url);
+      hls.attachMedia(videoRef.current);
+      
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        console.log('HLS manifest parsed, levels:', hls.levels);
+        setIsLoading(false);
+      });
+
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        console.error('HLS error:', data);
+        if (data.fatal) {
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              console.error('Fatal network error, trying to recover');
+              hls.startLoad();
+              break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              console.error('Fatal media error, trying to recover');
+              hls.recoverMediaError();
+              break;
+            default:
+              console.error('Fatal error, cannot recover');
+              hls.destroy();
+              break;
+          }
+        }
+      });
+
+      hlsRef.current = hls;
+
+      return () => {
+        if (hlsRef.current) {
+          hlsRef.current.destroy();
+        }
+      };
+    }
+  }, [isHLS, url]);
+
   // Si no es ningún formato válido, mostrar mensaje
   if (!videoId && !isDirectVideo && !isHLS && !isDASH) {
     console.warn('VideoPlayer: URL no válida', url);
@@ -61,7 +112,7 @@ export default function VideoPlayer({ url }: Props) {
     );
   }
 
-  // Para videos HLS (M3U8) - formato de Steam
+  // Para videos HLS (M3U8) - formato de Steam con hls.js
   if (isHLS) {
     return (
       <div className="plyr-wrapper w-full h-full relative bg-black">
@@ -70,53 +121,13 @@ export default function VideoPlayer({ url }: Props) {
             <div className="text-white text-lg animate-pulse">Cargando video...</div>
           </div>
         )}
-        <Plyr
-          source={{
-            type: 'video',
-            sources: [
-              {
-                src: url,
-                type: 'application/x-mpegURL',
-              },
-            ],
-          }}
-          options={{
-            controls: [
-              'play-large',
-              'play',
-              'progress',
-              'current-time',
-              'mute',
-              'volume',
-              'settings',
-              'fullscreen',
-            ],
-            settings: ['quality', 'speed'],
-            quality: {
-              default: 720,
-              options: [1080, 720, 480, 360],
-            },
-            speed: {
-              selected: 1,
-              options: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
-            },
-            autoplay: true,
-            muted: false,
-            clickToPlay: true,
-            disableContextMenu: true,
-            hideControls: false,
-            resetOnEnd: false,
-            keyboard: { focused: true, global: true },
-            tooltips: { controls: true, seek: true },
-            fullscreen: {
-              enabled: true,
-              fallback: true,
-              iosNative: true,
-            },
-            // Optimizaciones de rendimiento
-            ratio: '16:9',
-            storage: { enabled: true, key: 'plyr' },
-          }}
+        <video
+          ref={videoRef}
+          className="w-full h-full"
+          autoPlay
+          controls
+          playsInline
+          style={{ objectFit: 'contain' }}
         />
       </div>
     );
@@ -149,18 +160,8 @@ export default function VideoPlayer({ url }: Props) {
               'current-time',
               'mute',
               'volume',
-              'settings',
               'fullscreen',
             ],
-            settings: ['quality', 'speed'],
-            quality: {
-              default: 720,
-              options: [1080, 720, 480, 360],
-            },
-            speed: {
-              selected: 1,
-              options: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
-            },
             autoplay: true,
             muted: false,
             clickToPlay: true,
@@ -174,7 +175,7 @@ export default function VideoPlayer({ url }: Props) {
               fallback: true,
               iosNative: true,
             },
-            // Optimizaciones de rendimiento
+            // DASH maneja la calidad automáticamente (adaptive bitrate)
             ratio: '16:9',
             storage: { enabled: true, key: 'plyr' },
           }}
