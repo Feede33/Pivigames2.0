@@ -118,7 +118,7 @@ export default function GameModal({ game, onClose }: Props) {
     ? steamData.screenshots.map(s => s.full)
     : game?.screenshots?.length
     ? game.screenshots
-    : [game?.wallpaper].filter(Boolean) as string[];
+    : game?.wallpaper ? [game.wallpaper] : [];
 
   // Videos - prioriza los de steamData, luego el trailer del game
   const videos = steamData?.videos?.length
@@ -128,14 +128,24 @@ export default function GameModal({ game, onClose }: Props) {
     : [];
 
   const currentVideo = videos[0];
+  
+  // Obtener la URL del video actual
+  const getVideoUrl = () => {
+    if (!currentVideo) return '';
+    return currentVideo.mp4?.max || (currentVideo.mp4 as Record<string, string>)?.['480'] || game?.trailer || '';
+  };
+  
+  const videoUrl = getVideoUrl();
+  const hasValidVideo = videoUrl && videoUrl.trim() !== '';
 
   // Debug: Log video info
   useEffect(() => {
     if (steamData?.videos?.length) {
       console.log('Steam videos loaded:', steamData.videos);
       console.log('Current video:', currentVideo);
+      console.log('Video URL:', videoUrl);
     }
-  }, [steamData, currentVideo]);
+  }, [steamData, currentVideo, videoUrl]);
 
   useEffect(() => {
     setReady(true);
@@ -214,15 +224,25 @@ export default function GameModal({ game, onClose }: Props) {
               }`} />
 
             {/* Video Player */}
-            <div className={`absolute inset-0 transition-opacity duration-500 ${showTrailer && currentVideo ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            <div className={`absolute inset-0 transition-opacity duration-500 ${showTrailer && hasValidVideo ? 'opacity-100' : 'opacity-0 pointer-events-none'
               }`}>
-              {showTrailer && currentVideo && (
+              {showTrailer && hasValidVideo && (
                 <VideoPlayer
-                  url={currentVideo.mp4?.max || (currentVideo.mp4 as Record<string, string>)?.['480'] || game.trailer || ''}
+                  url={videoUrl}
                   playing={showTrailer}
                 />
               )}
             </div>
+            
+            {/* Mensaje de error si no hay video válido */}
+            {showTrailer && !hasValidVideo && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/80">
+                <div className="text-center text-white">
+                  <p className="text-xl mb-2">No hay trailer disponible</p>
+                  <p className="text-sm text-gray-400">Este juego no tiene un video de trailer</p>
+                </div>
+              </div>
+            )}
 
             {/* Título y botones sobre el wallpaper */}
             <div className={`absolute bottom-5 left-6 right-6 z-10 transition-all duration-500 ${showTrailer ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
@@ -240,7 +260,7 @@ export default function GameModal({ game, onClose }: Props) {
                     Download Free
                   </a>
                 )}
-                {(currentVideo || game.trailer) && (
+                {(hasValidVideo || game.trailer) && (
                   <button
                     onClick={() => setShowTrailer(true)}
                     className="px-7 py-2.5 rounded-full bg-gray-500/70 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors"
@@ -270,7 +290,7 @@ export default function GameModal({ game, onClose }: Props) {
                     Download Free
                   </a>
                 )}
-                {(currentVideo || game.trailer) && (
+                {(hasValidVideo || game.trailer) && (
                   <button
                     onClick={() => setShowTrailer(false)}
                     className="px-7 py-2.5 rounded-full bg-red-600 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-red-700 transition-colors"

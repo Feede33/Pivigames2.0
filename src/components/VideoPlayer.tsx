@@ -2,6 +2,7 @@
 
 import { Plyr } from 'plyr-react';
 import 'plyr/dist/plyr.css';
+import { useState, useEffect } from 'react';
 
 type Props = {
   url: string;
@@ -21,19 +22,42 @@ function isDirectVideoUrl(url: string): boolean {
 }
 
 export default function VideoPlayer({ url }: Props) {
+  const [isLoading, setIsLoading] = useState(true);
+  
   const videoId = getYouTubeId(url);
   const isDirectVideo = isDirectVideoUrl(url);
 
-  // Si no es YouTube ni video directo, no renderizar nada
+  // Simular carga del video
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [url]);
+
+  // Si no es YouTube ni video directo, mostrar mensaje
   if (!videoId && !isDirectVideo) {
     console.warn('VideoPlayer: URL no válida', url);
-    return null;
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-900">
+        <div className="text-center text-white">
+          <p className="text-lg mb-2">URL de video no válida</p>
+          <p className="text-sm text-gray-400">No se pudo cargar el trailer</p>
+        </div>
+      </div>
+    );
   }
 
   // Para videos directos (Steam MP4/WebM)
   if (isDirectVideo) {
     return (
-      <div className="plyr-wrapper w-full h-full">
+      <div className="plyr-wrapper w-full h-full relative bg-black">
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-900 z-10">
+            <div className="text-white text-lg animate-pulse">Cargando video...</div>
+          </div>
+        )}
         <Plyr
           source={{
             type: 'video',
@@ -82,13 +106,18 @@ export default function VideoPlayer({ url }: Props) {
 
   return (
     <div 
-      className="plyr-wrapper w-full h-full"
+      className="plyr-wrapper w-full h-full relative"
       style={{
         backgroundImage: `url(${thumbnailUrl})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-900/80 z-10">
+          <div className="text-white text-lg animate-pulse">Cargando video...</div>
+        </div>
+      )}
       <Plyr
         source={{
           type: 'video',
