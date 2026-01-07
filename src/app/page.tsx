@@ -7,8 +7,8 @@ import { Bell, ChevronLeft, ChevronRight, Play, Info } from 'lucide-react';
 import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import GameModal from "@/components/GameModal"
+import UserProfile from "@/components/UserProfile"
 import { getGames, enrichGameWithSteamData, type GameWithSteamData } from "@/lib/supabase"
-import Snowfall from 'react-snowfall';
 
 import {
   DropdownMenu,
@@ -393,6 +393,9 @@ export default function Home() {
 
       {/* Modal del juego - Componente separado */}
       <GameModal game={modalGame} origin={modalOrigin} onClose={closeModal} />
+
+      {/* User Profile - Discord Style */}
+      <UserProfile />
 
       {/* Footer */}
       <footer className="border-border px-8 py-12 bg-black">
