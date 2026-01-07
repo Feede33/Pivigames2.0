@@ -49,6 +49,10 @@ export async function enrichGameWithSteamData(game: Game): Promise<GameWithSteam
     
     const steamData = await response.json();
     
+    // Priorizar background_raw (sin compresión) sobre background
+    const wallpaperUrl = steamData.background_raw || steamData.background || steamData.header_image || '';
+    console.log(`Wallpaper URL for ${steamData.name}:`, wallpaperUrl);
+    
     return {
       ...game,
       title: steamData.name || 'Unknown Game',
@@ -56,7 +60,7 @@ export async function enrichGameWithSteamData(game: Game): Promise<GameWithSteam
       image: steamData.header_image || '',
       cover_image: steamData.header_image || '',
       rating: steamData.metacritic ? steamData.metacritic / 10 : 7.5,
-      wallpaper: steamData.background_raw || steamData.background || steamData.header_image || '',
+      wallpaper: wallpaperUrl,
       description: steamData.short_description || '',
       trailer: steamData.videos?.[0]?.mp4?.max || steamData.videos?.[0]?.mp4?.['480'] || '',
       screenshots: steamData.screenshots?.map((s: any) => s.full) || []

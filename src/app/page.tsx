@@ -125,12 +125,13 @@ export default function Home() {
       ) : (
         <div className="relative h-[90vh] flex items-center overflow-hidden bg-black">
           {/* Wallpaper que cubre toda la pantalla manteniendo aspect ratio */}
-          <div
-            className="absolute inset-0 bg-center bg-no-repeat transition-all duration-700"
+          <img
+            src={heroGames[currentSlide].wallpaper}
+            alt={heroGames[currentSlide].title}
+            className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
             style={{
-              backgroundImage: `url(${heroGames[currentSlide].wallpaper})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
+              filter: 'none',
+              imageRendering: '-webkit-optimize-contrast'
             }}
           />
           {/* Gradiente negro desde la izquierda para legibilidad del texto */}

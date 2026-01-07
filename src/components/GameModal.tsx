@@ -280,10 +280,15 @@ export default function GameModal({ game, onClose }: Props) {
 
             {/* Wallpaper - siempre presente pero con fade */}
             {!loadingSteam && (
-              <div
-                className={`absolute inset-0 bg-cover bg-center transition-opacity duration-500 ${showTrailer ? 'opacity-0' : 'opacity-100'
+              <img
+                src={game.wallpaper}
+                alt={game.title}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${showTrailer ? 'opacity-0' : 'opacity-100'
                   }`}
-                style={{ backgroundImage: `url(${game.wallpaper})` }}
+                style={{ 
+                  filter: 'none',
+                  imageRendering: '-webkit-optimize-contrast'
+                }}
               />
             )}
             <div className={`absolute inset-0 bg-gradient-to-t from-[#181818] to-transparent transition-opacity duration-500 ${showTrailer ? 'opacity-0' : 'opacity-100'
