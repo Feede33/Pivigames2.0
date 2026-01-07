@@ -50,7 +50,20 @@ export async function enrichGameWithSteamData(game: Game): Promise<GameWithSteam
     const steamData = await response.json();
     
     // Priorizar background_raw (sin compresión) sobre background
-    const wallpaperUrl = steamData.background_raw || steamData.background || steamData.header_image || '';
+    // Si no existe ninguno, usar header_image
+    let wallpaperUrl = '';
+    
+    if (steamData.background_raw) {
+      wallpaperUrl = steamData.background_raw;
+      console.log(`✓ Using background_raw for ${steamData.name}`);
+    } else if (steamData.background) {
+      wallpaperUrl = steamData.background;
+      console.log(`⚠ Using background (compressed) for ${steamData.name}`);
+    } else if (steamData.header_image) {
+      wallpaperUrl = steamData.header_image;
+      console.log(`⚠ Using header_image (fallback) for ${steamData.name}`);
+    }
+    
     console.log(`Wallpaper URL for ${steamData.name}:`, wallpaperUrl);
     
     return {

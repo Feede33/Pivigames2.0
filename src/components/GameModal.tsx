@@ -9,6 +9,7 @@ import { MapPinCheck } from 'lucide-react';
 import Snowfall from 'react-snowfall';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import 'overlayscrollbars/overlayscrollbars.css';
+import WallpaperImage from './WallpaperImage';
 
 
 const VideoPlayer = dynamic(() => import('./VideoPlayer'), { ssr: false });
@@ -284,15 +285,11 @@ export default function GameModal({ game, onClose }: Props) {
 
             {/* Wallpaper - siempre presente pero con fade */}
             {!loadingSteam && (
-              <img
+              <WallpaperImage
                 src={game.wallpaper}
                 alt={game.title}
                 className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${showTrailer ? 'opacity-0' : 'opacity-100'
                   }`}
-                style={{ 
-                  filter: 'none',
-                  imageRendering: '-webkit-optimize-contrast'
-                }}
               />
             )}
             <div className={`absolute inset-0 bg-gradient-to-t from-[#181818] to-transparent transition-opacity duration-500 ${showTrailer ? 'opacity-0' : 'opacity-100'

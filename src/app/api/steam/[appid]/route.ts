@@ -39,6 +39,35 @@ export async function GET(
       full: screenshot.path_full,
     })) || [];
 
+    // IMPORTANTE: Detectar si background es una URL dinámica de Steam (con fondo azul)
+    // Estas URLs tienen el formato: store.akamai.steamstatic.com/images/storepagebackground/
+    const isDynamicBackground = gameData.background?.includes('storepagebackground');
+    
+    // Si es una URL dinámica, preferir usar el primer screenshot en alta calidad
+    // o el header_image en lugar del background azul
+    let bestBackground = gameData.background_raw; // Prioridad 1: background_raw (sin procesar)
+    
+    if (!bestBackground) {
+      if (isDynamicBackground && screenshots.length > 0) {
+        // Prioridad 2: Primer screenshot si background es dinámico (azul)
+        bestBackground = screenshots[0].full;
+        console.log(`⚠ Using first screenshot as background for ${gameData.name} (avoiding blue background)`);
+      } else if (gameData.background && !isDynamicBackground) {
+        // Prioridad 3: background normal (no dinámico)
+        bestBackground = gameData.background;
+      } else {
+        // Prioridad 4: header_image como último recurso
+        bestBackground = gameData.header_image;
+      }
+    }
+
+    console.log(`Background type for ${gameData.name}:`, {
+      has_raw: !!gameData.background_raw,
+      has_background: !!gameData.background,
+      is_dynamic: isDynamicBackground,
+      using: bestBackground
+    });
+
     // Extraer videos/trailers
     const videos = gameData.movies?.map((movie: any) => {
       console.log('Raw movie data:', JSON.stringify(movie, null, 2));
@@ -118,7 +147,7 @@ export async function GET(
       screenshots,
       videos,
       header_image: gameData.header_image,
-      background: gameData.background,
+      background: bestBackground, // Usar el mejor background disponible
       background_raw: gameData.background_raw,
       genres,
       categories,

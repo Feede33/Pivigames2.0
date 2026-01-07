@@ -8,6 +8,7 @@ import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import GameModal from "@/components/GameModal"
 import UserProfile from "@/components/UserProfile"
+import WallpaperImage from "@/components/WallpaperImage"
 import { getGames, enrichGameWithSteamData, type GameWithSteamData } from "@/lib/supabase"
 
 import {
@@ -125,14 +126,10 @@ export default function Home() {
       ) : (
         <div className="relative h-[90vh] flex items-center overflow-hidden bg-black">
           {/* Wallpaper que cubre toda la pantalla manteniendo aspect ratio */}
-          <img
+          <WallpaperImage
             src={heroGames[currentSlide].wallpaper}
             alt={heroGames[currentSlide].title}
             className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
-            style={{
-              filter: 'none',
-              imageRendering: '-webkit-optimize-contrast'
-            }}
           />
           {/* Gradiente negro desde la izquierda para legibilidad del texto */}
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent z-10 pointer-events-none" />
