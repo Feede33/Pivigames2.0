@@ -227,162 +227,182 @@ export default function Home() {
       {/* Game Categories */}
       {!loading && games.length > 0 && (
         <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">
-          {/* Trending Now */}
+          {/* Trending Now - Epic Games Style */}
           {trendingGames.length > 0 && (
             <section>
-              <h3 className="text-2xl font-bold mb-4">Trending Now</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold">Epic Extras</h3>
+                <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
+                  Ver más <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
                 {trendingGames.map((game) => (
                   <div
                     key={game.id}
-                    className="relative group cursor-pointer transition-transform duration-300 hover:scale-105"
-                    onMouseEnter={() => setHoveredGame(game.id)}
-                    onMouseLeave={() => setHoveredGame(null)}
+                    className="flex-shrink-0 w-[180px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="aspect-[2/3] bg-game-card rounded-lg overflow-hidden">
-                      <img
-                        src={game.image}
-                        alt={game.title}
-                        className="w-full h-full object-cover object-center"
-                      />
-                    </div>
-                    {hoveredGame === game.id && (
-                      <div className="absolute inset-0 bg-background/90 rounded-lg p-4 flex flex-col justify-end">
-                        <h4 className="font-bold text-lg mb-1">{game.title}</h4>
-                        <p className="text-sm text-muted-foreground mb-2">{game.genre}</p>
-                        <div className="flex items-center gap-2">
-                          <span className="text-warning">⭐</span>
-                          <span className="text-sm">{game.rating}</span>
-                        </div>
-                        <div className="flex gap-2 mt-3">
-                          <button className="w-full bg-primary text-primary-foreground px-4 py-2 rounded text-sm font-bold hover:bg-primary/90 flex items-center justify-center gap-1">
-                            <Play className="w-4 h-4" />
-                            Play
-                          </button>
-                        </div>
+                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
+                      <div className="aspect-[3/4] bg-gradient-to-br from-purple-900 to-blue-900">
+                        <img
+                          src={game.image}
+                          alt={game.title}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                    )}
+                      {/* Badge superior */}
+                      <div className="absolute top-2 left-2">
+                        <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
+                          {game.rating >= 8 ? 'Popular' : 'Add-On'}
+                        </span>
+                      </div>
+                    </div>
+                    {/* Título y precio */}
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                        {game.genre}
+                      </p>
+                      <h4 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition">
+                        {game.title}
+                      </h4>
+                      <p className="text-sm font-bold">
+                        {game.rating >= 9 ? 'Free' : '$19.99'}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
             </section>
           )}
 
-          {/* Action Games */}
+          {/* Action Games - Epic Style */}
           {actionGames.length > 0 && (
             <section>
-              <h3 className="text-2xl font-bold mb-4">Action & Thrillers</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold">Top New Releases</h3>
+                <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
+                  Ver más <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
                 {actionGames.map((game) => (
                   <div
                     key={game.id}
-                    className="relative group cursor-pointer transition-transform duration-300 hover:scale-105"
-                    onMouseEnter={() => setHoveredGame(game.id)}
-                    onMouseLeave={() => setHoveredGame(null)}
+                    className="flex-shrink-0 w-[280px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="aspect-video bg-game-action rounded-lg overflow-hidden">
-                      <img
-                        src={game.cover_image}
-                        alt={game.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    {hoveredGame === game.id && (
-                      <div className="absolute inset-0 bg-background/90 rounded-lg p-3 flex flex-col justify-end">
-                        <h4 className="font-bold mb-1">{game.title}</h4>
-                        <p className="text-xs text-muted-foreground mb-1">{game.genre}</p>
-                        <div className="flex items-center gap-1 text-sm mb-2">
-                          <span className="text-warning">⭐</span>
-                          <span>{game.rating}</span>
-                        </div>
-                        <button className="w-full bg-primary text-primary-foreground px-3 py-1.5 rounded text-xs font-bold hover:bg-primary/90 flex items-center justify-center gap-1">
-                          <Play className="w-3 h-3" />
-                          Play
-                        </button>
+                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
+                      <div className="aspect-[16/9] bg-gradient-to-br from-red-900 to-orange-900">
+                        <img
+                          src={game.cover_image}
+                          alt={game.title}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                    )}
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-base line-clamp-1 group-hover:text-primary transition">
+                        {game.title}
+                      </h4>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <span>⭐ {game.rating}</span>
+                        <span>•</span>
+                        <span>{game.genre}</span>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
             </section>
           )}
 
-          {/* Adventure Games */}
+          {/* Adventure Games - Epic Style */}
           {adventureGames.length > 0 && (
             <section>
-              <h3 className="text-2xl font-bold mb-4">Epic Adventures</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold">Epic Adventures</h3>
+                <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
+                  Ver más <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
                 {adventureGames.map((game) => (
                   <div
                     key={game.id}
-                    className="relative group cursor-pointer transition-transform duration-300 hover:scale-105"
-                    onMouseEnter={() => setHoveredGame(game.id)}
-                    onMouseLeave={() => setHoveredGame(null)}
+                    className="flex-shrink-0 w-[180px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="aspect-video bg-game-adventure rounded-lg overflow-hidden">
-                      <img
-                        src={game.cover_image}
-                        alt={game.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    {hoveredGame === game.id && (
-                      <div className="absolute inset-0 bg-background/90 rounded-lg p-3 flex flex-col justify-end">
-                        <h4 className="font-bold mb-1">{game.title}</h4>
-                        <p className="text-xs text-muted-foreground mb-1">{game.genre}</p>
-                        <div className="flex items-center gap-1 text-sm mb-2">
-                          <span className="text-warning">⭐</span>
-                          <span>{game.rating}</span>
-                        </div>
-                        <button className="w-full bg-primary text-primary-foreground px-3 py-1.5 rounded text-xs font-bold hover:bg-primary/90 flex items-center justify-center gap-1">
-                          <Play className="w-3 h-3" />
-                          Play
-                        </button>
+                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
+                      <div className="aspect-[3/4] bg-gradient-to-br from-green-900 to-teal-900">
+                        <img
+                          src={game.image}
+                          alt={game.title}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                    )}
+                      <div className="absolute top-2 left-2">
+                        <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
+                          Adventure
+                        </span>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                        {game.genre}
+                      </p>
+                      <h4 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition">
+                        {game.title}
+                      </h4>
+                      <p className="text-sm font-bold">
+                        Free
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
             </section>
           )}
 
-          {/* Sports Games */}
+          {/* Sports Games - Epic Style */}
           {sportsGames.length > 0 && (
             <section>
-              <h3 className="text-2xl font-bold mb-4">Sports & Racing</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold">Sports & Racing</h3>
+                <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
+                  Ver más <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
                 {sportsGames.map((game) => (
                   <div
                     key={game.id}
-                    className="relative group cursor-pointer transition-transform duration-300 hover:scale-105"
-                    onMouseEnter={() => setHoveredGame(game.id)}
-                    onMouseLeave={() => setHoveredGame(null)}
+                    className="flex-shrink-0 w-[280px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="aspect-video bg-game-sports rounded-lg overflow-hidden">
-                      <img
-                        src={game.cover_image}
-                        alt={game.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    {hoveredGame === game.id && (
-                      <div className="absolute inset-0 bg-background/90 rounded-lg p-3 flex flex-col justify-end">
-                        <h4 className="font-bold mb-1">{game.title}</h4>
-                        <p className="text-xs text-muted-foreground mb-1">{game.genre}</p>
-                        <div className="flex items-center gap-1 text-sm mb-2">
-                          <span className="text-warning">⭐</span>
-                          <span>{game.rating}</span>
-                        </div>
-                        <button className="w-full bg-primary text-primary-foreground px-3 py-1.5 rounded text-xs font-bold hover:bg-primary/90 flex items-center justify-center gap-1">
-                          <Play className="w-3 h-3" />
-                          Play
-                        </button>
+                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
+                      <div className="aspect-[16/9] bg-gradient-to-br from-blue-900 to-purple-900">
+                        <img
+                          src={game.cover_image}
+                          alt={game.title}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                    )}
+                      <div className="absolute top-2 left-2">
+                        <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
+                          Sports
+                        </span>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-base line-clamp-1 group-hover:text-primary transition">
+                        {game.title}
+                      </h4>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">{game.genre}</span>
+                        <span className="text-sm font-bold">$29.99</span>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
