@@ -5,7 +5,7 @@ import { Settings } from 'lucide-react';
 
 export default function UserProfile() {
   return (
-    <div className="fixed bottom-15 left-15 z-50 w-64 bg-background/95 backdrop-blur-sm border-t border-r border-border rounded-full">
+    <div className="fixed bottom-10 left-15 z-50 w-64 bg-background/95 backdrop-blur-sm border-t border-r border-border rounded-full">
       <div className="flex items-center justify-between p-2 gap-2">
         {/* Avatar y Info del Usuario */}
         <div className="flex items-center gap-2 flex-1 min-w-0">
