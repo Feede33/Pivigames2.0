@@ -16,6 +16,7 @@ export default function Home() {
   const [games, setGames] = useState<GameWithSteamData[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
+  const [epicExtrasScroll, setEpicExtrasScroll] = useState(0);
   const GAMES_PER_PAGE = 20;
 
   // Cargar juegos desde Supabase y enriquecerlos con datos de Steam
@@ -104,6 +105,19 @@ export default function Home() {
   const closeModal = () => {
     setModalGame(null);
     setModalOrigin(null);
+  };
+
+  const scrollEpicExtras = (direction: 'left' | 'right') => {
+    const container = document.getElementById('epic-extras-scroll');
+    if (container) {
+      const scrollAmount = 240; // ancho de card + gap
+      const newScroll = direction === 'left' 
+        ? Math.max(0, epicExtrasScroll - scrollAmount)
+        : epicExtrasScroll + scrollAmount;
+      
+      container.scrollTo({ left: newScroll, behavior: 'smooth' });
+      setEpicExtrasScroll(newScroll);
+    }
   };
 
 
@@ -212,14 +226,28 @@ export default function Home() {
         <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">
           {/* Trending Now - Epic Games Style */}
           {trendingGames.length > 0 && (
-            <section>
+            <section className="relative">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold">Epic Extras</h3>
-                <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
-                  Ver más <ChevronRight className="w-4 h-4" />
-                </button>
+                <h3 className="text-2xl font-bold">Ofertas</h3>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => scrollEpicExtras('left')}
+                    className="bg-background/50 hover:bg-background/80 p-2 rounded-full transition"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button 
+                    onClick={() => scrollEpicExtras('right')}
+                    className="bg-background/50 hover:bg-background/80 p-2 rounded-full transition"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
-              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+              <div 
+                id="epic-extras-scroll"
+                className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth"
+              >
                 {trendingGames.map((game) => (
                   <div
                     key={game.id}
