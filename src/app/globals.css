@@ -263,6 +263,26 @@
   -webkit-backface-visibility: hidden;
 }
 
+/* Estilos para controles personalizados de calidad */
+.plyr-wrapper .quality-menu {
+  position: absolute;
+  bottom: 60px;
+  right: 16px;
+  z-index: 20;
+}
+
+.plyr-wrapper .quality-button {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.plyr-wrapper .quality-button:hover {
+  background: rgba(0, 0, 0, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 /* Fondo blur para las barras negras */
 .plyr-wrapper::before {
   content: '';

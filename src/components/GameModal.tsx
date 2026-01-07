@@ -7,6 +7,8 @@ import dynamic from 'next/dynamic';
 import type { GameWithSteamData } from '@/lib/supabase';
 import { MapPinCheck } from 'lucide-react';
 import Snowfall from 'react-snowfall';
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
+import 'overlayscrollbars/overlayscrollbars.css';
 
 
 const VideoPlayer = dynamic(() => import('./VideoPlayer'), { ssr: false });
@@ -117,27 +119,38 @@ export default function GameModal({ game, onClose }: Props) {
   const screenshots = steamData?.screenshots?.length
     ? steamData.screenshots.map(s => s.full)
     : game?.screenshots?.length
-    ? game.screenshots
-    : game?.wallpaper ? [game.wallpaper] : [];
+      ? game.screenshots
+      : game?.wallpaper ? [game.wallpaper] : [];
 
   // Videos - prioriza los de steamData, luego el trailer del game
   const videos = steamData?.videos?.length
     ? steamData.videos
     : game?.trailer
-    ? [{ name: 'Trailer', mp4: { max: game.trailer } as { max: string } }]
-    : [];
+      ? [{ name: 'Trailer', mp4: { max: game.trailer } as { max: string } }]
+      : [];
 
   const currentVideo = videos[0] as any;
-  
+
+  // Combinar screenshots con thumbnails de videos para el slider
+  const mediaItems = [
+    ...screenshots.map((src, index) => ({ type: 'image' as const, src, index })),
+    ...videos.map((video: any, index) => ({
+      type: 'video' as const,
+      src: video.thumbnail,
+      videoUrl: video.hls || video.dash || video.mp4?.max || video.mp4?.['480'] || video.webm?.max || video.webm?.['480'] || '',
+      index: screenshots.length + index
+    }))
+  ];
+
   // Obtener la URL del video actual
   const getVideoUrl = () => {
     if (!currentVideo) {
       console.log('No currentVideo');
       return '';
     }
-    
+
     console.log('currentVideo structure:', JSON.stringify(currentVideo, null, 2));
-    
+
     // Steam ahora usa HLS (M3U8) y DASH (MPD) en lugar de MP4/WebM directo
     // Prioridad: HLS > DASH > MP4 > WebM > trailer del juego
     const hlsUrl = currentVideo.hls;
@@ -147,7 +160,7 @@ export default function GameModal({ game, onClose }: Props) {
     const webmMax = currentVideo.webm?.max;
     const webm480 = currentVideo.webm?.['480'];
     const trailerUrl = game?.trailer;
-    
+
     console.log('hlsUrl:', hlsUrl);
     console.log('dashUrl:', dashUrl);
     console.log('mp4Max:', mp4Max);
@@ -155,11 +168,11 @@ export default function GameModal({ game, onClose }: Props) {
     console.log('webmMax:', webmMax);
     console.log('webm480:', webm480);
     console.log('trailerUrl:', trailerUrl);
-    
+
     // HLS es el formato más compatible con navegadores modernos
     return hlsUrl || dashUrl || mp4Max || mp4_480 || webmMax || webm480 || trailerUrl || '';
   };
-  
+
   const videoUrl = getVideoUrl();
   const hasValidVideo = videoUrl && videoUrl.trim() !== '';
 
@@ -203,11 +216,11 @@ export default function GameModal({ game, onClose }: Props) {
   };
 
   const nextScreenshot = () => {
-    setScreenshotIndex((prev) => (prev + 1) % Math.max(1, screenshots.length - 2));
+    setScreenshotIndex((prev) => (prev + 1) % Math.max(1, mediaItems.length - 2));
   };
 
   const prevScreenshot = () => {
-    setScreenshotIndex((prev) => (prev - 1 + Math.max(1, screenshots.length - 2)) % Math.max(1, screenshots.length - 2));
+    setScreenshotIndex((prev) => (prev - 1 + Math.max(1, mediaItems.length - 2)) % Math.max(1, mediaItems.length - 2));
   };
 
   const nextViewerImage = () => {
@@ -229,6 +242,17 @@ export default function GameModal({ game, onClose }: Props) {
         className={`w-[1100px] min-h-[850px] bg-[#181818] rounded-lg overflow-hidden transition-all duration-200 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
       >
+        <OverlayScrollbarsComponent
+          options={{
+            scrollbars: {
+              autoHide: 'leave',
+              theme: 'os-theme-dark',
+            },
+          }}
+          style={{ maxHeight: '500px' }}
+        >
+          {/* Tu contenido aquí */}
+        </OverlayScrollbarsComponent>
         {/* Botón cerrar */}
         <button
           onClick={handleClose}
@@ -253,7 +277,7 @@ export default function GameModal({ game, onClose }: Props) {
                 </div>
               </div>
             )}
-            
+
             {/* Wallpaper - siempre presente pero con fade */}
             {!loadingSteam && (
               <div
@@ -275,7 +299,7 @@ export default function GameModal({ game, onClose }: Props) {
                 />
               )}
             </div>
-            
+
             {/* Mensaje de error si no hay video válido */}
             {showTrailer && !hasValidVideo && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/80">
@@ -445,7 +469,7 @@ export default function GameModal({ game, onClose }: Props) {
                 {/* Screenshots section with slider */}
                 <div className="mb-6">
                   <h3 className="text-white font-semibold mb-3">
-                    Screenshots
+                    Screenshots & Videos
                     {loadingSteam && <span className="text-gray-500 text-sm ml-2">(Cargando desde Steam...)</span>}
                     {steamData && <span className="text-green-500 text-sm ml-2">✓ Steam</span>}
                   </h3>
@@ -475,23 +499,38 @@ export default function GameModal({ game, onClose }: Props) {
                           className="flex gap-2 transition-transform duration-300"
                           style={{ transform: `translateX(-${screenshotIndex * 33.33}%)` }}
                         >
-                          {screenshots.map((src, index) => (
+                          {mediaItems.map((item, index) => (
                             <div
                               key={index}
-                              className="flex-shrink-0 w-[calc(33.33%-5px)] aspect-video bg-gray-700 rounded overflow-hidden cursor-pointer"
-                              onClick={() => openViewer(index)}
+                              className="flex-shrink-0 w-[calc(33.33%-5px)] aspect-video bg-gray-700 rounded overflow-hidden cursor-pointer relative group"
+                              onClick={() => {
+                                if (item.type === 'video' && item.videoUrl) {
+                                  // Reproducir video en el modal
+                                  setShowTrailer(true);
+                                } else {
+                                  openViewer(item.index);
+                                }
+                              }}
                             >
                               <div
                                 className="w-full h-full bg-cover bg-center hover:scale-110 transition-transform duration-300"
-                                style={{ backgroundImage: `url(${src})` }}
+                                style={{ backgroundImage: `url(${item.src})` }}
                               />
+                              {/* Indicador de video */}
+                              {item.type === 'video' && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-colors">
+                                  <div className="bg-white/90 rounded-full p-3">
+                                    <Play className="w-6 h-6 text-black" />
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
                       </div>
 
                       {/* Navigation arrows */}
-                      {screenshots.length > 3 && (
+                      {mediaItems.length > 3 && (
                         <>
                           <button
                             onClick={prevScreenshot}
@@ -510,7 +549,7 @@ export default function GameModal({ game, onClose }: Props) {
 
                       {/* Dots indicator */}
                       <div className="flex justify-center gap-1.5 mt-3">
-                        {Array.from({ length: Math.max(1, screenshots.length - 2) }).map((_, index) => (
+                        {Array.from({ length: Math.max(1, mediaItems.length - 2) }).map((_, index) => (
                           <button
                             key={index}
                             onClick={() => setScreenshotIndex(index)}

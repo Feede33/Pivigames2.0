@@ -34,6 +34,9 @@ function isDASHUrl(url: string): boolean {
 
 export default function VideoPlayer({ url }: Props) {
   const [isLoading, setIsLoading] = useState(true);
+  const [showQualityMenu, setShowQualityMenu] = useState(false);
+  const [currentQuality, setCurrentQuality] = useState<number>(-1); // -1 = auto
+  const [availableQualities, setAvailableQualities] = useState<Array<{ level: number; height: number; bitrate: number }>>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   
@@ -66,6 +69,14 @@ export default function VideoPlayer({ url }: Props) {
       
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         console.log('HLS manifest parsed, levels:', hls.levels);
+        
+        // Guardar las calidades disponibles
+        const qualities = hls.levels.map((level, index) => ({
+          level: index,
+          height: level.height,
+          bitrate: level.bitrate,
+        }));
+        setAvailableQualities(qualities);
         setIsLoading(false);
       });
 
@@ -99,6 +110,15 @@ export default function VideoPlayer({ url }: Props) {
     }
   }, [isHLS, url]);
 
+  // Cambiar calidad
+  const changeQuality = (level: number) => {
+    if (hlsRef.current) {
+      hlsRef.current.currentLevel = level;
+      setCurrentQuality(level);
+      setShowQualityMenu(false);
+    }
+  };
+
   // Si no es ningún formato válido, mostrar mensaje
   if (!videoId && !isDirectVideo && !isHLS && !isDASH) {
     console.warn('VideoPlayer: URL no válida', url);
@@ -115,7 +135,7 @@ export default function VideoPlayer({ url }: Props) {
   // Para videos HLS (M3U8) - formato de Steam con hls.js
   if (isHLS) {
     return (
-      <div className="plyr-wrapper w-full h-full relative bg-black">
+      <div className="plyr-wrapper w-full h-full relative bg-black group">
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-900 z-10">
             <div className="text-white text-lg animate-pulse">Cargando video...</div>
@@ -129,6 +149,48 @@ export default function VideoPlayer({ url }: Props) {
           playsInline
           style={{ objectFit: 'contain' }}
         />
+        
+        {/* Controles de calidad personalizados */}
+        {availableQualities.length > 0 && (
+          <div className="absolute bottom-14 right-4 z-20">
+            {/* Menú de calidad */}
+            {showQualityMenu && (
+              <div className="mb-2 bg-black/90 rounded-lg overflow-hidden backdrop-blur-sm">
+                <div className="py-2">
+                  <button
+                    onClick={() => changeQuality(-1)}
+                    className={`w-full px-4 py-2 text-left text-sm hover:bg-white/10 transition-colors ${
+                      currentQuality === -1 ? 'text-red-500 font-bold' : 'text-white'
+                    }`}
+                  >
+                    Auto
+                  </button>
+                  {availableQualities
+                    .sort((a, b) => b.height - a.height)
+                    .map((quality) => (
+                      <button
+                        key={quality.level}
+                        onClick={() => changeQuality(quality.level)}
+                        className={`w-full px-4 py-2 text-left text-sm hover:bg-white/10 transition-colors ${
+                          currentQuality === quality.level ? 'text-red-500 font-bold' : 'text-white'
+                        }`}
+                      >
+                        {quality.height}p
+                      </button>
+                    ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Botón de calidad */}
+            <button
+              onClick={() => setShowQualityMenu(!showQualityMenu)}
+              className="bg-black/70 hover:bg-black/90 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm"
+            >
+              {currentQuality === -1 ? 'Auto' : `${availableQualities.find(q => q.level === currentQuality)?.height}p`}
+            </button>
+          </div>
+        )}
       </div>
     );
   }
