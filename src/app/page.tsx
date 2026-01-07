@@ -222,7 +222,7 @@ export default function Home() {
                 {trendingGames.map((game) => (
                   <div
                     key={game.id}
-                    className="flex-shrink-0 w-[180px] group cursor-pointer"
+                    className="flex-shrink-0 w-[220px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
                     <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
