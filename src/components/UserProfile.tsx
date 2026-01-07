@@ -30,7 +30,7 @@ export default function UserProfile() {
             className="p-1.5 hover:bg-accent rounded transition-colors"
             title="User Settings"
           >
-            <Settings className="w-4 h-4" />
+            <Settings className="p-2 w-4 h-4" />
           </button>
         </div>
       </div>
