@@ -7,6 +7,8 @@ import UserProfile from "@/components/UserProfile"
 import WallpaperImage from "@/components/WallpaperImage"
 import { getGames, enrichGameWithSteamData, type GameWithSteamData } from "@/lib/supabase"
 import { proxySteamImage } from "@/lib/image-proxy"
+import { Star } from 'lucide-react';
+
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -25,19 +27,19 @@ export default function Home() {
         // Primero obtener los juegos de la DB
         const gamesFromDB = await getGames();
         console.log('Games from DB:', gamesFromDB);
-        
+
         if (gamesFromDB.length === 0) {
           setGames([]);
           setHasMore(false);
           setLoading(false);
           return;
         }
-        
+
         // Luego enriquecer cada juego con datos de Steam
         const enrichedGames = await Promise.all(
           gamesFromDB.map(game => enrichGameWithSteamData(game))
         );
-        
+
         console.log('Enriched games:', enrichedGames);
         setGames(enrichedGames);
         setHasMore(enrichedGames.length >= GAMES_PER_PAGE);
@@ -56,11 +58,11 @@ export default function Home() {
   useEffect(() => {
     const handleScroll = () => {
       if (loading || !hasMore) return;
-      
+
       const scrollHeight = document.documentElement.scrollHeight;
       const scrollTop = document.documentElement.scrollTop;
       const clientHeight = document.documentElement.clientHeight;
-      
+
       // Si estamos cerca del final (200px antes)
       if (scrollHeight - scrollTop - clientHeight < 200) {
         // Aquí se podría cargar más juegos en el futuro
@@ -116,12 +118,12 @@ export default function Home() {
             <div className="hidden md:flex gap-6 text-sm">
               <a href="#" className="hover:text-muted-foreground transition">Discover</a>
               <a href="#" className="hover:text-muted-foreground transition">Browse</a>
-      
+
               <a href="#" className="hover:text-muted-foreground transition">Ofertas e Historial de Precios</a>
             </div>
           </div>
 
-          
+
         </div>
       </nav>
 
@@ -226,7 +228,7 @@ export default function Home() {
                     onClick={(e) => handleGameClick(game, e)}
                   >
                     <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
-                      <div className="aspect-[3/4] bg-gradient-to-br from-purple-900 to-blue-900">
+                      <div className="aspect-[2/3] bg-gradient-to-br from-purple-900 to-blue-900">
                         <img
                           src={proxySteamImage(game.image)}
                           alt={game.title}
@@ -289,7 +291,10 @@ export default function Home() {
                       </h4>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span>⭐ {game.rating}</span>
+                          <span><Star fill="yellow"
+                            stroke="yellow"
+                            strokeWidth={0.5}
+                            size={16} /> {game.rating}</span>
                           <span>•</span>
                           <span>{game.genre}</span>
                         </div>
@@ -315,11 +320,11 @@ export default function Home() {
                 {adventureGames.map((game) => (
                   <div
                     key={game.id}
-                    className="flex-shrink-0 w-[180px] group cursor-pointer"
+                    className="flex-shrink-0 w-[220px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
                     <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
-                      <div className="aspect-[3/4] bg-gradient-to-br from-green-900 to-teal-900">
+                      <div className="aspect-[2/3] bg-gradient-to-br from-green-900 to-teal-900">
                         <img
                           src={proxySteamImage(game.image)}
                           alt={game.title}
@@ -408,7 +413,7 @@ export default function Home() {
                     onClick={(e) => handleGameClick(game, e)}
                   >
                     <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
-                      <div className="aspect-[3/4] bg-gradient-to-br from-purple-900 to-blue-900">
+                      <div className="aspect-[2/3] bg-gradient-to-br from-purple-900 to-blue-900">
                         <img
                           src={proxySteamImage(game.image)}
                           alt={game.title}
@@ -433,7 +438,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              
+
               {/* Loading indicator */}
               {loading && (
                 <div className="text-center py-8">
@@ -451,7 +456,7 @@ export default function Home() {
       {/* User Profile - Discord Style */}
       <UserProfile />
 
-     
+
     </div>
   );
 }
