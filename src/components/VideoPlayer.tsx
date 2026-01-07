@@ -155,11 +155,11 @@ export default function VideoPlayer({ url }: Props) {
           <div className="absolute bottom-20 right-5 z-20">
             {/* Menú de calidad */}
             {showQualityMenu && (
-              <div className="mb-2 bg-white rounded-lg overflow-hidden backdrop-blur-sm">
+              <div className="mb-2 rounded-lg overflow-hidden backdrop-blur-sm">
                 <div className="py-2">
                   <button
                     onClick={() => changeQuality(-1)}
-                    className={`w-full px-4 py-2 text-left text-sm hover:bg-white/10 transition-colors ${currentQuality === -1 ? 'text-red-500 font-bold' : 'text-white'
+                    className={`w-full px-4 py-2 text-left text-sm hover:bg-white/10 transition-colors ${currentQuality === -1 ? 'text-red-500 font-bold' : 'text-black'
                       }`}
                   >
                     Auto
