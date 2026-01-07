@@ -124,8 +124,8 @@ export default function Home() {
           </div>
         </div>
       ) : (
-        <div className="relative h-[100vh] flex items-center overflow-hidden bg-black">
-          {/* Imagen de fondo del wallpaper */}
+        <div className="relative h-[100vh] flex items-center overflow-hidden">
+          {/* Imagen de fondo del wallpaper en máximo esplendor */}
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
             style={{
@@ -134,10 +134,10 @@ export default function Home() {
               backgroundPosition: 'center'
             }}
           />
-          {/* Gradiente oscuro desde la izquierda para legibilidad del texto */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10 pointer-events-none" />
-          {/* Gradiente inferior suave hacia el fondo de la página */}
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent z-10 pointer-events-none" />
+          {/* Gradiente negro desde la izquierda para legibilidad del texto */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent z-10 pointer-events-none" />
+          {/* Gradiente negro inferior suave hacia el fondo de la página */}
+          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black via-black/80 to-transparent z-10 pointer-events-none" />
 
           {/* Navigation Arrows */}
           <button
