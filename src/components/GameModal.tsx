@@ -127,7 +127,7 @@ export default function GameModal({ game, onClose }: Props) {
     ? [{ name: 'Trailer', mp4: { max: game.trailer } as { max: string } }]
     : [];
 
-  const currentVideo = videos[0];
+  const currentVideo = videos[0] as any;
   
   // Obtener la URL del video actual
   const getVideoUrl = () => {
