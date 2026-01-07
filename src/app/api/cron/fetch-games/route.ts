@@ -59,21 +59,27 @@ async function appIdExists(appId: string): Promise<boolean> {
 
 export async function GET(request: Request) {
   try {
-    // Verificar autorización
-    // Vercel Cron envía un header especial, pero también aceptamos el Bearer token
+    // Verificar autorización de Vercel Cron
     const authHeader = request.headers.get('authorization');
-    const cronSecret = process.env.CRON_SECRET || 'your-secret-key';
+    const cronSecret = process.env.CRON_SECRET;
     
-    // Permitir requests de Vercel Cron (sin auth) o con Bearer token correcto
-    const isVercelCron = request.headers.get('user-agent')?.includes('vercel');
-    const hasValidAuth = authHeader === `Bearer ${cronSecret}`;
+    // Vercel Cron envía el header: Authorization: Bearer <CRON_SECRET>
+    // También verificamos si viene de Vercel por el header especial
+    const isVercelCron = authHeader === `Bearer ${cronSecret}`;
     
-    if (!isVercelCron && !hasValidAuth) {
+    if (!isVercelCron) {
+      console.error('Unauthorized cron attempt:', {
+        hasAuthHeader: !!authHeader,
+        authHeaderValue: authHeader?.substring(0, 20) + '...',
+        expectedSecret: cronSecret?.substring(0, 10) + '...'
+      });
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
+    
+    console.log('Cron job started at:', new Date().toISOString());
 
     // Obtener 20 App IDs aleatorios
     const randomAppIds = getRandomAppIds(20);
@@ -142,7 +148,8 @@ export async function GET(request: Request) {
     return NextResponse.json(
       { 
         error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
       },
       { status: 500 }
     );
