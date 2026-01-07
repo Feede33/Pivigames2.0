@@ -124,13 +124,13 @@ export default function Home() {
           </div>
         </div>
       ) : (
-        <div className="relative h-[100vh] flex items-center overflow-hidden">
-          {/* Wallpaper con resolución original respetada */}
+        <div className="relative h-[100vh] flex items-center overflow-hidden bg-black">
+          {/* Wallpaper que cubre toda la pantalla manteniendo aspect ratio */}
           <div
             className="absolute inset-0 bg-center bg-no-repeat transition-all duration-700"
             style={{
               backgroundImage: `url(${heroGames[currentSlide].wallpaper})`,
-              backgroundSize: 'contain',
+              backgroundSize: 'cover',
               backgroundPosition: 'center'
             }}
           />
