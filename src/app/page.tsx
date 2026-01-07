@@ -1,32 +1,21 @@
 'use client';
-import { useTheme } from "next-themes"
 
 import { useState, useEffect } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Bell, ChevronLeft, ChevronRight, Play, Info } from 'lucide-react';
-import { Moon, Sun } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ChevronLeft, ChevronRight, Play, Info } from 'lucide-react';
 import GameModal from "@/components/GameModal"
 import UserProfile from "@/components/UserProfile"
 import WallpaperImage from "@/components/WallpaperImage"
 import { getGames, enrichGameWithSteamData, type GameWithSteamData } from "@/lib/supabase"
 import { proxySteamImage } from "@/lib/image-proxy"
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
 export default function Home() {
-  const [hoveredGame, setHoveredGame] = useState<number | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [modalGame, setModalGame] = useState<GameWithSteamData | null>(null);
   const [modalOrigin, setModalOrigin] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
-  const { setTheme } = useTheme()
   const [games, setGames] = useState<GameWithSteamData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  const GAMES_PER_PAGE = 20;
 
   // Cargar juegos desde Supabase y enriquecerlos con datos de Steam
   useEffect(() => {
@@ -39,6 +28,7 @@ export default function Home() {
         
         if (gamesFromDB.length === 0) {
           setGames([]);
+          setHasMore(false);
           setLoading(false);
           return;
         }
@@ -50,9 +40,11 @@ export default function Home() {
         
         console.log('Enriched games:', enrichedGames);
         setGames(enrichedGames);
+        setHasMore(enrichedGames.length >= GAMES_PER_PAGE);
       } catch (error) {
         console.error('Error loading games:', error);
         setGames([]);
+        setHasMore(false);
       } finally {
         setLoading(false);
       }
@@ -60,11 +52,32 @@ export default function Home() {
     loadGames();
   }, []);
 
-  // Organizar juegos por categorías
-  const trendingGames = games.slice(0, 6);
-  const actionGames = games.filter(g => g.genre.toLowerCase().includes('action')).slice(0, 4);
-  const adventureGames = games.filter(g => g.genre.toLowerCase().includes('adventure')).slice(0, 4);
-  const sportsGames = games.filter(g => g.genre.toLowerCase().includes('sport')).slice(0, 4);
+  // Infinite scroll - por ahora solo detecta scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (loading || !hasMore) return;
+      
+      const scrollHeight = document.documentElement.scrollHeight;
+      const scrollTop = document.documentElement.scrollTop;
+      const clientHeight = document.documentElement.clientHeight;
+      
+      // Si estamos cerca del final (200px antes)
+      if (scrollHeight - scrollTop - clientHeight < 200) {
+        // Aquí se podría cargar más juegos en el futuro
+        console.log('Near bottom - could load more games');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading, hasMore]);
+
+  // Organizar juegos por categorías - mostrar todos sin límite
+  const trendingGames = games.slice(0, Math.min(games.length, 20));
+  const actionGames = games.filter(g => g.genre.toLowerCase().includes('action'));
+  const adventureGames = games.filter(g => g.genre.toLowerCase().includes('adventure'));
+  const sportsGames = games.filter(g => g.genre.toLowerCase().includes('sport'));
+  const allOtherGames = games; // Mostrar todos los juegos
 
   const heroGames = trendingGames.length > 0 ? trendingGames : [];
 
@@ -378,6 +391,55 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+            </section>
+          )}
+
+          {/* All Games - Grid infinito */}
+          {allOtherGames.length > 0 && (
+            <section>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold">Todos los Juegos</h3>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {allOtherGames.map((game) => (
+                  <div
+                    key={game.id}
+                    className="group cursor-pointer"
+                    onClick={(e) => handleGameClick(game, e)}
+                  >
+                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
+                      <div className="aspect-[3/4] bg-gradient-to-br from-purple-900 to-blue-900">
+                        <img
+                          src={proxySteamImage(game.image)}
+                          alt={game.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="absolute top-2 left-2">
+                        <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
+                          {game.genre}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition">
+                        {game.title}
+                      </h4>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">⭐ {game.rating}</span>
+                        <span className="text-sm font-bold text-green-500">FREE</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Loading indicator */}
+              {loading && (
+                <div className="text-center py-8">
+                  <div className="text-muted-foreground">Cargando más juegos...</div>
+                </div>
+              )}
             </section>
           )}
         </div>
