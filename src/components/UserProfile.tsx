@@ -25,9 +25,9 @@ export default function UserProfile() {
         </div>
 
         {/* Controles */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <button
-            className="p-2.5 hover:bg-accent rounded transition-colors"
+            className="p-1.5 mr-2 hover:bg-accent rounded transition-colors"
             title="User Settings"
           >
             <Settings className="w-4 h-4" />
