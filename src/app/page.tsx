@@ -99,10 +99,9 @@ export default function Home() {
           <div className="flex items-center gap-8">
             <h1 className="text-3xl font-bold text-brand">Pivigames2.0</h1>
             <div className="hidden md:flex gap-6 text-sm">
-              <a href="#" className="hover:text-muted-foreground transition">Home</a>
-              <a href="#" className="hover:text-muted-foreground transition">Games</a>
-              <a href="#" className="hover:text-muted-foreground transition">New & Popular</a>
-              <a href="#" className="hover:text-muted-foreground transition">My List</a>
+              <a href="#" className="hover:text-muted-foreground transition">Discover</a>
+              <a href="#" className="hover:text-muted-foreground transition">Browse</a>
+      
               <a href="#" className="hover:text-muted-foreground transition">Ofertas e Historial de Precios</a>
             </div>
           </div>
