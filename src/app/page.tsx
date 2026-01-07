@@ -125,15 +125,19 @@ export default function Home() {
         </div>
       ) : (
         <div className="relative h-[100vh] flex items-center overflow-hidden">
-          {/* SOLO EL WALLPAPER - SIN GRADIENTES PARA DEBUG */}
+          {/* Wallpaper con resolución original respetada */}
           <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
+            className="absolute inset-0 bg-center bg-no-repeat transition-all duration-700"
             style={{
               backgroundImage: `url(${heroGames[currentSlide].wallpaper})`,
-              backgroundSize: 'cover',
+              backgroundSize: 'contain',
               backgroundPosition: 'center'
             }}
           />
+          {/* Gradiente negro desde la izquierda para legibilidad del texto */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent z-10 pointer-events-none" />
+          {/* Gradiente negro inferior suave hacia el fondo de la página */}
+          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black via-black/80 to-transparent z-10 pointer-events-none" />
 
           {/* Navigation Arrows */}
           <button
