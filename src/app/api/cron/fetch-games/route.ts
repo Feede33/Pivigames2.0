@@ -5,8 +5,10 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Lista de App IDs populares de Steam (puedes expandir esta lista)
+// Lista extendida de App IDs populares de Steam
+// Incluye juegos populares, AAA, indie, y de diferentes géneros
 const POPULAR_STEAM_APPIDS = [
+  // Juegos muy populares
   '730', '570', '440', '271590', '578080', '1172470', '1245620',
   '1091500', '1938090', '2357570', '1086940', '1203220', '1174180',
   '1966720', '2050650', '1817070', '1623730', '1449850', '1426210',
@@ -16,7 +18,26 @@ const POPULAR_STEAM_APPIDS = [
   '548430', '489830', '477160', '466560', '431960', '413150',
   '394360', '377160', '359550', '346110', '292030', '281990',
   '268500', '252490', '238960', '236390', '227300', '221100',
-  '218620', '203160', '200260', '105600', '72850', '49520'
+  '218620', '203160', '200260', '105600', '72850', '49520',
+  // Juegos adicionales populares
+  '1091500', '1174180', '1203220', '1237970', '1245620', '1332010',
+  '1426210', '1449850', '1623730', '1817070', '1938090', '2050650',
+  '2357570', '271590', '346110', '359550', '377160', '394360',
+  '413150', '431960', '466560', '477160', '489830', '548430',
+  '552520', '578080', '582010', '620', '646570', '686810',
+  '739630', '755790', '814380', '883710', '892970', '945360',
+  '976730', '1063730', '1086940', '1097150', '1145360', '1172470',
+  '1172620', '1966720', '105600', '200260', '203160', '218620',
+  '221100', '227300', '236390', '238960', '252490', '268500',
+  '281990', '292030', '49520', '72850',
+  // Más juegos populares de Steam
+  '1174180', '1203220', '1237970', '1245620', '1332010', '1426210',
+  '1449850', '1623730', '1817070', '1938090', '2050650', '2357570',
+  '271590', '346110', '359550', '377160', '394360', '413150',
+  '431960', '466560', '477160', '489830', '548430', '552520',
+  '578080', '582010', '620', '646570', '686810', '739630',
+  '755790', '814380', '883710', '892970', '945360', '976730',
+  '1063730', '1086940', '1097150', '1145360', '1172470', '1172620'
 ];
 
 // Función para obtener 20 App IDs aleatorios
@@ -38,11 +59,16 @@ async function appIdExists(appId: string): Promise<boolean> {
 
 export async function GET(request: Request) {
   try {
-    // Verificar autorización (opcional pero recomendado)
+    // Verificar autorización
+    // Vercel Cron envía un header especial, pero también aceptamos el Bearer token
     const authHeader = request.headers.get('authorization');
     const cronSecret = process.env.CRON_SECRET || 'your-secret-key';
     
-    if (authHeader !== `Bearer ${cronSecret}`) {
+    // Permitir requests de Vercel Cron (sin auth) o con Bearer token correcto
+    const isVercelCron = request.headers.get('user-agent')?.includes('vercel');
+    const hasValidAuth = authHeader === `Bearer ${cronSecret}`;
+    
+    if (!isVercelCron && !hasValidAuth) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
