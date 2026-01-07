@@ -257,7 +257,7 @@ export default function Home() {
                     className="flex-shrink-0 w-[220px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
+                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200">
                       <div className="aspect-[2/3] bg-gradient-to-br from-purple-900 to-blue-900">
                         <img
                           src={proxySteamImage(game.image)}
@@ -306,7 +306,7 @@ export default function Home() {
                     className="flex-shrink-0 w-[280px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
+                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200">
                       <div className="aspect-[16/9] bg-gradient-to-br from-red-900 to-orange-900">
                         <img
                           src={proxySteamImage(game.cover_image)}
@@ -353,7 +353,7 @@ export default function Home() {
                     className="flex-shrink-0 w-[220px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
+                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200">
                       <div className="aspect-[2/3] bg-gradient-to-br from-green-900 to-teal-900">
                         <img
                           src={proxySteamImage(game.image)}
@@ -400,7 +400,7 @@ export default function Home() {
                     className="flex-shrink-0 w-[280px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
+                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200">
                       <div className="aspect-[16/9] bg-gradient-to-br from-blue-900 to-purple-900">
                         <img
                           src={proxySteamImage(game.cover_image)}
@@ -442,7 +442,7 @@ export default function Home() {
                     className="group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
+                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200">
                       <div className="aspect-[2/3] bg-gradient-to-br from-purple-900 to-blue-900">
                         <img
                           src={proxySteamImage(game.image)}
