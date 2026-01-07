@@ -131,8 +131,28 @@ export default function GameModal({ game, onClose }: Props) {
   
   // Obtener la URL del video actual
   const getVideoUrl = () => {
-    if (!currentVideo) return '';
-    return currentVideo.mp4?.max || (currentVideo.mp4 as Record<string, string>)?.['480'] || game?.trailer || '';
+    if (!currentVideo) {
+      console.log('No currentVideo');
+      return '';
+    }
+    
+    console.log('currentVideo structure:', currentVideo);
+    console.log('currentVideo.mp4:', currentVideo.mp4);
+    console.log('currentVideo.webm:', currentVideo.webm);
+    
+    const mp4Max = currentVideo.mp4?.max;
+    const mp4_480 = currentVideo.mp4?.['480'];
+    const webmMax = currentVideo.webm?.max;
+    const webm480 = currentVideo.webm?.['480'];
+    const trailerUrl = game?.trailer;
+    
+    console.log('mp4Max:', mp4Max);
+    console.log('mp4_480:', mp4_480);
+    console.log('webmMax:', webmMax);
+    console.log('webm480:', webm480);
+    console.log('trailerUrl:', trailerUrl);
+    
+    return mp4Max || mp4_480 || webmMax || webm480 || trailerUrl || '';
   };
   
   const videoUrl = getVideoUrl();
@@ -144,8 +164,9 @@ export default function GameModal({ game, onClose }: Props) {
       console.log('Steam videos loaded:', steamData.videos);
       console.log('Current video:', currentVideo);
       console.log('Video URL:', videoUrl);
+      console.log('Has valid video:', hasValidVideo);
     }
-  }, [steamData, currentVideo, videoUrl]);
+  }, [steamData, currentVideo, videoUrl, hasValidVideo]);
 
   useEffect(() => {
     setReady(true);
