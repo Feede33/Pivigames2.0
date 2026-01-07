@@ -686,7 +686,7 @@ export default function GameModal({ game, onClose }: Props) {
                     ) : steamData.price_info ? (
                       <div>
                         {steamData.price_info.discount_percent > 0 ? (
-                          <div className="space-y-2">
+                          <div className="mt-2 space-y-2">
                             <div className="flex items-center gap-3">
                               <span className="bg-green-600 text-white px-2 py-1 rounded font-bold text-sm">
                                 -{steamData.price_info.discount_percent}%
