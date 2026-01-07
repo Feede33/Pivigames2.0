@@ -226,24 +226,27 @@ export default function Home() {
         <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">
           {/* Trending Now - Epic Games Style */}
           {trendingGames.length > 0 && (
-            <section className="relative">
+            <section className="relative group">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold">Ofertas</h3>
-                <div className="flex items-center gap-2">
-                  <button 
-                    onClick={() => scrollEpicExtras('left')}
-                    className="bg-background/50 hover:bg-background/80 p-2 rounded-full transition"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <button 
-                    onClick={() => scrollEpicExtras('right')}
-                    className="bg-background/50 hover:bg-background/80 p-2 rounded-full transition"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
               </div>
+              
+              {/* Botón izquierdo */}
+              <button 
+                onClick={() => scrollEpicExtras('left')}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              
+              {/* Botón derecho */}
+              <button 
+                onClick={() => scrollEpicExtras('right')}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+              
               <div 
                 id="epic-extras-scroll"
                 className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth"
