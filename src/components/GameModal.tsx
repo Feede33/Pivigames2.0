@@ -588,7 +588,19 @@ export default function GameModal({ game, onClose }: Props) {
               {/* Right column - Sidebar */}
               <div className="space-y-6">
                 {/* Price Card - Destacado */}
-                {steamData?.price && (
+                {loadingSteam ? (
+                  <div className="relative overflow-hidden bg-gradient-to-br from-gray-700/20 via-gray-600/10 to-gray-700/20 border border-gray-600/30 rounded-3xl p-8">
+                    <div className="flex items-center justify-between gap-6 mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-1 h-8 bg-gray-600 animate-pulse rounded-full"></div>
+                        <div className="h-4 w-16 bg-gray-600 animate-pulse rounded"></div>
+                      </div>
+                      <div className="h-8 w-24 bg-gray-600 animate-pulse rounded-full"></div>
+                    </div>
+                    <div className="h-10 w-32 bg-gray-600 animate-pulse rounded mb-2"></div>
+                    <div className="h-3 w-20 bg-gray-600 animate-pulse rounded"></div>
+                  </div>
+                ) : steamData?.price ? (
                   <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500/10 via-green-500/5 to-teal-500/10 border border-green-400/30 rounded-3xl p-8 backdrop-blur-sm">
                     <Snowfall
                       style={{
@@ -649,7 +661,7 @@ export default function GameModal({ game, onClose }: Props) {
                       </p>
                     )}
                   </div>
-                )}
+                ) : null}
 
                 {/* Game info */}
                 {loadingSteam ? (
@@ -788,7 +800,11 @@ export default function GameModal({ game, onClose }: Props) {
             </div>
 
             {/* Buy on Steam Widget - Full Width */}
-            {steamData && (
+            {loadingSteam ? (
+              <div className="flex justify-center mt-8 px-6">
+                <div className="w-[646px] h-[190px] bg-gray-700 animate-pulse rounded-lg" />
+              </div>
+            ) : steamData ? (
               <div className="flex justify-center mt-8 px-6">
                 <iframe
                   src={`https://store.steampowered.com/widget/${steamData.steam_appid}/`}
@@ -797,7 +813,7 @@ export default function GameModal({ game, onClose }: Props) {
                   frameBorder="0"
                 />
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
