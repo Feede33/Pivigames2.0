@@ -136,7 +136,7 @@ export default function GameModal({ game, onClose }: Props) {
       return '';
     }
     
-    console.log('currentVideo structure:', currentVideo);
+    console.log('currentVideo structure:', JSON.stringify(currentVideo, null, 2));
     console.log('currentVideo.mp4:', currentVideo.mp4);
     console.log('currentVideo.webm:', currentVideo.webm);
     
@@ -151,6 +151,25 @@ export default function GameModal({ game, onClose }: Props) {
     console.log('webmMax:', webmMax);
     console.log('webm480:', webm480);
     console.log('trailerUrl:', trailerUrl);
+    
+    // Intentar con todas las posibles propiedades
+    const allMp4Keys = currentVideo.mp4 ? Object.keys(currentVideo.mp4) : [];
+    const allWebmKeys = currentVideo.webm ? Object.keys(currentVideo.webm) : [];
+    console.log('All mp4 keys:', allMp4Keys);
+    console.log('All webm keys:', allWebmKeys);
+    
+    // Intentar obtener cualquier valor de mp4 o webm
+    if (allMp4Keys.length > 0) {
+      const firstMp4Key = allMp4Keys[0];
+      console.log(`First mp4 value (${firstMp4Key}):`, currentVideo.mp4[firstMp4Key]);
+      return currentVideo.mp4[firstMp4Key] || '';
+    }
+    
+    if (allWebmKeys.length > 0) {
+      const firstWebmKey = allWebmKeys[0];
+      console.log(`First webm value (${firstWebmKey}):`, currentVideo.webm[firstWebmKey]);
+      return currentVideo.webm[firstWebmKey] || '';
+    }
     
     return mp4Max || mp4_480 || webmMax || webm480 || trailerUrl || '';
   };

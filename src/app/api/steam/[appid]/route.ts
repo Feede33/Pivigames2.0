@@ -40,19 +40,16 @@ export async function GET(
     })) || [];
 
     // Extraer videos/trailers
-    const videos = gameData.movies?.map((movie: any) => ({
-      id: movie.id,
-      name: movie.name,
-      thumbnail: movie.thumbnail,
-      webm: {
-        480: movie.webm?.['480'],
-        max: movie.webm?.max,
-      },
-      mp4: {
-        480: movie.mp4?.['480'],
-        max: movie.mp4?.max,
-      },
-    })) || [];
+    const videos = gameData.movies?.map((movie: any) => {
+      console.log('Raw movie data:', JSON.stringify(movie, null, 2));
+      return {
+        id: movie.id,
+        name: movie.name,
+        thumbnail: movie.thumbnail,
+        webm: movie.webm || {},
+        mp4: movie.mp4 || {},
+      };
+    }) || [];
 
     // Extraer géneros
     const genres = gameData.genres?.map((g: any) => g.description) || [];
