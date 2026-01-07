@@ -6,37 +6,56 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-const STEAM_API_KEY = process.env.STEAM_API_KEY!;
-
-// Obtener lista completa de juegos de Steam
-async function getAllSteamGames() {
-  const response = await fetch(
-    `https://api.steampowered.com/ISteamApps/GetAppList/v2/`
-  );
-  const data = await response.json();
-  return data.applist.apps;
+// Generar App IDs aleatorios en rangos conocidos de Steam
+// Steam tiene App IDs desde ~10 hasta ~3,000,000+
+function generateRandomAppIds(count: number): string[] {
+  const appIds = new Set<string>();
+  
+  while (appIds.size < count * 3) { // Generar 3x para tener buffer
+    // Generar IDs en rangos donde hay más juegos
+    const ranges = [
+      { min: 200, max: 1000 },      // Juegos clásicos
+      { min: 10000, max: 100000 },  // Juegos indie
+      { min: 200000, max: 800000 }, // Juegos modernos
+      { min: 1000000, max: 2500000 } // Juegos recientes
+    ];
+    
+    const range = ranges[Math.floor(Math.random() * ranges.length)];
+    const randomId = Math.floor(Math.random() * (range.max - range.min) + range.min);
+    appIds.add(randomId.toString());
+  }
+  
+  return Array.from(appIds);
 }
 
 // Verificar si un App ID ya existe en la base de datos
 async function appIdExists(appId: string): Promise<boolean> {
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from('games')
     .select('steam_appid')
     .eq('steam_appid', appId)
     .single();
   
-  return !!data && !error;
+  return !!data;
 }
 
-// Verificar si un juego es válido (tiene datos completos en Steam)
+// Verificar si un juego existe y es válido en Steam
 async function isValidGame(appId: string): Promise<boolean> {
   try {
     const response = await fetch(
-      `https://store.steampowered.com/api/appdetails?appids=${appId}`
+      `https://store.steampowered.com/api/appdetails?appids=${appId}`,
+      {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+      }
     );
+    
+    if (!response.ok) return false;
+    
     const data = await response.json();
     
-    // Verificar que sea un juego válido con datos
+    // Verificar que sea un juego válido
     if (data[appId]?.success && data[appId]?.data?.type === 'game') {
       return true;
     }
@@ -64,45 +83,41 @@ export async function GET(request: Request) {
 
     console.log('Cron job started at:', new Date().toISOString());
 
-    // Obtener todos los juegos de Steam
-    console.log('Fetching all Steam games...');
-    const allGames = await getAllSteamGames();
-    console.log(`Total Steam games: ${allGames.length}`);
+    // Generar App IDs aleatorios
+    const candidateIds = generateRandomAppIds(60); // Generar 60 candidatos
+    console.log(`Generated ${candidateIds.length} candidate App IDs`);
     
     const results = {
       total: 0,
       inserted: 0,
       skipped: 0,
-      errors: 0,
+      invalid: 0,
       details: [] as any[]
     };
 
-    // Mezclar y buscar 20 juegos válidos que no existan en la DB
-    const shuffled = [...allGames].sort(() => Math.random() - 0.5);
-    
-    for (const game of shuffled) {
+    // Procesar candidatos hasta conseguir 20 válidos
+    for (const appId of candidateIds) {
       // Si ya tenemos 20 insertados, terminar
       if (results.inserted >= 20) {
         break;
       }
-      
-      const appId = game.appid.toString();
       
       try {
         // Verificar si ya existe en nuestra DB
         const exists = await appIdExists(appId);
         
         if (exists) {
-          continue; // Saltar sin contar
+          results.skipped++;
+          continue;
         }
         
         // Verificar si es un juego válido en Steam
-        console.log(`Validating App ID: ${appId} (${game.name})`);
+        console.log(`Validating App ID: ${appId}`);
         const isValid = await isValidGame(appId);
         
         if (!isValid) {
-          console.log(`App ID ${appId} is not a valid game, skipping`);
-          continue; // Saltar sin contar
+          results.invalid++;
+          continue;
         }
 
         // Insertar nuevo juego
@@ -117,32 +132,23 @@ export async function GET(request: Request) {
 
         if (error) {
           console.error(`Error inserting App ID ${appId}:`, error);
-          throw error;
+          continue;
         }
 
-        console.log(`Successfully inserted App ID ${appId} (${game.name})`);
+        console.log(`Successfully inserted App ID ${appId}`);
         results.inserted++;
         results.total++;
         results.details.push({
           appId,
-          name: game.name,
           status: 'inserted',
           id: data.id
         });
         
-        // Pequeña pausa para no saturar la API de Steam
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Pequeña pausa para no saturar la API
+        await new Promise(resolve => setTimeout(resolve, 500));
         
       } catch (error) {
         console.error(`Failed to process App ID ${appId}:`, error);
-        results.errors++;
-        results.total++;
-        results.details.push({
-          appId,
-          name: game.name,
-          status: 'error',
-          error: error instanceof Error ? error.message : 'Unknown error'
-        });
       }
     }
 
@@ -150,7 +156,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: `Processed ${results.total} games, inserted ${results.inserted}`,
+      message: `Inserted ${results.inserted} new games`,
       results,
       timestamp: new Date().toISOString()
     });
