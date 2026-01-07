@@ -68,6 +68,7 @@ export default function GameModal({ game, onClose }: Props) {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(0);
   const [showTrailer, setShowTrailer] = useState(false);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [steamData, setSteamData] = useState<SteamData | null>(null);
   const [loadingSteam, setLoadingSteam] = useState(false);
   const [userLocation, setUserLocation] = useState<{
@@ -129,7 +130,7 @@ export default function GameModal({ game, onClose }: Props) {
       ? [{ name: 'Trailer', mp4: { max: game.trailer } as { max: string } }]
       : [];
 
-  const currentVideo = videos[0] as any;
+  const currentVideo = videos[currentVideoIndex] as any;
 
   // Combinar screenshots con thumbnails de videos para el slider
   const mediaItems = [
@@ -138,6 +139,7 @@ export default function GameModal({ game, onClose }: Props) {
       type: 'video' as const,
       src: video.thumbnail,
       videoUrl: video.hls || video.dash || video.mp4?.max || video.mp4?.['480'] || video.webm?.max || video.webm?.['480'] || '',
+      videoIndex: index,
       index: screenshots.length + index
     }))
   ];
@@ -180,11 +182,12 @@ export default function GameModal({ game, onClose }: Props) {
   useEffect(() => {
     if (steamData?.videos?.length) {
       console.log('Steam videos loaded:', steamData.videos);
+      console.log('Current video index:', currentVideoIndex);
       console.log('Current video:', currentVideo);
       console.log('Video URL:', videoUrl);
       console.log('Has valid video:', hasValidVideo);
     }
-  }, [steamData, currentVideo, videoUrl, hasValidVideo]);
+  }, [steamData, currentVideoIndex, currentVideo, videoUrl, hasValidVideo]);
 
   useEffect(() => {
     setReady(true);
@@ -193,6 +196,7 @@ export default function GameModal({ game, onClose }: Props) {
   useEffect(() => {
     if (game) {
       requestAnimationFrame(() => setVisible(true));
+      setCurrentVideoIndex(0); // Reset video index when game changes
     } else {
       setVisible(false);
     }
@@ -299,6 +303,7 @@ export default function GameModal({ game, onClose }: Props) {
               }`}>
               {showTrailer && hasValidVideo && (
                 <VideoPlayer
+                  key={`video-${currentVideoIndex}-${videoUrl}`}
                   url={videoUrl}
                   playing={showTrailer}
                 />
@@ -334,7 +339,10 @@ export default function GameModal({ game, onClose }: Props) {
                   )}
                   {(hasValidVideo || game.trailer) && (
                     <button
-                      onClick={() => setShowTrailer(true)}
+                      onClick={() => {
+                        setCurrentVideoIndex(0);
+                        setShowTrailer(true);
+                      }}
                       className="px-7 py-2.5 rounded-full bg-gray-500/70 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors"
                     >
                       <Play className="w-[18px] h-[18px]" />
@@ -365,7 +373,10 @@ export default function GameModal({ game, onClose }: Props) {
                 )}
                 {(hasValidVideo || game.trailer) && (
                   <button
-                    onClick={() => setShowTrailer(false)}
+                    onClick={() => {
+                      setShowTrailer(false);
+                      setCurrentVideoIndex(0);
+                    }}
                     className="px-7 py-2.5 rounded-full bg-red-600 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-red-700 transition-colors"
                   >
                     <X className="w-[18px] h-[18px]" />
@@ -510,7 +521,8 @@ export default function GameModal({ game, onClose }: Props) {
                               className="flex-shrink-0 w-[calc(33.33%-5px)] aspect-video bg-gray-700 rounded overflow-hidden cursor-pointer relative group"
                               onClick={() => {
                                 if (item.type === 'video' && item.videoUrl) {
-                                  // Reproducir video en el modal
+                                  // Reproducir el video específico clickeado
+                                  setCurrentVideoIndex(item.videoIndex || 0);
                                   setShowTrailer(true);
                                 } else {
                                   openViewer(item.index);
@@ -524,7 +536,7 @@ export default function GameModal({ game, onClose }: Props) {
                               {/* Indicador de video */}
                               {item.type === 'video' && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-colors">
-                                  <div className="bg-white/90 rounded-full p-3">
+                                  <div className="bg-white/90 rounded-full p-3 group-hover:scale-110 transition-transform">
                                     <Play className="w-6 h-6 text-black" />
                                   </div>
                                 </div>
