@@ -404,8 +404,8 @@ export default function GameModal({ game, onClose }: Props) {
                 <>
                   <span className="text-green-500 font-bold text-[15px]">
                     {steamData?.metacritic
-                      ? `${steamData.metacritic}% Match`
-                      : `${Math.round(game.rating * 10)}% Match`}
+                      ? `${steamData.metacritic}% Rating`
+                      : `${Math.round(game.rating * 10)}% Rating`}
                   </span>
                   <span className="text-gray-400 text-sm">
                     {steamData?.release_year || '2024'}
