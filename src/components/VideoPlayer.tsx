@@ -92,11 +92,16 @@ export default function VideoPlayer({ url }: Props) {
               'fullscreen',
             ],
             settings: ['quality', 'speed'],
+            quality: {
+              default: 720,
+              options: [1080, 720, 480, 360],
+            },
             speed: {
               selected: 1,
               options: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
             },
             autoplay: true,
+            muted: false,
             clickToPlay: true,
             disableContextMenu: true,
             hideControls: false,
@@ -108,6 +113,9 @@ export default function VideoPlayer({ url }: Props) {
               fallback: true,
               iosNative: true,
             },
+            // Optimizaciones de rendimiento
+            ratio: '16:9',
+            storage: { enabled: true, key: 'plyr' },
           }}
         />
       </div>
@@ -145,11 +153,16 @@ export default function VideoPlayer({ url }: Props) {
               'fullscreen',
             ],
             settings: ['quality', 'speed'],
+            quality: {
+              default: 720,
+              options: [1080, 720, 480, 360],
+            },
             speed: {
               selected: 1,
               options: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
             },
             autoplay: true,
+            muted: false,
             clickToPlay: true,
             disableContextMenu: true,
             hideControls: false,
@@ -161,6 +174,9 @@ export default function VideoPlayer({ url }: Props) {
               fallback: true,
               iosNative: true,
             },
+            // Optimizaciones de rendimiento
+            ratio: '16:9',
+            storage: { enabled: true, key: 'plyr' },
           }}
         />
       </div>
