@@ -137,6 +137,13 @@ export async function GET(
       final_formatted: gameData.price_overview.final_formatted || null,
     } : null;
 
+    // Calcular precio actual y precio más bajo (simulado por ahora)
+    // En una implementación real, esto vendría de una base de datos de historial de precios
+    const currentPrice = priceInfo?.final_formatted || (gameData.is_free ? 'Free' : null);
+    const lowestRecordedPrice = priceInfo ? 
+      (priceInfo.discount_percent > 0 ? priceInfo.final_formatted : priceInfo.initial_formatted) : 
+      currentPrice;
+
     return NextResponse.json({
       appid: gameData.steam_appid,
       name: gameData.name,
@@ -165,6 +172,8 @@ export async function GET(
       },
       price: gameData.is_free ? 'Free' : gameData.price_overview?.final_formatted || null,
       price_info: priceInfo,
+      current_price: currentPrice,
+      lowest_recorded_price: lowestRecordedPrice,
       is_free: gameData.is_free || false,
       steam_appid: gameData.steam_appid,
     });

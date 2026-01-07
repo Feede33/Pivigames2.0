@@ -52,6 +52,8 @@ type SteamData = {
     initial_formatted: string | null;
     final_formatted: string | null;
   } | null;
+  current_price: string | null;
+  lowest_recorded_price: string | null;
   is_free: boolean;
   steam_appid: number;
 };
@@ -762,6 +764,32 @@ export default function GameModal({ game, onClose }: Props) {
                       <span className="text-white">
                         {steamData?.release_date || 'Dec 15, 2024'}
                       </span>
+                    </p>
+                    <p className="text-gray-500 text-sm">
+                      <span>Price History: </span>
+                      {steamData?.current_price && steamData?.lowest_recorded_price ? (
+                        <span className="text-white">
+                          <a 
+                            href={`https://steamdb.info/app/${steamData.steam_appid}/`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-green-400 transition-colors cursor-pointer underline decoration-dotted"
+                          >
+                            Current Price: {steamData.current_price}
+                          </a>
+                          {' | '}
+                          <a 
+                            href={`https://steamdb.info/app/${steamData.steam_appid}/`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-green-400 transition-colors cursor-pointer underline decoration-dotted"
+                          >
+                            Lowest Recorded Price: {steamData.lowest_recorded_price}
+                          </a>
+                        </span>
+                      ) : (
+                        <span className="text-white">No disponible</span>
+                      )}
                     </p>
                   </div>
                 )}
