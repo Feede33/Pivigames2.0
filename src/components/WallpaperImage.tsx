@@ -16,11 +16,16 @@ export default function WallpaperImage({ src, alt, className = '', onLoad }: Wal
     mixBlendMode: 'normal' as any
   });
 
+  // Use proxy for Steam images to avoid CORS issues
+  const proxiedSrc = src.includes('steamstatic.com') || src.includes('akamai') 
+    ? `/api/proxy-image?url=${encodeURIComponent(src)}`
+    : src;
+
   useEffect(() => {
     // Detectar si la imagen tiene un tinte azul dominante
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.src = src;
+    img.src = proxiedSrc;
     
     img.onload = () => {
       try {
@@ -74,11 +79,11 @@ export default function WallpaperImage({ src, alt, className = '', onLoad }: Wal
       
       if (onLoad) onLoad();
     };
-  }, [src, alt, onLoad]);
+  }, [proxiedSrc, alt, onLoad]);
 
   return (
     <img
-      src={src}
+      src={proxiedSrc}
       alt={alt}
       className={className}
       style={imageStyle}

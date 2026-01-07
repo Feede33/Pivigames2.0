@@ -10,6 +10,7 @@ import GameModal from "@/components/GameModal"
 import UserProfile from "@/components/UserProfile"
 import WallpaperImage from "@/components/WallpaperImage"
 import { getGames, enrichGameWithSteamData, type GameWithSteamData } from "@/lib/supabase"
+import { proxySteamImage } from "@/lib/image-proxy"
 
 import {
   DropdownMenu,
@@ -214,7 +215,7 @@ export default function Home() {
                     <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
                       <div className="aspect-[3/4] bg-gradient-to-br from-purple-900 to-blue-900">
                         <img
-                          src={game.image}
+                          src={proxySteamImage(game.image)}
                           alt={game.title}
                           className="w-full h-full object-cover"
                         />
@@ -263,7 +264,7 @@ export default function Home() {
                     <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
                       <div className="aspect-[16/9] bg-gradient-to-br from-red-900 to-orange-900">
                         <img
-                          src={game.cover_image}
+                          src={proxySteamImage(game.cover_image)}
                           alt={game.title}
                           className="w-full h-full object-cover"
                         />
@@ -307,7 +308,7 @@ export default function Home() {
                     <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
                       <div className="aspect-[3/4] bg-gradient-to-br from-green-900 to-teal-900">
                         <img
-                          src={game.image}
+                          src={proxySteamImage(game.image)}
                           alt={game.title}
                           className="w-full h-full object-cover"
                         />
@@ -354,7 +355,7 @@ export default function Home() {
                     <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200 group-hover:scale-105">
                       <div className="aspect-[16/9] bg-gradient-to-br from-blue-900 to-purple-900">
                         <img
-                          src={game.cover_image}
+                          src={proxySteamImage(game.cover_image)}
                           alt={game.title}
                           className="w-full h-full object-cover"
                         />

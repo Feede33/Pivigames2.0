@@ -10,6 +10,7 @@ import Snowfall from 'react-snowfall';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import 'overlayscrollbars/overlayscrollbars.css';
 import WallpaperImage from './WallpaperImage';
+import { proxySteamImage } from '@/lib/image-proxy';
 
 
 const VideoPlayer = dynamic(() => import('./VideoPlayer'), { ssr: false });
@@ -530,7 +531,7 @@ export default function GameModal({ game, onClose }: Props) {
                             >
                               <div
                                 className="w-full h-full bg-cover bg-center hover:scale-110 transition-transform duration-300"
-                                style={{ backgroundImage: `url(${item.src})` }}
+                                style={{ backgroundImage: `url(${proxySteamImage(item.src)})` }}
                               />
                               {/* Indicador de video */}
                               {item.type === 'video' && (
@@ -930,7 +931,7 @@ export default function GameModal({ game, onClose }: Props) {
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={screenshots[viewerIndex]}
+              src={proxySteamImage(screenshots[viewerIndex])}
               alt={`Screenshot ${viewerIndex + 1}`}
               className="max-w-full max-h-[85vh] object-contain"
             />
@@ -961,7 +962,7 @@ export default function GameModal({ game, onClose }: Props) {
               >
                 <div
                   className="w-full h-full bg-cover bg-center"
-                  style={{ backgroundImage: `url(${src})` }}
+                  style={{ backgroundImage: `url(${proxySteamImage(src)})` }}
                 />
               </button>
             ))}
