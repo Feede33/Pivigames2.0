@@ -234,7 +234,7 @@ export default function Home() {
               {/* Botón izquierdo */}
               <button 
                 onClick={() => scrollEpicExtras('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
               >
                 <ChevronLeft className="w-6 h-6" />
               </button>
@@ -242,7 +242,7 @@ export default function Home() {
               {/* Botón derecho */}
               <button 
                 onClick={() => scrollEpicExtras('right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
               >
                 <ChevronRight className="w-6 h-6" />
               </button>
