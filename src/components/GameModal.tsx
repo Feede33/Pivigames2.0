@@ -113,17 +113,29 @@ export default function GameModal({ game, onClose }: Props) {
     }
   }, [game?.steam_appid, userLocation]);
 
-  // Screenshots - usa los que vienen del game (ya cargados desde Steam)
-  const screenshots = game?.screenshots?.length
+  // Screenshots - prioriza los de steamData, luego los del game
+  const screenshots = steamData?.screenshots?.length
+    ? steamData.screenshots.map(s => s.full)
+    : game?.screenshots?.length
     ? game.screenshots
     : [game?.wallpaper].filter(Boolean) as string[];
 
-  // Videos - usa el trailer que viene del game
-  const videos = game?.trailer
+  // Videos - prioriza los de steamData, luego el trailer del game
+  const videos = steamData?.videos?.length
+    ? steamData.videos
+    : game?.trailer
     ? [{ name: 'Trailer', mp4: { max: game.trailer } as { max: string } }]
     : [];
 
   const currentVideo = videos[0];
+
+  // Debug: Log video info
+  useEffect(() => {
+    if (steamData?.videos?.length) {
+      console.log('Steam videos loaded:', steamData.videos);
+      console.log('Current video:', currentVideo);
+    }
+  }, [steamData, currentVideo]);
 
   useEffect(() => {
     setReady(true);
@@ -201,12 +213,12 @@ export default function GameModal({ game, onClose }: Props) {
             <div className={`absolute inset-0 bg-gradient-to-t from-[#181818] to-transparent transition-opacity duration-500 ${showTrailer ? 'opacity-0' : 'opacity-100'
               }`} />
 
-            {/* Video de YouTube con ReactPlayer */}
+            {/* Video Player */}
             <div className={`absolute inset-0 transition-opacity duration-500 ${showTrailer && currentVideo ? 'opacity-100' : 'opacity-0 pointer-events-none'
               }`}>
               {showTrailer && currentVideo && (
                 <VideoPlayer
-                  url={currentVideo.mp4?.max || (currentVideo.mp4 as any)?.['480'] || game.trailer || ''}
+                  url={currentVideo.mp4?.max || (currentVideo.mp4 as Record<string, string>)?.['480'] || game.trailer || ''}
                   playing={showTrailer}
                 />
               )}

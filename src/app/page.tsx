@@ -238,7 +238,7 @@ export default function Home() {
                         {game.title}
                       </h4>
                       <p className="text-sm font-bold">
-                        {game.rating >= 9 ? 'Free' : '$19.99'}
+                        {game.rating = 'Free'}
                       </p>
                     </div>
                   </div>
