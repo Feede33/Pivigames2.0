@@ -17,6 +17,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [epicExtrasScroll, setEpicExtrasScroll] = useState(0);
+  const [actionGamesScroll, setActionGamesScroll] = useState(0);
+  const [adventureGamesScroll, setAdventureGamesScroll] = useState(0);
+  const [sportsGamesScroll, setSportsGamesScroll] = useState(0);
   const GAMES_PER_PAGE = 20;
 
   // Cargar juegos desde Supabase y enriquecerlos con datos de Steam
@@ -257,13 +260,15 @@ export default function Home() {
                     className="flex-shrink-0 w-[220px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200">
+                    <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg group-hover:shadow-2xl group-hover:shadow-primary/50 transition-all duration-300">
                       <div className="aspect-[2/3] bg-gradient-to-br from-purple-900 to-blue-900">
                         <img
                           src={proxySteamImage(game.image)}
                           alt={game.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300"
                         />
+                        {/* Overlay hover */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
                       {/* Badge superior */}
                       <div className="absolute top-2 left-2">
@@ -271,6 +276,8 @@ export default function Home() {
                           {game.rating >= 8 ? 'Popular' : 'Add-On'}
                         </span>
                       </div>
+                      {/* Overlay hover */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
                     {/* Título y precio */}
                     <div className="space-y-1">
@@ -306,13 +313,15 @@ export default function Home() {
                     className="flex-shrink-0 w-[280px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200">
+                    <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg group-hover:shadow-2xl group-hover:shadow-primary/50 transition-all duration-300">
                       <div className="aspect-[16/9] bg-gradient-to-br from-red-900 to-orange-900">
                         <img
                           src={proxySteamImage(game.cover_image)}
                           alt={game.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300"
                         />
+                        {/* Overlay hover */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
                     </div>
                     <div className="space-y-1">
@@ -353,13 +362,15 @@ export default function Home() {
                     className="flex-shrink-0 w-[220px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200">
+                    <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg group-hover:shadow-2xl group-hover:shadow-primary/50 transition-all duration-300">
                       <div className="aspect-[2/3] bg-gradient-to-br from-green-900 to-teal-900">
                         <img
                           src={proxySteamImage(game.image)}
                           alt={game.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300"
                         />
+                        {/* Overlay hover */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
                       <div className="absolute top-2 left-2">
                         <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
@@ -400,13 +411,15 @@ export default function Home() {
                     className="flex-shrink-0 w-[280px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200">
+                    <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg group-hover:shadow-2xl group-hover:shadow-primary/50 transition-all duration-300">
                       <div className="aspect-[16/9] bg-gradient-to-br from-blue-900 to-purple-900">
                         <img
                           src={proxySteamImage(game.cover_image)}
                           alt={game.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300"
                         />
+                        {/* Overlay hover */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
                       <div className="absolute top-2 left-2">
                         <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
@@ -442,13 +455,15 @@ export default function Home() {
                     className="group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-3 transition-transform duration-200">
+                    <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg group-hover:shadow-2xl group-hover:shadow-primary/50 transition-all duration-300">
                       <div className="aspect-[2/3] bg-gradient-to-br from-purple-900 to-blue-900">
                         <img
                           src={proxySteamImage(game.image)}
                           alt={game.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-300"
                         />
+                        {/* Overlay hover */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
                       <div className="absolute top-2 left-2">
                         <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
