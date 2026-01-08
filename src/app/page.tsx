@@ -16,10 +16,7 @@ export default function Home() {
   const [games, setGames] = useState<GameWithSteamData[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
-  const [epicExtrasScroll, setEpicExtrasScroll] = useState(0);
-  const [actionGamesScroll, setActionGamesScroll] = useState(0);
-  const [adventureGamesScroll, setAdventureGamesScroll] = useState(0);
-  const [sportsGamesScroll, setSportsGamesScroll] = useState(0);
+  const [offersScroll, setOffersScroll] = useState(0);
   const GAMES_PER_PAGE = 20;
 
   // Cargar juegos desde Supabase y enriquecerlos con datos de Steam
@@ -77,14 +74,11 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [loading, hasMore]);
 
-  // Organizar juegos por categorías - mostrar todos sin límite
-  const trendingGames = games.slice(0, Math.min(games.length, 20));
-  const actionGames = games.filter(g => g.genre.toLowerCase().includes('action'));
-  const adventureGames = games.filter(g => g.genre.toLowerCase().includes('adventure'));
-  const sportsGames = games.filter(g => g.genre.toLowerCase().includes('sport'));
-  const allOtherGames = games; // Mostrar todos los juegos
+  // Organizar juegos por categorías
+  const offersGames = games.slice(0, Math.min(games.length, 20));
+  const allGames = games; // Mostrar todos los juegos
 
-  const heroGames = trendingGames.length > 0 ? trendingGames : [];
+  const heroGames = offersGames.length > 0 ? offersGames : [];
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % heroGames.length);
@@ -110,16 +104,16 @@ export default function Home() {
     setModalOrigin(null);
   };
 
-  const scrollEpicExtras = (direction: 'left' | 'right') => {
-    const container = document.getElementById('epic-extras-scroll');
+  const scrollOffers = (direction: 'left' | 'right') => {
+    const container = document.getElementById('offers-scroll');
     if (container) {
       const scrollAmount = 240; // ancho de card + gap
       const newScroll = direction === 'left' 
-        ? Math.max(0, epicExtrasScroll - scrollAmount)
-        : epicExtrasScroll + scrollAmount;
+        ? Math.max(0, offersScroll - scrollAmount)
+        : offersScroll + scrollAmount;
       
       container.scrollTo({ left: newScroll, behavior: 'smooth' });
-      setEpicExtrasScroll(newScroll);
+      setOffersScroll(newScroll);
     }
   };
 
@@ -227,8 +221,8 @@ export default function Home() {
       {/* Game Categories */}
       {!loading && games.length > 0 && (
         <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">
-          {/* Trending Now - Epic Games Style */}
-          {trendingGames.length > 0 && (
+          {/* Ofertas */}
+          {offersGames.length > 0 && (
             <section className="relative group">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold">Ofertas</h3>
@@ -236,7 +230,7 @@ export default function Home() {
               
               {/* Botón izquierdo */}
               <button 
-                onClick={() => scrollEpicExtras('left')}
+                onClick={() => scrollOffers('left')}
                 className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
               >
                 <ChevronLeft className="w-6 h-6" />
@@ -244,17 +238,17 @@ export default function Home() {
               
               {/* Botón derecho */}
               <button 
-                onClick={() => scrollEpicExtras('right')}
+                onClick={() => scrollOffers('right')}
                 className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
               >
                 <ChevronRight className="w-6 h-6" />
               </button>
               
               <div 
-                id="epic-extras-scroll"
-                className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide scroll-smooth"
+                id="offers-scroll"
+                className="flex gap-4 overflow-x-auto pb-4 pt-2 scrollbar-hide scroll-smooth"
               >
-                {trendingGames.map((game) => (
+                {offersGames.map((game) => (
                   <div
                     key={game.id}
                     className="flex-shrink-0 w-[220px] group cursor-pointer"
@@ -293,153 +287,14 @@ export default function Home() {
             </section>
           )}
 
-          {/* Action Games - Epic Style */}
-          {actionGames.length > 0 && (
-            <section>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold">Top New Releases</h3>
-                <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
-                  Ver más <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-                {actionGames.map((game) => (
-                  <div
-                    key={game.id}
-                    className="flex-shrink-0 w-[280px] group cursor-pointer"
-                    onClick={(e) => handleGameClick(game, e)}
-                  >
-                    <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg group-hover:shadow-2xl group-hover:shadow-primary/50 group-hover:scale-105 transition-all duration-300">
-                      <div className="aspect-[16/9] bg-gradient-to-br from-red-900 to-orange-900">
-                        <img
-                          src={proxySteamImage(game.cover_image)}
-                          alt={game.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <h4 className="font-semibold text-base line-clamp-1 group-hover:text-primary transition">
-                        {game.title}
-                      </h4>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span><Star fill="yellow"
-                            stroke="yellow"
-                            strokeWidth={0.5}
-                            size={16} /> {game.rating}</span>
-                          <span>•</span>
-                          <span>{game.genre}</span>
-                        </div>
-                        <span className="text-sm font-bold text-green-500">FREE</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Adventure Games - Epic Style */}
-          {adventureGames.length > 0 && (
-            <section className='p-4'>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold">Epic Adventures</h3>
-                <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
-                  Ver más <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-                {adventureGames.map((game) => (
-                  <div
-                    key={game.id}
-                    className="flex-shrink-0 w-[220px] group cursor-pointer"
-                    onClick={(e) => handleGameClick(game, e)}
-                  >
-                    <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg group-hover:shadow-2xl group-hover:shadow-primary/50 group-hover:scale-105 transition-all duration-300">
-                      <div className="aspect-[2/3] bg-gradient-to-br from-green-900 to-teal-900">
-                        <img
-                          src={proxySteamImage(game.image)}
-                          alt={game.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="absolute top-2 left-2">
-                        <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
-                          Adventure
-                        </span>
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                        {game.genre}
-                      </p>
-                      <h4 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition">
-                        {game.title}
-                      </h4>
-                      <p className="text-sm font-bold text-green-500">
-                        FREE
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Sports Games - Epic Style */}
-          {sportsGames.length > 0 && (
-            <section>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold">Sports & Racing</h3>
-                <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
-                  Ver más <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-                {sportsGames.map((game) => (
-                  <div
-                    key={game.id}
-                    className="flex-shrink-0 w-[280px] group cursor-pointer"
-                    onClick={(e) => handleGameClick(game, e)}
-                  >
-                    <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg group-hover:shadow-2xl group-hover:shadow-primary/50 group-hover:scale-105 transition-all duration-300">
-                      <div className="aspect-[16/9] bg-gradient-to-br from-blue-900 to-purple-900">
-                        <img
-                          src={proxySteamImage(game.cover_image)}
-                          alt={game.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="absolute top-2 left-2">
-                        <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
-                          Sports
-                        </span>
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <h4 className="font-semibold text-base line-clamp-1 group-hover:text-primary transition">
-                        {game.title}
-                      </h4>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">{game.genre}</span>
-                        <span className="text-sm font-bold text-green-500">FREE</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* All Games - Grid infinito */}
-          {allOtherGames.length > 0 && (
+          {/* Todos los Juegos - Grid infinito */}
+          {allGames.length > 0 && (
             <section>
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold">Todos los Juegos</h3>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                {allOtherGames.map((game) => (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pt-2">
+                {allGames.map((game) => (
                   <div
                     key={game.id}
                     className="group cursor-pointer"
