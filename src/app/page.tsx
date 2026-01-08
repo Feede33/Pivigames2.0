@@ -342,7 +342,7 @@ export default function Home() {
 
           {/* Adventure Games - Epic Style */}
           {adventureGames.length > 0 && (
-            <section>
+            <section className='p-4'>
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold">Epic Adventures</h3>
                 <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1">
