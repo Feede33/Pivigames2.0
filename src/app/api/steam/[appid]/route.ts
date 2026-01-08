@@ -39,34 +39,53 @@ export async function GET(
       full: screenshot.path_full,
     })) || [];
 
-    // IMPORTANTE: Detectar si background es una URL dinámica de Steam (con fondo azul)
-    // Estas URLs tienen el formato: store.akamai.steamstatic.com/images/storepagebackground/
+    // IMPORTANTE: Obtener el mejor wallpaper de alta calidad
+    // Steam proporciona diferentes URLs para backgrounds, priorizamos calidad
+    
+    // Detectar si background es una URL dinámica de baja calidad
     const isDynamicBackground = gameData.background?.includes('storepagebackground');
     
-    // Si es una URL dinámica, preferir usar el primer screenshot en alta calidad
-    // o el header_image en lugar del background azul
-    let bestBackground = gameData.background_raw; // Prioridad 1: background_raw (sin procesar)
+    // Intentar obtener page_bg_raw de alta calidad (1920x1080 o superior)
+    const highQualityBg = `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${appid}/page_bg_raw.jpg`;
     
-    if (!bestBackground) {
-      if (isDynamicBackground && screenshots.length > 0) {
-        // Prioridad 2: Primer screenshot si background es dinámico (azul)
-        bestBackground = screenshots[0].full;
-        console.log(`⚠ Using first screenshot as background for ${gameData.name} (avoiding blue background)`);
-      } else if (gameData.background && !isDynamicBackground) {
-        // Prioridad 3: background normal (no dinámico)
-        bestBackground = gameData.background;
-      } else {
-        // Prioridad 4: header_image como último recurso
-        bestBackground = gameData.header_image;
+    let bestBackground = '';
+    
+    // Prioridad 1: page_bg_raw de alta calidad (verificar si existe)
+    try {
+      const bgCheck = await fetch(highQualityBg, { method: 'HEAD' });
+      if (bgCheck.ok) {
+        bestBackground = highQualityBg;
+        console.log(`✓ Using high-quality page_bg_raw for ${gameData.name}`);
       }
+    } catch (e) {
+      // Si falla, continuar con otras opciones
+    }
+    
+    // Prioridad 2: background_raw si existe y no es dinámico
+    if (!bestBackground && gameData.background_raw && !gameData.background_raw.includes('storepagebackground')) {
+      bestBackground = gameData.background_raw;
+      console.log(`✓ Using background_raw for ${gameData.name}`);
+    }
+    
+    // Prioridad 3: Primer screenshot en alta calidad si background es dinámico o de baja calidad
+    if (!bestBackground && screenshots.length > 0 && (isDynamicBackground || !gameData.background)) {
+      bestBackground = screenshots[0].full;
+      console.log(`⚠ Using first screenshot as background for ${gameData.name}`);
+    }
+    
+    // Prioridad 4: background normal si no es dinámico
+    if (!bestBackground && gameData.background && !isDynamicBackground) {
+      bestBackground = gameData.background;
+      console.log(`⚠ Using standard background for ${gameData.name}`);
+    }
+    
+    // Prioridad 5: header_image como último recurso
+    if (!bestBackground) {
+      bestBackground = gameData.header_image;
+      console.log(`⚠ Using header_image as fallback for ${gameData.name}`);
     }
 
-    console.log(`Background type for ${gameData.name}:`, {
-      has_raw: !!gameData.background_raw,
-      has_background: !!gameData.background,
-      is_dynamic: isDynamicBackground,
-      using: bestBackground
-    });
+    console.log(`Wallpaper URL for ${gameData.name}:`, bestBackground);
 
     // Extraer videos/trailers
     const videos = gameData.movies?.map((movie: any) => {

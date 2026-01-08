@@ -51,22 +51,15 @@ export async function enrichGameWithSteamData(game: Game): Promise<GameWithSteam
     
     const steamData = await response.json();
     
-    // Priorizar background_raw (sin compresión) sobre background
-    // Si no existe ninguno, usar header_image
-    let wallpaperUrl = '';
+    // El wallpaper ya viene optimizado desde la API
+    // La API prioriza: page_bg_raw > background_raw > screenshots > background > header_image
+    const wallpaperUrl = steamData.background || steamData.header_image || '';
     
-    if (steamData.background_raw) {
-      wallpaperUrl = steamData.background_raw;
-      console.log(`✓ Using background_raw for ${steamData.name}`);
-    } else if (steamData.background) {
-      wallpaperUrl = steamData.background;
-      console.log(`⚠ Using background (compressed) for ${steamData.name}`);
-    } else if (steamData.header_image) {
-      wallpaperUrl = steamData.header_image;
-      console.log(`⚠ Using header_image (fallback) for ${steamData.name}`);
+    if (wallpaperUrl) {
+      console.log(`✓ Wallpaper loaded for ${steamData.name}`);
+    } else {
+      console.log(`⚠ No wallpaper available for ${steamData.name}`);
     }
-    
-    console.log(`Wallpaper URL for ${steamData.name}:`, wallpaperUrl);
     
     // Obtener la imagen de portada vertical (mejor para grids)
     // Steam proporciona diferentes tamaños de imágenes
