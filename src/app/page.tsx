@@ -108,10 +108,10 @@ export default function Home() {
     const container = document.getElementById('offers-scroll');
     if (container) {
       const scrollAmount = 240; // ancho de card + gap
-      const newScroll = direction === 'left' 
+      const newScroll = direction === 'left'
         ? Math.max(0, offersScroll - scrollAmount)
         : offersScroll + scrollAmount;
-      
+
       container.scrollTo({ left: newScroll, behavior: 'smooth' });
       setOffersScroll(newScroll);
     }
@@ -218,36 +218,21 @@ export default function Home() {
         </div>
       )}
 
-      {/* Game Categories */}
+      {/* Caja */}
       {!loading && games.length > 0 && (
         <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">
-          {/* Ofertas */}
+          {/* Ofertas Div*/}
           {offersGames.length > 0 && (
             <section className="relative group">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold">Ofertas</h3>
               </div>
-              
-              {/* Botón izquierdo */}
-              <button 
-                onClick={() => scrollOffers('left')}
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
-              
-              {/* Botón derecho */}
-              <button 
-                onClick={() => scrollOffers('right')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
-              >
-                <ChevronRight className="w-6 h-6" />
-              </button>
-              
-              <div 
+              {/*Ofertas - Main Caja*/}
+              <div
                 id="offers-scroll"
                 className="flex gap-4 overflow-x-auto pb-4 pt-2 scrollbar-hide scroll-smooth"
               >
+                {/*Contenido - Scroleable*/}
                 {offersGames.map((game) => (
                   <div
                     key={game.id}
@@ -284,6 +269,21 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+              {/* Slider Oferta izquierdo */}
+              <button
+                onClick={() => scrollOffers('left')}
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+
+              {/* Slider oferta derecho */}
+              <button
+                onClick={() => scrollOffers('right')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
             </section>
           )}
 
