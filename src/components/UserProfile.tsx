@@ -20,7 +20,7 @@ export default function UserProfile() {
           
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold truncate">POLLODEARROZ</p>
-            <p className="text-xs text-muted-foreground truncate">Invisible</p>
+            <p className="text-xs text-muted-foreground truncate">Online</p>
           </div>
         </div>
 
