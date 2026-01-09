@@ -491,20 +491,70 @@ export default function Home() {
                 ))}
               </div>
               
-              {/* Slider Oferta izquierdo - Mejorado */}
+              {/* Slider Oferta izquierdo - DISEÑO ÉPICO */}
               <button
                 onClick={() => scrollOffers('left')}
-                className="absolute left-0 top-[45%] -translate-y-1/2 z-10 bg-black/90 hover:bg-green-600/90 p-3 rounded-r-lg transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-xl border border-white/10"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 group/btn opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
               >
-                <ChevronLeft className="w-6 h-6" />
+                {/* Glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full blur-2xl opacity-0 group-hover/btn:opacity-60 transition-opacity duration-300"></div>
+                
+                {/* Button container */}
+                <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-green-500/30 group-hover/btn:border-green-400 shadow-2xl flex items-center justify-center transition-all duration-300">
+                  {/* Inner glow */}
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-green-500/20 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                  
+                  {/* Animated ring */}
+                  <div className="absolute inset-0 rounded-full border-2 border-green-400/0 group-hover/btn:border-green-400/50 group-hover/btn:scale-110 transition-all duration-300"></div>
+                  
+                  {/* Icon */}
+                  <ChevronLeft className="w-8 h-8 text-green-400 relative z-10 group-hover/btn:text-green-300 transition-colors duration-300 drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]" strokeWidth={3} />
+                  
+                  {/* Shine effect */}
+                  <div className="absolute inset-0 rounded-full overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700"></div>
+                  </div>
+                </div>
+                
+                {/* Tooltip */}
+                <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 pointer-events-none">
+                  <div className="bg-black/90 backdrop-blur-sm text-green-400 text-sm font-bold px-3 py-1.5 rounded-lg border border-green-500/30 whitespace-nowrap shadow-xl">
+                    Ver anteriores
+                  </div>
+                </div>
               </button>
 
-              {/* Slider oferta derecho - Mejorado */}
+              {/* Slider oferta derecho - DISEÑO ÉPICO */}
               <button
                 onClick={() => scrollOffers('right')}
-                className="absolute right-0 top-[45%] -translate-y-1/2 z-10 bg-black/90 hover:bg-green-600/90 p-3 rounded-l-lg transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-xl border border-white/10"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 group/btn opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
               >
-                <ChevronRight className="w-6 h-6" />
+                {/* Glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-l from-blue-500 to-cyan-500 rounded-full blur-2xl opacity-0 group-hover/btn:opacity-60 transition-opacity duration-300"></div>
+                
+                {/* Button container */}
+                <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-blue-500/30 group-hover/btn:border-blue-400 shadow-2xl flex items-center justify-center transition-all duration-300">
+                  {/* Inner glow */}
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-bl from-blue-500/20 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                  
+                  {/* Animated ring */}
+                  <div className="absolute inset-0 rounded-full border-2 border-blue-400/0 group-hover/btn:border-blue-400/50 group-hover/btn:scale-110 transition-all duration-300"></div>
+                  
+                  {/* Icon */}
+                  <ChevronRight className="w-8 h-8 text-blue-400 relative z-10 group-hover/btn:text-blue-300 transition-colors duration-300 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]" strokeWidth={3} />
+                  
+                  {/* Shine effect */}
+                  <div className="absolute inset-0 rounded-full overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700"></div>
+                  </div>
+                </div>
+                
+                {/* Tooltip */}
+                <div className="absolute right-full mr-4 top-1/2 -translate-y-1/2 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 pointer-events-none">
+                  <div className="bg-black/90 backdrop-blur-sm text-blue-400 text-sm font-bold px-3 py-1.5 rounded-lg border border-blue-500/30 whitespace-nowrap shadow-xl">
+                    Ver más ofertas
+                  </div>
+                </div>
               </button>
           </section>
         )}
