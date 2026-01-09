@@ -239,7 +239,7 @@ export default function Home() {
                     className="flex-shrink-0 w-[220px] group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg hover:shadow-2xl hover:shadow-primary/50 hover:scale-105 transition-all duration-300">
+                    <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg hover:scale-105 transition-all duration-300">
                       <div className="aspect-[2/3] bg-gradient-to-br from-purple-900 to-blue-900">
                         <img
                           src={proxySteamImage(game.image)}
