@@ -319,7 +319,7 @@ export default function Home() {
             <div className="flex gap-4 overflow-x-auto pb-4 pt-2">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="flex-shrink-0 w-[280px]">
-                  <div className="aspect-[460/215] bg-muted/20 rounded-lg animate-pulse" />
+                  <div className="aspect-[920/430] bg-muted/20 rounded-lg animate-pulse" />
                 </div>
               ))}
             </div>
