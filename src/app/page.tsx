@@ -642,7 +642,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <h4 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition">
+                      <h4 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition h-10">
                         {game.title}
                       </h4>
                       <div className="flex items-center justify-between">
