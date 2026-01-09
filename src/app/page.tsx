@@ -176,9 +176,57 @@ export default function Home() {
     }
   };
 
-  const handleSpecialClick = (special: SteamSpecial) => {
-    // Abrir en Steam directamente
-    window.open(`https://store.steampowered.com/app/${special.id}`, '_blank');
+  const handleSpecialClick = async (special: SteamSpecial, event: React.MouseEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setModalOrigin({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+      width: rect.width,
+      height: rect.height
+    });
+    
+    // Convertir SteamSpecial a GameWithSteamData para el modal
+    // Crear un objeto temporal mientras se cargan los datos completos
+    const tempGame: GameWithSteamData = {
+      id: special.id,
+      steam_appid: special.id.toString(),
+      title: special.name,
+      genre: 'Loading...',
+      image: special.capsule_image,
+      cover_image: special.header_image,
+      rating: 0,
+      wallpaper: special.header_image,
+      description: 'Cargando información...',
+      screenshots: [],
+    };
+    
+    setModalGame(tempGame);
+    
+    // Cargar datos completos de Steam en segundo plano
+    try {
+      const response = await fetch(`/api/steam/${special.id}?cc=${userCountry}`);
+      if (response.ok) {
+        const steamData = await response.json();
+        
+        const fullGame: GameWithSteamData = {
+          id: special.id,
+          steam_appid: special.id.toString(),
+          title: steamData.name || special.name,
+          genre: steamData.genres?.join(', ') || 'Unknown',
+          image: special.capsule_image,
+          cover_image: special.header_image,
+          rating: steamData.metacritic ? steamData.metacritic / 10 : 7.5,
+          wallpaper: steamData.background || special.header_image,
+          description: steamData.short_description || '',
+          trailer: steamData.videos?.[0]?.mp4?.max || steamData.videos?.[0]?.mp4?.['480'] || '',
+          screenshots: steamData.screenshots?.map((s: any) => s.full) || []
+        };
+        
+        setModalGame(fullGame);
+      }
+    } catch (error) {
+      console.error('Error loading full game data:', error);
+    }
   };
 
   const formatPrice = (price: number, currency: string) => {
@@ -335,7 +383,7 @@ export default function Home() {
                   <div
                     key={special.id}
                     className="flex-shrink-0 w-[460px] group cursor-pointer"
-                    onClick={() => handleSpecialClick(special)}
+                    onClick={(e) => handleSpecialClick(special, e)}
                   >
                     <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg hover:scale-105 transition-all duration-300">
                       <div className="w-[460px] h-[215px] bg-gradient-to-br from-purple-900 to-blue-900">
