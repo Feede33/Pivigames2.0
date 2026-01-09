@@ -272,7 +272,7 @@ export default function Home() {
               {/* Slider Oferta izquierdo */}
               <button
                 onClick={() => scrollOffers('left')}
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
               >
                 <ChevronLeft className="w-6 h-6" />
               </button>
