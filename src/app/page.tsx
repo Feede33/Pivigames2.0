@@ -550,7 +550,7 @@ export default function Home() {
                 </div>
                 
                 {/* Tooltip */}
-                <div className="absolute right-full mr-4 top-1/2 -translate-y-1/2 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 pointer-events-none">
+                <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 pointer-events-none">
                   <div className="bg-black/90 backdrop-blur-sm text-blue-400 text-sm font-bold px-3 py-1.5 rounded-lg border border-blue-500/30 whitespace-nowrap shadow-xl">
                     Ver más ofertas
                   </div>
