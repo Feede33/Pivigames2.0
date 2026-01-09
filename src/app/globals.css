@@ -481,3 +481,18 @@
     transform: translateX(100%);
   }
 }
+
+/* 3D Transform utilities */
+.hover\:rotate-y-6:hover {
+  transform: rotateY(6deg);
+}
+
+@layer utilities {
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+}

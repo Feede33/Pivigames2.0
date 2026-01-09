@@ -620,23 +620,26 @@ export default function Home() {
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-bold">Juegos Disponibles para Descargar</h3>
             </div>
-            <div className="grid grid-cols-7 gap-6 pt-2">
+            <div className="grid grid-cols-7 gap-6 pt-2" style={{ perspective: '1000px' }}>
                 {allGames.map((game) => (
                   <div
                     key={game.id}
                     className="group cursor-pointer"
                     onClick={(e) => handleGameClick(game, e)}
+                    style={{ transformStyle: 'preserve-3d' }}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg hover:scale-105 transition-all duration-300">
-                      <div className="aspect-[2/3] bg-gradient-to-br from-purple-900 to-blue-900">
+                    <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 hover:-translate-y-2 hover:rotate-y-6 group-hover:[transform:rotateY(5deg)_rotateX(-3deg)_translateZ(20px)]">
+                      <div className="aspect-[2/3] bg-gradient-to-br from-purple-900 to-blue-900 relative">
                         <img
                           src={proxySteamImage(game.image)}
                           alt={game.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
+                        {/* Shine overlay effect */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/0 to-transparent group-hover:via-white/20 transition-all duration-500 opacity-0 group-hover:opacity-100"></div>
                       </div>
                       <div className="absolute top-2 left-2">
-                        <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
+                        <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded shadow-lg">
                           {game.genre}
                         </span>
                       </div>
