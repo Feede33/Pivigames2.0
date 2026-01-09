@@ -166,7 +166,7 @@ export default function Home() {
   const scrollOffers = (direction: 'left' | 'right') => {
     const container = document.getElementById('offers-scroll');
     if (container) {
-      const scrollAmount = 296; // ancho de card (280px) + gap (16px)
+      const scrollAmount = 476; // ancho de card (460px) + gap (16px)
       const newScroll = direction === 'left'
         ? Math.max(0, offersScroll - scrollAmount)
         : offersScroll + scrollAmount;
@@ -318,8 +318,8 @@ export default function Home() {
           {loadingSpecials ? (
             <div className="flex gap-4 overflow-x-auto pb-4 pt-2">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-[280px]">
-                  <div className="aspect-[920/430] bg-muted/20 rounded-lg animate-pulse" />
+                <div key={i} className="flex-shrink-0 w-[460px]">
+                  <div className="w-[460px] h-[215px] bg-muted/20 rounded-lg animate-pulse" />
                 </div>
               ))}
             </div>
@@ -334,11 +334,11 @@ export default function Home() {
                 {steamSpecials.map((special) => (
                   <div
                     key={special.id}
-                    className="flex-shrink-0 w-[280px] group cursor-pointer"
+                    className="flex-shrink-0 w-[460px] group cursor-pointer"
                     onClick={() => handleSpecialClick(special)}
                   >
                     <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg hover:scale-105 transition-all duration-300">
-                      <div className="aspect-[460/215] bg-gradient-to-br from-purple-900 to-blue-900">
+                      <div className="w-[460px] h-[215px] bg-gradient-to-br from-purple-900 to-blue-900">
                         <img
                           src={proxySteamImage(special.header_image)}
                           alt={special.name}
@@ -346,20 +346,20 @@ export default function Home() {
                         />
                       </div>
                       {/* Badge de descuento */}
-                      <div className="absolute top-2 left-2">
-                        <span className="bg-green-600 text-white text-xs font-bold px-2 py-1 rounded">
+                      <div className="absolute top-3 left-3">
+                        <span className="bg-green-600 text-white text-sm font-bold px-3 py-1.5 rounded">
                           -{special.discount_percent}%
                         </span>
                       </div>
                       {/* Plataformas */}
-                      <div className="absolute bottom-2 right-2 flex gap-1">
+                      <div className="absolute bottom-3 right-3 flex gap-1.5">
                         {special.platforms.windows && (
-                          <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-1.5 py-0.5 rounded">
+                          <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
                             Win
                           </span>
                         )}
                         {special.platforms.mac && (
-                          <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-1.5 py-0.5 rounded">
+                          <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
                             Mac
                           </span>
                         )}
@@ -367,14 +367,14 @@ export default function Home() {
                     </div>
                     {/* Título y precio */}
                     <div className="space-y-1">
-                      <h4 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition">
+                      <h4 className="font-semibold text-base line-clamp-2 group-hover:text-primary transition">
                         {special.name}
                       </h4>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground line-through">
+                        <span className="text-sm text-muted-foreground line-through">
                           {formatPrice(special.original_price, special.currency)}
                         </span>
-                        <span className="text-sm font-bold text-green-500">
+                        <span className="text-base font-bold text-green-500">
                           {formatPrice(special.final_price, special.currency)}
                         </span>
                       </div>
