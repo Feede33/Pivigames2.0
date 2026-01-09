@@ -293,7 +293,7 @@ export default function Home() {
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold">Todos los Juegos</h3>
               </div>
-              <div className="flex gap-6 pt-2">
+              <div className="grid grid-cols-7 gap-6 pt-2">
                 {allGames.map((game) => (
                   <div
                     key={game.id}
