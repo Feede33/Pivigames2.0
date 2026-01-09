@@ -13,6 +13,15 @@ export type Game = {
   links?: string; // Link único de descarga para cada juego
 };
 
+// Tipo para ofertas de Steam
+export type SteamSpecial = {
+  id: number;
+  steam_appid: string;
+  links?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
 // Tipo extendido con datos de Steam API
 export type GameWithSteamData = Game & {
   title: string;
@@ -109,3 +118,69 @@ export async function getGameById(id: number): Promise<Game | null> {
 
   return data as Game;
 }
+
+// ============================================
+// FUNCIONES PARA OFERTAS DE STEAM
+// ============================================
+
+// Obtener todas las ofertas actuales de Steam desde Supabase
+export async function getSteamSpecials(): Promise<SteamSpecial[]> {
+  const { data, error } = await supabase
+    .from('steam_specials')
+    .select('*')
+    .order('updated_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching steam specials:', error);
+    return [];
+  }
+
+  return data as SteamSpecial[];
+}
+
+// Obtener solo ofertas que tienen link de descarga
+export async function getSteamSpecialsWithLinks(): Promise<SteamSpecial[]> {
+  const { data, error } = await supabase
+    .from('steam_specials')
+    .select('*')
+    .not('links', 'is', null)
+    .order('updated_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching steam specials with links:', error);
+    return [];
+  }
+
+  return data as SteamSpecial[];
+}
+
+// Verificar si una oferta tiene link de descarga
+export async function specialHasDownloadLink(steamAppId: string): Promise<string | null> {
+  const { data, error } = await supabase
+    .from('steam_specials')
+    .select('links')
+    .eq('steam_appid', steamAppId)
+    .single();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return data.links;
+}
+
+// Agregar o actualizar link de descarga para una oferta
+export async function updateSpecialDownloadLink(steamAppId: string, link: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('steam_specials')
+    .update({ links: link })
+    .eq('steam_appid', steamAppId);
+
+  if (error) {
+    console.error('Error updating special download link:', error);
+    return false;
+  }
+
+  return true;
+}
+

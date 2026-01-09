@@ -5,12 +5,12 @@ import { ChevronLeft, ChevronRight, Play, Info, Star } from 'lucide-react';
 import GameModal from "@/components/GameModal"
 import UserProfile from "@/components/UserProfile"
 import WallpaperImage from "@/components/WallpaperImage"
-import { getGames, enrichGameWithSteamData, type GameWithSteamData } from "@/lib/supabase"
+import { getGames, enrichGameWithSteamData, type GameWithSteamData, getSteamSpecials, specialHasDownloadLink } from "@/lib/supabase"
 import { proxySteamImage } from "@/lib/image-proxy"
 
 
-// Tipo para ofertas de Steam
-type SteamSpecial = {
+// Tipo para ofertas de Steam con datos enriquecidos
+type SteamSpecialEnriched = {
   id: number;
   name: string;
   discount_percent: number;
@@ -24,6 +24,8 @@ type SteamSpecial = {
     mac: boolean;
     linux: boolean;
   };
+  hasDownloadLink?: boolean; // Indica si tiene link de descarga en Supabase
+  downloadLink?: string | null;
 };
 
 export default function Home() {
@@ -34,7 +36,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [offersScroll, setOffersScroll] = useState(0);
-  const [steamSpecials, setSteamSpecials] = useState<SteamSpecial[]>([]);
+  const [steamSpecials, setSteamSpecials] = useState<SteamSpecialEnriched[]>([]);
   const [userCountry, setUserCountry] = useState<string>('us');
   const [loadingSpecials, setLoadingSpecials] = useState(true);
   const GAMES_PER_PAGE = 20;
@@ -64,12 +66,31 @@ export default function Home() {
       
       setLoadingSpecials(true);
       try {
+        // 1. Obtener ofertas de Steam API con precios regionales
         const response = await fetch(`/api/steam/specials?cc=${userCountry}&count=20`);
-        if (response.ok) {
-          const data = await response.json();
-          setSteamSpecials(data.games || []);
-          console.log('Steam specials loaded:', data.games?.length);
+        if (!response.ok) {
+          throw new Error('Failed to fetch Steam specials');
         }
+        
+        const data = await response.json();
+        const steamGames = data.games || [];
+        
+        // 2. Obtener ofertas de Supabase para verificar cuáles tienen links
+        const supabaseSpecials = await getSteamSpecials();
+        const specialsMap = new Map(
+          supabaseSpecials.map(s => [s.steam_appid, s.links])
+        );
+        
+        // 3. Enriquecer ofertas de Steam con información de links
+        const enrichedSpecials: SteamSpecialEnriched[] = steamGames.map((game: any) => ({
+          ...game,
+          hasDownloadLink: specialsMap.has(game.id.toString()) && !!specialsMap.get(game.id.toString()),
+          downloadLink: specialsMap.get(game.id.toString()) || null,
+        }));
+        
+        setSteamSpecials(enrichedSpecials);
+        console.log('Steam specials loaded:', enrichedSpecials.length);
+        console.log('With download links:', enrichedSpecials.filter(s => s.hasDownloadLink).length);
       } catch (error) {
         console.error('Error loading Steam specials:', error);
         setSteamSpecials([]);
@@ -176,7 +197,7 @@ export default function Home() {
     }
   };
 
-  const handleSpecialClick = async (special: SteamSpecial, event: React.MouseEvent<HTMLDivElement>) => {
+  const handleSpecialClick = async (special: SteamSpecialEnriched, event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
     setModalOrigin({
       x: rect.left + rect.width / 2,
@@ -399,6 +420,19 @@ export default function Home() {
                           -{special.discount_percent}%
                         </span>
                       </div>
+                      
+                      {/* Badge de disponibilidad de descarga */}
+                      {special.hasDownloadLink && (
+                        <div className="absolute top-3 right-3">
+                          <span className="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" />
+                            </svg>
+                            Disponible
+                          </span>
+                        </div>
+                      )}
+                      
                       {/* Plataformas */}
                       <div className="absolute bottom-3 right-3 flex gap-1.5">
                         {special.platforms.windows && (

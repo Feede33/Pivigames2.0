@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/fetch-games",
       "schedule": "05 22 * * *"
+    },
+    {
+      "path": "/api/cron/sync-specials",
+      "schedule": "0 */6 * * *"
     }
   ]
 }
