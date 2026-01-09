@@ -230,7 +230,7 @@ export default function Home() {
               {/*Ofertas - Main Caja*/}
               <div
                 id="offers-scroll"
-                className="flex gap-4 overflow-x-auto pb-4 pt-2 scrollbar-hide scroll-smooth"
+                className="flex gap-4 overflow-x-auto pb-4 pt-2 scrollbar-hide scroll-smooth pl-2"
               >
                 {/*Contenido - Scroleable*/}
                 {offersGames.map((game) => (
