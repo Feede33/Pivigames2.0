@@ -375,44 +375,25 @@ export default function Home() {
 
       {/* Caja Ofertas*/}
       <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">
-        {/* Ofertas de Steam en tiempo real */}
-        <section className="relative group">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h3 className="text-3xl font-bold mb-2 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-                🔥 Ofertas Especiales de Steam
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                Descuentos exclusivos actualizados diariamente
-              </p>
-            </div>
-            {loadingSpecials && (
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm text-muted-foreground">Actualizando ofertas...</span>
+        {/* Ofertas de Steam en tiempo real - Solo mostrar cuando termine de cargar */}
+        {!loadingSpecials && steamSpecials.length > 0 && (
+          <section className="relative group">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-3xl font-bold mb-2 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                  🔥 Ofertas Especiales de Steam
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  Descuentos exclusivos actualizados diariamente
+                </p>
               </div>
-            )}
-          </div>
-          
-          {loadingSpecials ? (
-            <div className="flex gap-6 overflow-x-auto pb-4 pt-2">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-[460px]">
-                  <div className="w-[460px] h-[215px] bg-gradient-to-br from-muted/20 to-muted/5 rounded-xl animate-pulse" />
-                  <div className="mt-3 space-y-2">
-                    <div className="h-4 bg-muted/20 rounded w-3/4 animate-pulse"></div>
-                    <div className="h-3 bg-muted/20 rounded w-1/2 animate-pulse"></div>
-                  </div>
-                </div>
-              ))}
             </div>
-          ) : steamSpecials.length > 0 ? (
-            <>
-              {/*Ofertas - Main Caja*/}
-              <div
-                id="offers-scroll"
-                className="flex gap-6 overflow-x-auto pb-6 pt-2 scrollbar-hide scroll-smooth pl-3"
-              >
+            
+            {/*Ofertas - Main Caja*/}
+            <div
+              id="offers-scroll"
+              className="flex gap-6 overflow-x-auto pb-6 pt-2 scrollbar-hide scroll-smooth pl-3"
+            >
                 {/*Contenido - Scroleable*/}
                 {steamSpecials.map((special) => (
                   <div
@@ -525,32 +506,71 @@ export default function Home() {
               >
                 <ChevronRight className="w-6 h-6" />
               </button>
-            </>
-          ) : (
-            <div className="text-center py-16 px-4">
-              <div className="inline-block p-6 bg-muted/10 rounded-2xl border border-muted/20">
-                <svg className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                </svg>
-                <p className="text-lg font-semibold text-muted-foreground mb-2">
-                  No hay ofertas disponibles en este momento
-                </p>
-                <p className="text-sm text-muted-foreground/70">
-                  Las ofertas se actualizan diariamente. Vuelve pronto para ver nuevas ofertas.
-                </p>
+          </section>
+        )}
+
+        {/* Skeleton de carga violeta */}
+        {loadingSpecials && (
+          <section className="relative">
+            <div className="flex items-center justify-between mb-8">
+              <div className="space-y-2">
+                <div className="h-9 w-96 bg-gradient-to-r from-purple-900/40 to-violet-900/40 rounded-lg animate-pulse"></div>
+                <div className="h-4 w-64 bg-purple-900/30 rounded animate-pulse"></div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                <div className="h-4 w-40 bg-purple-900/30 rounded animate-pulse"></div>
               </div>
             </div>
-          )}
-        </section>
+            
+            <div className="flex gap-6 overflow-x-auto pb-6 pt-2 scrollbar-hide">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex-shrink-0 w-[460px]">
+                  {/* Card skeleton */}
+                  <div className="relative rounded-xl overflow-hidden mb-4 border border-purple-900/30">
+                    {/* Imagen skeleton con gradiente violeta */}
+                    <div className="w-[460px] h-[215px] bg-gradient-to-br from-purple-900/40 via-violet-900/30 to-purple-800/40 relative overflow-hidden">
+                      {/* Efecto de shimmer animado */}
+                      <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-purple-400/10 to-transparent"></div>
+                      
+                      {/* Badge skeleton */}
+                      <div className="absolute top-4 left-4">
+                        <div className="w-16 h-16 bg-purple-700/50 rounded-md animate-pulse"></div>
+                      </div>
+                      
+                      {/* Plataformas skeleton */}
+                      <div className="absolute bottom-4 right-4 flex gap-2">
+                        <div className="w-12 h-6 bg-purple-800/50 rounded-md animate-pulse"></div>
+                        <div className="w-12 h-6 bg-purple-800/50 rounded-md animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Título y precio skeleton */}
+                  <div className="space-y-2 px-1">
+                    <div className="h-5 bg-purple-900/40 rounded w-4/5 animate-pulse"></div>
+                    <div className="h-4 bg-purple-900/30 rounded w-3/5 animate-pulse"></div>
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-4 w-16 bg-purple-900/30 rounded animate-pulse"></div>
+                        <div className="h-5 w-20 bg-gradient-to-r from-purple-700/50 to-violet-700/50 rounded animate-pulse"></div>
+                      </div>
+                      <div className="h-5 w-24 bg-purple-900/30 rounded animate-pulse"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Todos los Juegos de tu base de datos */}
         {!loading && games.length > 0 && (
-
           <section>
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-bold">Juegos Disponibles para Descargar</h3>
             </div>
-              <div className="grid grid-cols-7 gap-6 pt-2">
+            <div className="grid grid-cols-7 gap-6 pt-2">
                 {allGames.map((game) => (
                   <div
                     key={game.id}
@@ -587,15 +607,15 @@ export default function Home() {
                 ))}
               </div>
 
-            {/* Loading indicator */}
-            {loading && (
-              <div className="text-center py-8">
-                <div className="text-muted-foreground">Cargando más juegos...</div>
-              </div>
-            )}
-          </section>
-        )}
-      </div>
+              {/* Loading indicator */}
+              {loading && (
+                <div className="text-center py-8">
+                  <div className="text-muted-foreground">Cargando más juegos...</div>
+                </div>
+              )}
+            </section>
+          )}
+        </div>
 
       {/* Modal del juego - Componente separado */}
       <GameModal game={modalGame} origin={modalOrigin} onClose={closeModal} />
