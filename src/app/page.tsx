@@ -166,7 +166,7 @@ export default function Home() {
   const scrollOffers = (direction: 'left' | 'right') => {
     const container = document.getElementById('offers-scroll');
     if (container) {
-      const scrollAmount = 240; // ancho de card + gap
+      const scrollAmount = 296; // ancho de card (280px) + gap (16px)
       const newScroll = direction === 'left'
         ? Math.max(0, offersScroll - scrollAmount)
         : offersScroll + scrollAmount;
@@ -318,8 +318,8 @@ export default function Home() {
           {loadingSpecials ? (
             <div className="flex gap-4 overflow-x-auto pb-4 pt-2">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-[220px]">
-                  <div className="aspect-[2/3] bg-muted/20 rounded-lg animate-pulse" />
+                <div key={i} className="flex-shrink-0 w-[280px]">
+                  <div className="aspect-[460/215] bg-muted/20 rounded-lg animate-pulse" />
                 </div>
               ))}
             </div>
@@ -334,13 +334,13 @@ export default function Home() {
                 {steamSpecials.map((special) => (
                   <div
                     key={special.id}
-                    className="flex-shrink-0 w-[220px] group cursor-pointer"
+                    className="flex-shrink-0 w-[280px] group cursor-pointer"
                     onClick={() => handleSpecialClick(special)}
                   >
                     <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg hover:scale-105 transition-all duration-300">
-                      <div className="aspect-[2/3] bg-gradient-to-br from-purple-900 to-blue-900">
+                      <div className="aspect-[460/215] bg-gradient-to-br from-purple-900 to-blue-900">
                         <img
-                          src={proxySteamImage(special.capsule_image)}
+                          src={proxySteamImage(special.header_image)}
                           alt={special.name}
                           className="w-full h-full object-cover"
                         />
