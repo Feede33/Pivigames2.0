@@ -187,7 +187,7 @@ export default function Home() {
   const scrollOffers = (direction: 'left' | 'right') => {
     const container = document.getElementById('offers-scroll');
     if (container) {
-      const scrollAmount = 476; // ancho de card (460px) + gap (16px)
+      const scrollAmount = 484; // ancho de card (460px) + gap (24px)
       const newScroll = direction === 'left'
         ? Math.max(0, offersScroll - scrollAmount)
         : offersScroll + scrollAmount;
@@ -377,18 +377,32 @@ export default function Home() {
       <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">
         {/* Ofertas de Steam en tiempo real */}
         <section className="relative group">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold">Ofertas de Steam</h3>
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h3 className="text-3xl font-bold mb-2 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                🔥 Ofertas Especiales de Steam
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                Descuentos exclusivos actualizados diariamente
+              </p>
+            </div>
             {loadingSpecials && (
-              <span className="text-sm text-muted-foreground">Cargando ofertas...</span>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-muted-foreground">Actualizando ofertas...</span>
+              </div>
             )}
           </div>
           
           {loadingSpecials ? (
-            <div className="flex gap-4 overflow-x-auto pb-4 pt-2">
+            <div className="flex gap-6 overflow-x-auto pb-4 pt-2">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="flex-shrink-0 w-[460px]">
-                  <div className="w-[460px] h-[215px] bg-muted/20 rounded-lg animate-pulse" />
+                  <div className="w-[460px] h-[215px] bg-gradient-to-br from-muted/20 to-muted/5 rounded-xl animate-pulse" />
+                  <div className="mt-3 space-y-2">
+                    <div className="h-4 bg-muted/20 rounded w-3/4 animate-pulse"></div>
+                    <div className="h-3 bg-muted/20 rounded w-1/2 animate-pulse"></div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -397,92 +411,128 @@ export default function Home() {
               {/*Ofertas - Main Caja*/}
               <div
                 id="offers-scroll"
-                className="flex gap-4 overflow-x-auto pb-4 pt-2 scrollbar-hide scroll-smooth pl-3"
+                className="flex gap-6 overflow-x-auto pb-6 pt-2 scrollbar-hide scroll-smooth pl-3"
               >
                 {/*Contenido - Scroleable*/}
                 {steamSpecials.map((special) => (
                   <div
                     key={special.id}
-                    className="flex-shrink-0 w-[460px] group cursor-pointer"
+                    className="flex-shrink-0 w-[460px] group/card cursor-pointer"
                     onClick={(e) => handleSpecialClick(special, e)}
                   >
-                    <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg hover:scale-105 transition-all duration-300">
-                      <div className="w-[460px] h-[215px] bg-gradient-to-br from-purple-900 to-blue-900">
+                    <div className="relative rounded-xl overflow-hidden mb-4 shadow-2xl hover:shadow-green-500/20 transition-all duration-500 hover:scale-[1.02] border border-white/5">
+                      {/* Imagen principal */}
+                      <div className="w-[460px] h-[215px] bg-gradient-to-br from-purple-900 via-blue-900 to-black relative overflow-hidden">
                         <img
                           src={proxySteamImage(special.header_image)}
                           alt={special.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110"
                         />
-                      </div>
-                      {/* Badge de descuento */}
-                      <div className="absolute top-3 left-3">
-                        <span className="bg-green-600 text-white text-sm font-bold px-3 py-1.5 rounded">
-                          -{special.discount_percent}%
-                        </span>
+                        {/* Overlay gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover/card:opacity-40 transition-opacity duration-300"></div>
                       </div>
                       
-                      {/* Badge de disponibilidad de descarga */}
-                      {special.hasDownloadLink && (
-                        <div className="absolute top-3 right-3">
-                          <span className="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" />
+                      {/* Badge de descuento - Mejorado */}
+                      <div className="absolute top-4 left-4">
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-green-500 blur-xl opacity-50"></div>
+                          <span className="relative bg-gradient-to-r from-green-500 to-emerald-600 text-white text-base font-black px-4 py-2 rounded-lg shadow-lg flex items-center gap-1">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
                             </svg>
-                            Disponible
+                            -{special.discount_percent}%
                           </span>
+                        </div>
+                      </div>
+                      
+                      {/* Badge de disponibilidad de descarga - Mejorado */}
+                      {special.hasDownloadLink && (
+                        <div className="absolute top-4 right-4">
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-blue-500 blur-lg opacity-50"></div>
+                            <span className="relative bg-gradient-to-r from-blue-500 to-cyan-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
+                              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                              </svg>
+                              DISPONIBLE
+                            </span>
+                          </div>
                         </div>
                       )}
                       
-                      {/* Plataformas */}
-                      <div className="absolute bottom-3 right-3 flex gap-1.5">
+                      {/* Plataformas - Mejorado */}
+                      <div className="absolute bottom-4 right-4 flex gap-2">
                         {special.platforms.windows && (
-                          <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
+                          <span className="bg-black/80 backdrop-blur-md text-white text-xs font-medium px-2.5 py-1.5 rounded-md border border-white/10 shadow-lg">
+                            <svg className="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 16 16">
+                              <path d="M6.555 1.375 0 2.237v5.45h6.555V1.375zM0 13.795l6.555.933V8.313H0v5.482zm7.278-5.4.026 6.378L16 16V8.395H7.278zM16 0 7.33 1.244v6.414H16V0z"/>
+                            </svg>
                             Win
                           </span>
                         )}
                         {special.platforms.mac && (
-                          <span className="bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
+                          <span className="bg-black/80 backdrop-blur-md text-white text-xs font-medium px-2.5 py-1.5 rounded-md border border-white/10 shadow-lg">
+                            <svg className="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 16 16">
+                              <path d="M11.182.008C11.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516.024.034 1.52.087 2.475-1.258.955-1.345.762-2.391.728-2.43zm3.314 11.733c-.048-.096-2.325-1.234-2.113-3.422.212-2.189 1.675-2.789 1.698-2.854.023-.065-.597-.79-1.254-1.157a3.692 3.692 0 0 0-1.563-.434c-.108-.003-.483-.095-1.254.116-.508.139-1.653.589-1.968.607-.316.018-1.256-.522-2.267-.665-.647-.125-1.333.131-1.824.328-.49.196-1.422.754-2.074 2.237-.652 1.482-.311 3.83-.067 4.56.244.729.625 1.924 1.273 2.796.576.984 1.34 1.667 1.659 1.899.319.232 1.219.386 1.843.067.502-.308 1.408-.485 1.766-.472.357.013 1.061.154 1.782.539.571.197 1.111.115 1.652-.105.541-.221 1.324-1.059 2.238-2.758.347-.79.505-1.217.473-1.282z"/>
+                            </svg>
                             Mac
                           </span>
                         )}
                       </div>
                     </div>
-                    {/* Título y precio */}
-                    <div className="space-y-1">
-                      <h4 className="font-semibold text-base line-clamp-2 group-hover:text-primary transition">
+                    
+                    {/* Título y precio - Mejorado */}
+                    <div className="space-y-2 px-1">
+                      <h4 className="font-bold text-base line-clamp-2 group-hover/card:text-green-400 transition-colors duration-300">
                         {special.name}
                       </h4>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-muted-foreground line-through">
-                          {formatPrice(special.original_price, special.currency)}
-                        </span>
-                        <span className="text-base font-bold text-green-500">
-                          {formatPrice(special.final_price, special.currency)}
-                        </span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm text-muted-foreground line-through opacity-60">
+                            {formatPrice(special.original_price, special.currency)}
+                          </span>
+                          <span className="text-lg font-black bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                            {formatPrice(special.final_price, special.currency)}
+                          </span>
+                        </div>
+                        <div className="text-xs text-muted-foreground bg-muted/20 px-2 py-1 rounded">
+                          Ahorra {formatPrice(special.original_price - special.final_price, special.currency)}
+                        </div>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-              {/* Slider Oferta izquierdo */}
+              
+              {/* Slider Oferta izquierdo - Mejorado */}
               <button
                 onClick={() => scrollOffers('left')}
-                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-gradient-to-r from-black via-black/95 to-transparent hover:from-green-900/50 hover:via-black/95 p-4 rounded-r-xl transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-2xl border-y border-r border-white/10"
               >
-                <ChevronLeft className="w-6 h-6" />
+                <ChevronLeft className="w-8 h-8 text-green-400" />
               </button>
 
-              {/* Slider oferta derecho */}
+              {/* Slider oferta derecho - Mejorado */}
               <button
                 onClick={() => scrollOffers('right')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-black/80 hover:bg-black p-3 rounded-full transition opacity-0 group-hover:opacity-100"
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-gradient-to-l from-black via-black/95 to-transparent hover:from-green-900/50 hover:via-black/95 p-4 rounded-l-xl transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-2xl border-y border-l border-white/10"
               >
-                <ChevronRight className="w-6 h-6" />
+                <ChevronRight className="w-8 h-8 text-green-400" />
               </button>
             </>
           ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              No hay ofertas disponibles en este momento
+            <div className="text-center py-16 px-4">
+              <div className="inline-block p-6 bg-muted/10 rounded-2xl border border-muted/20">
+                <svg className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+                <p className="text-lg font-semibold text-muted-foreground mb-2">
+                  No hay ofertas disponibles en este momento
+                </p>
+                <p className="text-sm text-muted-foreground/70">
+                  Las ofertas se actualizan diariamente. Vuelve pronto para ver nuevas ofertas.
+                </p>
+              </div>
             </div>
           )}
         </section>
