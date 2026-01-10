@@ -12,6 +12,7 @@ import 'overlayscrollbars/overlayscrollbars.css';
 import WallpaperImage from './WallpaperImage';
 import { proxySteamImage } from '@/lib/image-proxy';
 import { useTranslations, type Locale } from '@/lib/i18n';
+import { getSteamLanguage } from '@/lib/steam-languages';
 
 
 const VideoPlayer = dynamic(() => import('./VideoPlayer'), { ssr: false });
@@ -893,7 +894,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
             ) : steamData ? (
               <div className="flex justify-center mt-8 px-6">
                 <iframe
-                  src={`https://store.steampowered.com/widget/${steamData.steam_appid}/`}
+                  src={`https://store.steampowered.com/widget/${steamData.steam_appid}/?l=${getSteamLanguage(locale)}`}
                   width="646"
                   height="190"
                   frameBorder="0"
