@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { getRandomGames } from '@/lib/steam-games';
+import { getRandomGames, TOTAL_UNIQUE_GAMES } from '@/lib/steam-games';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -34,6 +34,7 @@ export async function GET(request: Request) {
     }
 
     console.log('Cron job started at:', new Date().toISOString());
+    console.log('Total unique games available:', TOTAL_UNIQUE_GAMES);
 
     const results = {
       total: 0,
@@ -43,57 +44,52 @@ export async function GET(request: Request) {
       details: [] as any[]
     };
 
-    // Obtener juegos aleatorios hasta conseguir 200 nuevos
-    let attempts = 0;
-    const maxAttempts = 1000; // Evitar loop infinito
+    const TARGET_GAMES = 200;
     
-    while (results.inserted < 201 && attempts < maxAttempts) {
-      // Obtener más candidatos de los necesarios
-      const candidates = getRandomGames(30);
+    // Obtener todos los juegos únicos y mezclarlos
+    const allCandidates = getRandomGames(TOTAL_UNIQUE_GAMES);
+    
+    // Procesar en lotes
+    for (const appId of allCandidates) {
+      if (results.inserted >= TARGET_GAMES) break;
       
-      for (const appId of candidates) {
-        if (results.inserted >= 201) break;
+      try {
+        // Verificar si ya existe en nuestra DB
+        const exists = await appIdExists(appId);
         
-        attempts++;
-        
-        try {
-          // Verificar si ya existe en nuestra DB
-          const exists = await appIdExists(appId);
-          
-          if (exists) {
-            results.skipped++;
-            continue;
-          }
-
-          // Insertar nuevo juego
-          const { data, error } = await supabase
-            .from('games')
-            .insert({
-              steam_appid: appId,
-              links: null
-            })
-            .select()
-            .single();
-
-          if (error) {
-            console.error(`Error inserting App ID ${appId}:`, error);
-            results.errors++;
-            continue;
-          }
-
-          console.log(`Successfully inserted App ID ${appId}`);
-          results.inserted++;
-          results.total++;
-          results.details.push({
-            appId,
-            status: 'inserted',
-            id: data.id
-          });
-          
-        } catch (error) {
-          console.error(`Failed to process App ID ${appId}:`, error);
-          results.errors++;
+        if (exists) {
+          results.skipped++;
+          continue;
         }
+
+        // Insertar nuevo juego
+        const { data, error } = await supabase
+          .from('games')
+          .insert({
+            steam_appid: appId,
+            links: null
+          })
+          .select()
+          .single();
+
+        if (error) {
+          console.error(`Error inserting App ID ${appId}:`, error);
+          results.errors++;
+          continue;
+        }
+
+        console.log(`Successfully inserted App ID ${appId}`);
+        results.inserted++;
+        results.total++;
+        results.details.push({
+          appId,
+          status: 'inserted',
+          id: data.id
+        });
+        
+      } catch (error) {
+        console.error(`Failed to process App ID ${appId}:`, error);
+        results.errors++;
       }
     }
 

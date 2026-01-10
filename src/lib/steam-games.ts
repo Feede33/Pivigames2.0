@@ -116,8 +116,14 @@ export const POPULAR_STEAM_GAMES = [
   '212680', '211820', '209000', '206440', '204360', '202970'
 ];
 
+// Obtener array único de juegos (sin duplicados)
+const UNIQUE_GAMES = Array.from(new Set(POPULAR_STEAM_GAMES));
+
 // Función para obtener N juegos aleatorios sin repetir
 export function getRandomGames(count: number): string[] {
-  const shuffled = [...POPULAR_STEAM_GAMES].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
+  const shuffled = [...UNIQUE_GAMES].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(count, UNIQUE_GAMES.length));
 }
+
+// Exportar el total de juegos únicos disponibles
+export const TOTAL_UNIQUE_GAMES = UNIQUE_GAMES.length;
