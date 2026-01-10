@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSteamLanguageFromHeader } from '@/lib/steam-languages';
 
 // API para obtener las ofertas especiales de Steam
 export async function GET(request: NextRequest) {
@@ -6,10 +7,15 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const countryCode = searchParams.get('cc') || 'us';
     const count = parseInt(searchParams.get('count') || '20');
+    
+    // Obtener idioma desde query params o header Accept-Language
+    const langParam = searchParams.get('l');
+    const acceptLanguage = request.headers.get('accept-language');
+    const steamLanguage = langParam || getSteamLanguageFromHeader(acceptLanguage);
 
     // Steam Featured API - obtiene juegos destacados y en oferta
     const response = await fetch(
-      `https://store.steampowered.com/api/featuredcategories?cc=${countryCode}&l=spanish`,
+      `https://store.steampowered.com/api/featuredcategories?cc=${countryCode}&l=${steamLanguage}`,
       { next: { revalidate: 1800 } } // Cache por 30 minutos
     );
 

@@ -7,7 +7,7 @@ export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
   // Si ya tiene un locale en la URL, continuar
-  const pathnameHasLocale = ['es', 'en'].some(
+  const pathnameHasLocale = ['es', 'en', 'pt', 'fr', 'de', 'it', 'ru', 'ja', 'ko', 'zh', 'ar'].some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
   
@@ -28,7 +28,9 @@ export function proxy(request: NextRequest) {
     languages.sort((a, b) => b.quality - a.quality);
     
     // Buscar el primer idioma soportado
-    const supportedLang = languages.find(lang => ['es', 'en'].includes(lang.code));
+    const supportedLang = languages.find(lang => 
+      ['es', 'en', 'pt', 'fr', 'de', 'it', 'ru', 'ja', 'ko', 'zh', 'ar'].includes(lang.code)
+    );
     if (supportedLang) {
       locale = supportedLang.code;
     }

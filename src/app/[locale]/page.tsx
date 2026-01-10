@@ -9,6 +9,7 @@ import { getGames, enrichGameWithSteamData, type GameWithSteamData, getSteamSpec
 import { proxySteamImage } from "@/lib/image-proxy"
 import { useTranslations, type Locale } from "@/lib/i18n"
 import LanguageSwitcher from "@/components/LanguageSwitcher"
+import { getSteamLanguage } from "@/lib/steam-languages"
 
 
 // Tipo para ofertas de Steam con datos enriquecidos
@@ -105,8 +106,11 @@ export default function Home({ params }: { params: Promise<{ locale: string }> }
       
       setLoadingSpecials(true);
       try {
-        // 1. Obtener ofertas de Steam API con precios regionales
-        const response = await fetch(`/api/steam/specials?cc=${userCountry}&count=20`);
+        // Obtener idioma de Steam basado en el locale actual
+        const steamLang = getSteamLanguage(locale);
+        
+        // 1. Obtener ofertas de Steam API con precios regionales e idioma
+        const response = await fetch(`/api/steam/specials?cc=${userCountry}&l=${steamLang}&count=20`);
         if (!response.ok) {
           throw new Error('Failed to fetch Steam specials');
         }
@@ -138,7 +142,7 @@ export default function Home({ params }: { params: Promise<{ locale: string }> }
       }
     }
     loadSteamSpecials();
-  }, [userCountry]);
+  }, [userCountry, locale]); // Agregar locale como dependencia
 
   // Cargar juegos desde Supabase y enriquecerlos con datos de Steam
   useEffect(() => {
@@ -264,7 +268,8 @@ export default function Home({ params }: { params: Promise<{ locale: string }> }
     
     // Cargar datos completos de Steam en segundo plano
     try {
-      const response = await fetch(`/api/steam/${special.id}?cc=${userCountry}`);
+      const steamLang = getSteamLanguage(locale);
+      const response = await fetch(`/api/steam/${special.id}?cc=${userCountry}&l=${steamLang}`);
       if (response.ok) {
         const steamData = await response.json();
         

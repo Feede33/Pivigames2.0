@@ -22,7 +22,19 @@ export const metadata: Metadata = {
 type Locale = 'es' | 'en';
 
 export async function generateStaticParams() {
-  return [{ locale: 'es' as const }, { locale: 'en' as const }];
+  return [
+    { locale: 'es' as const },
+    { locale: 'en' as const },
+    { locale: 'pt' as const },
+    { locale: 'fr' as const },
+    { locale: 'de' as const },
+    { locale: 'it' as const },
+    { locale: 'ru' as const },
+    { locale: 'ja' as const },
+    { locale: 'ko' as const },
+    { locale: 'zh' as const },
+    { locale: 'ar' as const },
+  ];
 }
 
 type LayoutProps = {

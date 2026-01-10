@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSteamLanguageFromHeader } from '@/lib/steam-languages';
 
 export async function GET(
   request: NextRequest,
@@ -10,10 +11,15 @@ export async function GET(
     // Obtener el código de país desde query params (enviado desde el cliente)
     const searchParams = request.nextUrl.searchParams;
     const countryCode = searchParams.get('cc') || 'us';
+    
+    // Obtener idioma desde query params o header Accept-Language
+    const langParam = searchParams.get('l');
+    const acceptLanguage = request.headers.get('accept-language');
+    const steamLanguage = langParam || getSteamLanguageFromHeader(acceptLanguage);
 
-    // Steam Store API con código de país para precios regionales
+    // Steam Store API con código de país para precios regionales e idioma
     const response = await fetch(
-      `https://store.steampowered.com/api/appdetails?appids=${appid}&l=spanish&cc=${countryCode}`,
+      `https://store.steampowered.com/api/appdetails?appids=${appid}&l=${steamLanguage}&cc=${countryCode}`,
       { next: { revalidate: 3600 } } // Cache por 1 hora
     );
 
