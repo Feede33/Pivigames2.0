@@ -11,6 +11,7 @@ import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import 'overlayscrollbars/overlayscrollbars.css';
 import WallpaperImage from './WallpaperImage';
 import { proxySteamImage } from '@/lib/image-proxy';
+import { useTranslations, type Locale } from '@/lib/i18n';
 
 
 const VideoPlayer = dynamic(() => import('./VideoPlayer'), { ssr: false });
@@ -67,6 +68,7 @@ type Props = {
 };
 
 export default function GameModal({ game, onClose, locale = 'es' }: Props) {
+  const t = useTranslations(locale as Locale);
   const [ready, setReady] = useState(false);
   const [visible, setVisible] = useState(false);
   const [screenshotIndex, setScreenshotIndex] = useState(0);
@@ -335,7 +337,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                       className="px-7 py-2.5 rounded-full bg-white text-black border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-200 transition-colors"
                     >
                       <Download className="w-[18px] h-[18px]" />
-                      Download Free
+                      {t.modal.downloadFree}
                     </a>
                   )}
                   {(hasValidVideo || game.trailer) && (
@@ -347,7 +349,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                       className="px-7 py-2.5 rounded-full bg-gray-500/70 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors"
                     >
                       <Play className="w-[18px] h-[18px]" />
-                      Trailer
+                      {t.modal.trailer}
                     </button>
                   )}
                 </div>
@@ -369,7 +371,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                     className="px-7 py-2.5 rounded-full bg-white text-black border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-200 transition-colors"
                   >
                     <Download className="w-[18px] h-[18px]" />
-                    Download Free
+                    {t.modal.downloadFree}
                   </a>
                 )}
                 {(hasValidVideo || game.trailer) && (
@@ -381,7 +383,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                     className="px-7 py-2.5 rounded-full bg-red-600 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-red-700 transition-colors"
                   >
                     <X className="w-[18px] h-[18px]" />
-                    Cerrar Trailer
+                    {t.modal.closeTrailer}
                   </button>
                 )}
               </div>
@@ -442,7 +444,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
 
                 {/* Features section */}
                 <div className="mb-6">
-                  <h3 className="text-white font-semibold mb-3">Game Features</h3>
+                  <h3 className="text-white font-semibold mb-3">{t.modal.gameFeatures}</h3>
                   {loadingSteam ? (
                     <div className="grid grid-cols-2 gap-3">
                       {[...Array(6)].map((_, i) => (
@@ -486,8 +488,8 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                 {/* Screenshots section with slider */}
                 <div className="mb-6">
                   <h3 className="text-white font-semibold mb-3">
-                    Screenshots & Videos
-                    {loadingSteam && <span className="text-gray-500 text-sm ml-2">(Cargando desde Steam...)</span>}
+                    {t.modal.screenshotsVideos}
+                    {loadingSteam && <span className="text-gray-500 text-sm ml-2">({t.common.loading})</span>}
                     {steamData && <span className="text-green-500 text-sm ml-2">✓ Steam</span>}
                   </h3>
                   {loadingSteam ? (
@@ -582,12 +584,12 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
 
                 {/* System Requirements */}
                 <div>
-                  <h3 className="text-white font-semibold mb-4 text-lg">REQUISITOS DEL SISTEMA</h3>
+                  <h3 className="text-white font-semibold mb-4 text-lg">{t.modal.systemRequirements}</h3>
                   {loadingSteam ? (
                     <div className="grid grid-cols-2 gap-8">
                       {/* MÍNIMO Skeleton */}
                       <div>
-                        <h4 className="text-gray-400 text-sm font-semibold mb-3">MÍNIMO:</h4>
+                        <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.minimum}</h4>
                         <div className="space-y-2">
                           {[...Array(5)].map((_, i) => (
                             <div key={i} className="h-4 bg-gray-700 animate-pulse rounded w-full" />
@@ -596,7 +598,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                       </div>
                       {/* RECOMENDADO Skeleton */}
                       <div>
-                        <h4 className="text-gray-400 text-sm font-semibold mb-3">RECOMENDADO:</h4>
+                        <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.recommended}</h4>
                         <div className="space-y-2">
                           {[...Array(5)].map((_, i) => (
                             <div key={i} className="h-4 bg-gray-700 animate-pulse rounded w-full" />
@@ -608,7 +610,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                     <div className="grid grid-cols-2 gap-8">
                       {/* MÍNIMO */}
                       <div>
-                        <h4 className="text-gray-400 text-sm font-semibold mb-3">MÍNIMO:</h4>
+                        <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.minimum}</h4>
                         {steamData?.pc_requirements?.minimum ? (
                           <div className="space-y-2 text-sm text-gray-300">
                             {steamData.pc_requirements.minimum.split('\n').filter(Boolean).map((line, index) => (
@@ -617,14 +619,14 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                           </div>
                         ) : (
                           <div className="space-y-2 text-sm text-gray-300">
-                            <p className="text-gray-500">No hay información de requisitos mínimos disponible</p>
+                            <p className="text-gray-500">{t.modal.noMinimum}</p>
                           </div>
                         )}
                       </div>
 
                       {/* RECOMENDADO */}
                       <div>
-                        <h4 className="text-gray-400 text-sm font-semibold mb-3">RECOMENDADO:</h4>
+                        <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.recommended}</h4>
                         {steamData?.pc_requirements?.recommended ? (
                           <div className="space-y-2 text-sm text-gray-300">
                             {steamData.pc_requirements.recommended.split('\n').filter(Boolean).map((line, index) => (
@@ -633,7 +635,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                           </div>
                         ) : (
                           <div className="space-y-2 text-sm text-gray-300">
-                            <p className="text-gray-500">No hay información de requisitos recomendados disponible</p>
+                            <p className="text-gray-500">{t.modal.noRecommended}</p>
                           </div>
                         )}
                       </div>
@@ -670,7 +672,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                     <div className="relative flex items-center justify-between gap-6">
                       <div className="flex items-center gap-3">
                         <div className="w-1 h-8 bg-gradient-to-b from-green-400 to-emerald-500 rounded-full"></div>
-                        <h4 className="text-gray-300 text-xs font-bold tracking-wider uppercase">Precio</h4>
+                        <h4 className="text-gray-300 text-xs font-bold tracking-wider uppercase">{t.modal.price}</h4>
                       </div>
                       {userLocation && (
                         <span className="flex items-center gap-2 text-xs text-emerald-400 bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-4 py-2 rounded-full border border-green-400/20 backdrop-blur-sm shadow-lg shadow-green-500/10">
@@ -682,7 +684,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
 
                     {steamData.is_free ? (
                       <div className="text-3xl font-bold text-green-400">
-                        GRATIS
+                        {t.modal.free}
                       </div>
                     ) : steamData.price_info ? (
                       <div>
@@ -714,7 +716,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
 
                     {steamData.price_info && (
                       <p className="text-xs text-gray-400 mt-2">
-                        Precio en {steamData.price_info.currency}
+                        {t.modal.priceIn} {steamData.price_info.currency}
                       </p>
                     )}
                   </div>
@@ -730,7 +732,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                 ) : (
                   <div className="space-y-3">
                     <p className="text-gray-500 text-sm">
-                      <span>Genre: </span>
+                      <span>{t.modal.genre} </span>
                       <span className="text-white">
                         {steamData?.genres?.length
                           ? steamData.genres.join(', ')
@@ -738,7 +740,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                       </span>
                     </p>
                     <p className="text-gray-500 text-sm">
-                      <span>Rating: </span>
+                      <span>{t.modal.rating} </span>
                       <span className="text-white flex items-center gap-1">
                         <Star fill="yellow" stroke="yellow" strokeWidth={0.5} size={16} />
                         {steamData?.metacritic
@@ -747,7 +749,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                       </span>
                     </p>
                     <p className="text-gray-500 text-sm">
-                      <span>Developer: </span>
+                      <span>{t.modal.developer} </span>
                       <span className="text-white">
                         {steamData?.developers?.length
                           ? steamData.developers.join(', ')
@@ -755,7 +757,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                       </span>
                     </p>
                     <p className="text-gray-500 text-sm">
-                      <span>Publisher: </span>
+                      <span>{t.modal.publisher} </span>
                       <span className="text-white">
                         {steamData?.publishers?.length
                           ? steamData.publishers.join(', ')
@@ -763,13 +765,13 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                       </span>
                     </p>
                     <p className="text-gray-500 text-sm">
-                      <span>Release: </span>
+                      <span>{t.modal.release} </span>
                       <span className="text-white">
                         {steamData?.release_date || 'Dec 15, 2024'}
                       </span>
                     </p>
                     <p className="text-gray-500 text-sm">
-                      <span>Price History: </span>
+                      <span>{t.modal.priceHistory} </span>
                       {steamData?.current_price && steamData?.lowest_recorded_price ? (
                         <span className="text-white">
                           <a 
@@ -778,7 +780,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                             rel="noopener noreferrer"
                             className="hover:text-green-400 transition-colors cursor-pointer underline decoration-dotted"
                           >
-                            Current Price: {steamData.current_price}
+                            {t.modal.currentPrice} {steamData.current_price}
                           </a>
                           {' | '}
                           <a 
@@ -787,11 +789,11 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
                             rel="noopener noreferrer"
                             className="hover:text-green-400 transition-colors cursor-pointer underline decoration-dotted"
                           >
-                            Lowest Recorded Price: {steamData.lowest_recorded_price}
+                            {t.modal.lowestPrice} {steamData.lowest_recorded_price}
                           </a>
                         </span>
                       ) : (
-                        <span className="text-white">No disponible</span>
+                        <span className="text-white">{t.modal.notAvailable}</span>
                       )}
                     </p>
                   </div>
@@ -799,7 +801,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
 
                 {/* Platforms */}
                 <div>
-                  <h4 className="text-gray-400 text-sm mb-2">Available on</h4>
+                  <h4 className="text-gray-400 text-sm mb-2">{t.modal.availableOn}</h4>
                   {loadingSteam ? (
                     <div className="h-5 w-24 bg-gray-700 animate-pulse rounded" />
                   ) : (
@@ -819,7 +821,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
 
                 {/* Tags */}
                 <div>
-                  <h4 className="text-gray-400 text-sm mb-2">Tags</h4>
+                  <h4 className="text-gray-400 text-sm mb-2">{t.modal.tags}</h4>
                   {loadingSteam ? (
                     <div className="flex flex-wrap gap-2">
                       {[...Array(6)].map((_, i) => (
@@ -850,7 +852,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
 
                 {/* Languages */}
                 <div>
-                  <h4 className="text-gray-400 text-sm mb-2">Languages</h4>
+                  <h4 className="text-gray-400 text-sm mb-2">{t.modal.languages}</h4>
                   {loadingSteam ? (
                     <div className="space-y-2">
                       <div className="h-4 bg-gray-700 animate-pulse rounded w-full" />
@@ -867,16 +869,16 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
 
                 {/* Social */}
                 <div>
-                  <h4 className="text-gray-400 text-sm mb-2">Share</h4>
+                  <h4 className="text-gray-400 text-sm mb-2">{t.modal.share}</h4>
                   <div className="flex gap-3">
                     <button className="bg-[#333] hover:bg-[#444] text-white px-3 py-1.5 rounded text-sm transition-colors">
-                      Discord
+                      {t.modal.discord}
                     </button>
                     <button className="bg-[#333] hover:bg-[#444] text-white px-3 py-1.5 rounded text-sm transition-colors">
-                      Facebook
+                      {t.modal.facebook}
                     </button>
                     <button className="bg-[#333] hover:bg-[#444] text-white px-3 py-1.5 rounded text-sm transition-colors">
-                      Copy Link
+                      {t.modal.copyLink}
                     </button>
                   </div>
                 </div>

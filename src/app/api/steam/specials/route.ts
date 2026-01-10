@@ -11,7 +11,10 @@ export async function GET(request: NextRequest) {
     // Obtener idioma desde query params, referer (URL), o header Accept-Language
     let steamLanguage = searchParams.get('l');
     
-    if (!steamLanguage) {
+    // Si viene un locale desde query params, convertirlo a formato Steam
+    if (steamLanguage) {
+      steamLanguage = getSteamLanguage(steamLanguage);
+    } else {
       // Intentar extraer el locale de la URL del referer
       const referer = request.headers.get('referer');
       if (referer) {
