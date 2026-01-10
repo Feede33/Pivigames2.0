@@ -9,10 +9,10 @@ type Props = {
   games: GameWithSteamData[];
   loading: boolean;
   t: any; // Acepta cualquier objeto de traducción
-  onGameClick: (game: GameWithSteamData, event: React.MouseEvent<HTMLDivElement>) => void;
+  onGameClickAction: (game: GameWithSteamData, event: React.MouseEvent<HTMLDivElement>) => void;
 };
 
-export default function GamesGrid({ games, loading, t, onGameClick }: Props) {
+export default function GamesGrid({ games, loading, t, onGameClickAction }: Props) {
   if (loading || games.length === 0) {
     return null;
   }
@@ -27,7 +27,7 @@ export default function GamesGrid({ games, loading, t, onGameClick }: Props) {
           <div
             key={game.id}
             className="group cursor-pointer"
-            onClick={(e) => onGameClick(game, e)}
+            onClick={(e) => onGameClickAction(game, e)}
           >
             <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg hover:scale-105 transition-all duration-300">
               <div className="aspect-[2/3] bg-gradient-to-br from-purple-900 to-blue-900">

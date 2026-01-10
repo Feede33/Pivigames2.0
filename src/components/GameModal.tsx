@@ -64,11 +64,11 @@ type SteamData = {
 type Props = {
   game: GameWithSteamData | null;
   origin?: { x: number; y: number; width: number; height: number } | null;
-  onClose: () => void;
+  onCloseAction: () => void;
   locale?: string; // Agregar locale como prop opcional
 };
 
-export default function GameModal({ game, onClose, locale = 'es' }: Props) {
+export default function GameModal({ game, onCloseAction, locale = 'es' }: Props) {
   const t = useTranslations(locale as Locale);
   const [ready, setReady] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -214,7 +214,7 @@ export default function GameModal({ game, onClose, locale = 'es' }: Props) {
 
   const handleClose = () => {
     setVisible(false);
-    setTimeout(onClose, 200);
+    setTimeout(onCloseAction, 200);
   };
 
   const openViewer = (index: number) => {

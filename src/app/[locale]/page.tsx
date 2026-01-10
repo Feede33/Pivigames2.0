@@ -316,11 +316,11 @@ export default function Home() {
         />
 
         {/* Games Grid */}
-        <GamesGrid games={games} loading={loading} t={t as any} onGameClick={handleGameClick} />
+        <GamesGrid games={games} loading={loading} t={t as any} onGameClickAction={handleGameClick} />
       </div>
 
       {/* Modal */}
-      <GameModal game={modalGame} origin={modalOrigin} onClose={closeModal} locale={locale} />
+      <GameModal game={modalGame} origin={modalOrigin} onCloseAction={closeModal} locale={locale} />
 
       {/* Error de autenticación */}
       {authError && (

@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/fetch-games",
-      "schedule": "05 22 * * *"
+      "schedule": "*/15 * * * *"
     },
     {
       "path": "/api/cron/sync-specials",
