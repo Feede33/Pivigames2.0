@@ -1,70 +1,82 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { POPULAR_STEAM_GAMES } from '@/lib/steam-games';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// Cache para la lista completa de juegos de Steam
-let steamGamesCache: string[] | null = null;
+// Cache para juegos de SteamSpy
+let steamSpyCache: string[] | null = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 horas
 
-// Obtener lista completa de juegos de Steam
-async function getAllSteamGames(): Promise<string[]> {
-  // Usar cache si está disponible y no ha expirado
-  if (steamGamesCache !== null && Date.now() - cacheTimestamp < CACHE_DURATION) {
-    console.log(`Using cached Steam games list (${steamGamesCache.length} games)`);
-    return [...steamGamesCache];
-  }
-
+// Obtener juegos desde SteamSpy API
+async function getSteamSpyGames(page: number = 0): Promise<string[]> {
   try {
-    console.log('Fetching Steam games list from API...');
-    const response = await fetch('https://api.steampowered.com/ISteamApps/GetAppList/v2/', {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; GameFetcher/1.0)',
-      },
-    });
+    console.log(`Fetching SteamSpy page ${page}...`);
+    const response = await fetch(
+      `https://steamspy.com/api.php?request=all&page=${page}`,
+      {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; GameFetcher/1.0)',
+        },
+      }
+    );
     
     if (!response.ok) {
-      console.error(`Steam API returned status ${response.status}`);
-      throw new Error(`HTTP ${response.status}`);
-    }
-    
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      console.error(`Steam API returned non-JSON content: ${contentType}`);
-      throw new Error('Invalid content type');
+      console.error(`SteamSpy API returned status ${response.status}`);
+      return [];
     }
     
     const data = await response.json();
     
-    if (data?.applist?.apps) {
-      // Extraer solo los App IDs y convertir a strings
-      const games = data.applist.apps.map((app: any) => String(app.appid));
-      steamGamesCache = games;
-      cacheTimestamp = Date.now();
-      console.log(`Loaded ${games.length} games from Steam API`);
-      return games;
-    } else {
-      console.error('Invalid Steam API response structure');
-      throw new Error('Invalid response structure');
-    }
+    // SteamSpy devuelve un objeto donde las keys son los App IDs
+    const appIds = Object.keys(data);
+    console.log(`Fetched ${appIds.length} games from SteamSpy page ${page}`);
+    return appIds;
   } catch (error) {
-    console.error('Error fetching Steam games list:', error);
+    console.error(`Error fetching SteamSpy page ${page}:`, error);
+    return [];
+  }
+}
+
+// Obtener múltiples páginas de SteamSpy
+async function getAllSteamSpyGames(maxPages: number = 3): Promise<string[]> {
+  // Usar cache si está disponible y no ha expirado
+  if (steamSpyCache !== null && Date.now() - cacheTimestamp < CACHE_DURATION) {
+    console.log(`Using cached SteamSpy games (${steamSpyCache.length} games)`);
+    return [...steamSpyCache];
   }
 
-  // Si falla, retornar cache anterior si existe, sino array vacío
-  if (steamGamesCache !== null) {
-    console.log(`Using stale cache (${steamGamesCache.length} games)`);
-    return [...steamGamesCache];
+  const allAppIds: string[] = [];
+  
+  // Obtener múltiples páginas (cada página tiene ~1000 juegos)
+  for (let page = 0; page < maxPages; page++) {
+    const appIds = await getSteamSpyGames(page);
+    
+    if (appIds.length === 0) {
+      console.log(`No more games found at page ${page}, stopping`);
+      break;
+    }
+    
+    allAppIds.push(...appIds);
+    
+    // Rate limit: 1 request per minute según SteamSpy
+    // Pero en producción solo hacemos 1 página por ejecución para ser conservadores
+    if (page < maxPages - 1) {
+      console.log('Waiting 2 seconds before next page...');
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
   }
   
-  // Último recurso: usar el array hardcodeado
-  console.log(`Using fallback game list (${POPULAR_STEAM_GAMES.length} games)`);
-  const uniqueGames = Array.from(new Set(POPULAR_STEAM_GAMES));
-  return uniqueGames;
+  // Guardar en cache
+  if (allAppIds.length > 0) {
+    steamSpyCache = allAppIds;
+    cacheTimestamp = Date.now();
+    console.log(`Cached ${allAppIds.length} games from SteamSpy`);
+  }
+  
+  return allAppIds;
 }
 
 // Verificar si un App ID ya existe en la base de datos
@@ -116,27 +128,25 @@ export async function GET(request: Request) {
 
     const TARGET_GAMES = 1000;
     
-    // Obtener lista completa de juegos de Steam
-    const allSteamGames = await getAllSteamGames();
+    // Obtener juegos desde SteamSpy (3 páginas = ~3000 juegos)
+    const allGames = await getAllSteamSpyGames(3);
     
-    if (allSteamGames.length === 0) {
-      console.error('No games available from any source');
+    if (allGames.length === 0) {
+      console.error('Failed to fetch games from SteamSpy');
       return NextResponse.json({
         success: false,
-        message: 'No games available from any source',
+        message: 'Failed to fetch games from SteamSpy',
         results,
         timestamp: new Date().toISOString()
       }, { status: 500 });
     }
     
-    console.log(`Total Steam games available: ${allSteamGames.length}`);
+    console.log(`Total games available: ${allGames.length}`);
     
-    // Mezclar y tomar una muestra aleatoria
-    const shuffledGames = shuffleArray(allSteamGames);
-    const candidates = shuffledGames.slice(0, Math.min(5000, allSteamGames.length));
+    // Mezclar y procesar
+    const shuffledGames = shuffleArray(allGames);
     
-    // Procesar candidatos
-    for (const appId of candidates) {
+    for (const appId of shuffledGames) {
       if (results.inserted >= TARGET_GAMES) break;
       
       try {
@@ -164,7 +174,10 @@ export async function GET(request: Request) {
           continue;
         }
 
-        console.log(`Successfully inserted App ID ${appId}`);
+        if (results.inserted % 100 === 0) {
+          console.log(`Progress: ${results.inserted}/${TARGET_GAMES} inserted`);
+        }
+        
         results.inserted++;
         results.total++;
         results.details.push({
