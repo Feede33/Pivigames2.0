@@ -39,6 +39,7 @@ export const translations = {
     },
     modal: {
       downloadFree: 'Descargar Gratis',
+      viewOnSteam: 'Ver en Steam',
       trailer: 'Tráiler',
       closeTrailer: 'Cerrar Tráiler',
       gameFeatures: 'Características del Juego',
@@ -111,6 +112,7 @@ export const translations = {
     },
     modal: {
       downloadFree: 'Download Free',
+      viewOnSteam: 'View on Steam',
       trailer: 'Trailer',
       closeTrailer: 'Close Trailer',
       gameFeatures: 'Game Features',
@@ -183,6 +185,7 @@ export const translations = {
     },
     modal: {
       downloadFree: 'Baixar Grátis',
+      viewOnSteam: 'Ver no Steam',
       trailer: 'Trailer',
       closeTrailer: 'Fechar Trailer',
       gameFeatures: 'Recursos do Jogo',
@@ -255,6 +258,7 @@ export const translations = {
     },
     modal: {
       downloadFree: 'Télécharger Gratuitement',
+      viewOnSteam: 'Voir sur Steam',
       trailer: 'Bande-annonce',
       closeTrailer: 'Fermer la Bande-annonce',
       gameFeatures: 'Fonctionnalités du Jeu',
@@ -327,6 +331,7 @@ export const translations = {
     },
     modal: {
       downloadFree: 'Kostenlos Herunterladen',
+      viewOnSteam: 'Auf Steam ansehen',
       trailer: 'Trailer',
       closeTrailer: 'Trailer Schließen',
       gameFeatures: 'Spielfunktionen',
@@ -399,6 +404,7 @@ export const translations = {
     },
     modal: {
       downloadFree: 'Scarica Gratis',
+      viewOnSteam: 'Vedi su Steam',
       trailer: 'Trailer',
       closeTrailer: 'Chiudi Trailer',
       gameFeatures: 'Caratteristiche del Gioco',
@@ -471,6 +477,7 @@ export const translations = {
     },
     modal: {
       downloadFree: 'Скачать Бесплатно',
+      viewOnSteam: 'Посмотреть в Steam',
       trailer: 'Трейлер',
       closeTrailer: 'Закрыть Трейлер',
       gameFeatures: 'Особенности Игры',
@@ -543,6 +550,7 @@ export const translations = {
     },
     modal: {
       downloadFree: '無料ダウンロード',
+      viewOnSteam: 'Steamで見る',
       trailer: 'トレーラー',
       closeTrailer: 'トレーラーを閉じる',
       gameFeatures: 'ゲーム機能',
@@ -615,6 +623,7 @@ export const translations = {
     },
     modal: {
       downloadFree: '무료 다운로드',
+      viewOnSteam: 'Steam에서 보기',
       trailer: '트레일러',
       closeTrailer: '트레일러 닫기',
       gameFeatures: '게임 기능',
@@ -687,6 +696,7 @@ export const translations = {
     },
     modal: {
       downloadFree: '免费下载',
+      viewOnSteam: '在Steam上查看',
       trailer: '预告片',
       closeTrailer: '关闭预告片',
       gameFeatures: '游戏功能',
@@ -759,6 +769,7 @@ export const translations = {
     },
     modal: {
       downloadFree: 'تحميل مجاني',
+      viewOnSteam: 'عرض على Steam',
       trailer: 'العرض الترويجي',
       closeTrailer: 'إغلاق العرض الترويجي',
       gameFeatures: 'ميزات اللعبة',

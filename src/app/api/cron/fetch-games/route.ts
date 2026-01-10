@@ -47,12 +47,12 @@ export async function GET(request: Request) {
     let attempts = 0;
     const maxAttempts = 1000; // Evitar loop infinito
     
-    while (results.inserted < 200 && attempts < maxAttempts) {
+    while (results.inserted < 201 && attempts < maxAttempts) {
       // Obtener más candidatos de los necesarios
       const candidates = getRandomGames(30);
       
       for (const appId of candidates) {
-        if (results.inserted >= 200) break;
+        if (results.inserted >= 201) break;
         
         attempts++;
         

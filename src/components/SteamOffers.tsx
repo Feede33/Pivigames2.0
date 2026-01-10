@@ -140,8 +140,8 @@ export default function SteamOffers({ specials, loading, t, onSpecialClick }: Pr
               </div>
 
               {/* Badge de disponibilidad */}
-              {special.hasDownloadLink && (
-                <div className="absolute top-4 right-4">
+              <div className="absolute top-4 right-4">
+                {special.hasDownloadLink ? (
                   <div className="relative">
                     <div className="absolute inset-0 bg-blue-500 blur-lg opacity-50"></div>
                     <span className="relative bg-gradient-to-r from-blue-500 to-cyan-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-1.5 backdrop-blur-sm">
@@ -155,8 +155,18 @@ export default function SteamOffers({ specials, loading, t, onSpecialClick }: Pr
                       {t.offers.available}
                     </span>
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-orange-500 blur-lg opacity-40"></div>
+                    <span className="relative bg-gradient-to-r from-orange-500/90 to-amber-600/90 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-1.5 backdrop-blur-sm border border-orange-400/30">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Steam
+                    </span>
+                  </div>
+                )}
+              </div>
 
               {/* Plataformas */}
               <div className="absolute bottom-4 right-4 flex gap-2">

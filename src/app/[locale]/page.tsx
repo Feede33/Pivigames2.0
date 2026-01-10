@@ -122,6 +122,7 @@ export default function Home() {
         const specialsMap = new Map(supabaseSpecials.map((s) => [s.steam_appid, s.links]));
 
         // Enriquecer ofertas de Steam con información de links
+        // MOSTRAR TODAS las ofertas, tengan o no link de descarga
         const enrichedSpecials: SteamSpecialEnriched[] = steamGames.map((game: any) => ({
           ...game,
           hasDownloadLink:
@@ -230,6 +231,7 @@ export default function Home() {
     });
 
     // Crear un objeto temporal mientras se cargan los datos completos
+    // Incluir el link de descarga si existe
     const tempGame: GameWithSteamData = {
       id: special.id,
       steam_appid: special.id.toString(),
@@ -241,6 +243,7 @@ export default function Home() {
       wallpaper: special.header_image,
       description: t.loading.info,
       screenshots: [],
+      links: special.downloadLink || undefined,
     };
 
     setModalGame(tempGame);
@@ -264,6 +267,7 @@ export default function Home() {
           trailer:
             steamData.videos?.[0]?.mp4?.max || steamData.videos?.[0]?.mp4?.['480'] || '',
           screenshots: steamData.screenshots?.map((s: any) => s.full) || [],
+          links: special.downloadLink || undefined,
         };
 
         setModalGame(fullGame);

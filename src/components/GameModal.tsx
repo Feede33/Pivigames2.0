@@ -330,7 +330,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                 }`}>
                 <h2 className="text-4xl font-bold text-white mb-3">{game.title}</h2>
                 <div className="flex gap-3">
-                  {game.links && (
+                  {game.links ? (
                     <a
                       href={game.links}
                       target="_blank"
@@ -339,6 +339,18 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                     >
                       <Download className="w-[18px] h-[18px]" />
                       {t.modal.downloadFree}
+                    </a>
+                  ) : (
+                    <a
+                      href={`https://store.steampowered.com/app/${game.steam_appid}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-7 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg"
+                    >
+                      <svg className="w-[18px] h-[18px]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2m0-2a12 12 0 0 0-12 12 12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.5 14.5-5-2.5V9l5 2.5v3z"/>
+                      </svg>
+                      {t.modal.viewOnSteam}
                     </a>
                   )}
                   {(hasValidVideo || game.trailer) && (
@@ -364,7 +376,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
             <div className="px-6 py-4 bg-[#181818]">
               <h2 className="text-4xl font-bold text-white mb-3">{game.title}</h2>
               <div className="flex gap-3">
-                {game.links && (
+                {game.links ? (
                   <a
                     href={game.links}
                     target="_blank"
@@ -373,6 +385,18 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                   >
                     <Download className="w-[18px] h-[18px]" />
                     {t.modal.downloadFree}
+                  </a>
+                ) : (
+                  <a
+                    href={`https://store.steampowered.com/app/${game.steam_appid}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-7 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg"
+                  >
+                    <svg className="w-[18px] h-[18px]" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2m0-2a12 12 0 0 0-12 12 12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.5 14.5-5-2.5V9l5 2.5v3z"/>
+                    </svg>
+                    {t.modal.viewOnSteam}
                   </a>
                 )}
                 {(hasValidVideo || game.trailer) && (
