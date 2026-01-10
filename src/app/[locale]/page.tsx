@@ -62,7 +62,7 @@ export default function Home({ params }: { params: Promise<{ locale: string }> }
     const errorDescription = params.get('error_description');
     
     if (error) {
-      let message = t.auth.error;
+      let message: string = t.auth.error;
       
       if (errorDescription?.includes('email')) {
         message = t.auth.emailRequired;

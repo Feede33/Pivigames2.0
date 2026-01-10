@@ -1,8 +1,8 @@
-# ✅ Implementación de i18n Completada
+# ✅ Implementación de i18n Completada (Next.js 16)
 
 ## 🎯 Qué se implementó
 
-Se ha configurado un sistema de internacionalización (i18n) **nativo de Next.js** que detecta automáticamente el idioma del navegador del usuario.
+Se ha configurado un sistema de internacionalización (i18n) **nativo de Next.js 16** que detecta automáticamente el idioma del navegador del usuario.
 
 ## 🌍 Idiomas soportados
 
@@ -33,12 +33,12 @@ Se ha configurado un sistema de internacionalización (i18n) **nativo de Next.js
 
 ### Nuevos archivos:
 - `src/lib/i18n.ts` - Sistema de traducciones
-- `src/middleware.ts` - Detección y redirección de idioma
+- `proxy.ts` - Detección y redirección de idioma (Next.js 16 usa proxy en lugar de middleware)
 - `src/components/LanguageSwitcher.tsx` - Selector de idioma
 - `README_I18N.md` - Documentación completa
 
 ### Modificados:
-- `src/app/[locale]/layout.tsx` - Layout con soporte de locale
+- `src/app/[locale]/layout.tsx` - Layout con soporte de locale (async params)
 - `src/app/[locale]/page.tsx` - Página principal con traducciones
 - `src/app/page.tsx` - Redirección inicial
 - `next.config.ts` - Configuración limpia
@@ -77,16 +77,24 @@ export const translations = {
 
 Usa en tu componente:
 ```typescript
-const t = useTranslations(params.locale);
+const t = useTranslations(locale);
 <h1>{t.miNuevaSeccion.titulo}</h1>
 ```
 
 ## 🌐 Cómo agregar más idiomas
 
 1. Agrega las traducciones en `src/lib/i18n.ts`
-2. Actualiza el array de locales en `src/middleware.ts`
+2. Actualiza el array de locales en `proxy.ts`
 3. Agrega el locale en `generateStaticParams()` en `src/app/[locale]/layout.tsx`
 4. Agrega la bandera en `src/components/LanguageSwitcher.tsx`
+
+## ⚠️ Importante: Next.js 16
+
+Esta implementación usa las nuevas convenciones de Next.js 16:
+
+- **`proxy.ts`** en lugar de `middleware.ts` (deprecado)
+- **`params` es una Promise** - Debe ser await/then en componentes
+- **Tipos más estrictos** - Los params deben ser `Promise<{ locale: string }>`
 
 ## ✨ Ventajas de esta implementación
 
@@ -96,6 +104,7 @@ const t = useTranslations(params.locale);
 - **Type-safe** - TypeScript valida las traducciones
 - **Mantenible** - Todo en un solo archivo
 - **SEO** - URLs limpias indexables por buscadores
+- **Compatible con Next.js 16** - Usa las últimas convenciones
 
 ## 🧪 Cómo probar
 
@@ -108,9 +117,10 @@ const t = useTranslations(params.locale);
 
 - Las rutas de API (`/api/*`) no están afectadas por i18n
 - Las rutas de auth (`/auth/*`) funcionan con cualquier locale
-- El middleware excluye archivos estáticos automáticamente
+- El proxy excluye archivos estáticos automáticamente
 - La detección de idioma ocurre solo en la primera carga
+- **Build exitoso** ✅ - Compilado y optimizado correctamente
 
 ## 🎉 Resultado
 
-Tu sitio ahora es completamente multiidioma y detecta automáticamente el idioma preferido del usuario basándose en la configuración de su navegador, sin necesidad de herramientas externas ni configuración compleja.
+Tu sitio ahora es completamente multiidioma y detecta automáticamente el idioma preferido del usuario basándose en la configuración de su navegador, sin necesidad de herramientas externas ni configuración compleja. Compatible con Next.js 16.
