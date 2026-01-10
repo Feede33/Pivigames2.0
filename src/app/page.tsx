@@ -39,7 +39,33 @@ export default function Home() {
   const [steamSpecials, setSteamSpecials] = useState<SteamSpecialEnriched[]>([]);
   const [userCountry, setUserCountry] = useState<string>('us');
   const [loadingSpecials, setLoadingSpecials] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
   const GAMES_PER_PAGE = 20;
+
+  // Detectar errores de autenticación en la URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get('error');
+    const errorDescription = params.get('error_description');
+    
+    if (error) {
+      let message = 'Error al iniciar sesión';
+      
+      if (errorDescription?.includes('email')) {
+        message = '⚠️ Para iniciar sesión con Discord, necesitas tener tu email verificado. Por favor verifica tu email en Discord e intenta nuevamente.';
+      } else if (error === 'access_denied') {
+        message = 'Acceso denegado. Necesitas autorizar la aplicación para continuar.';
+      }
+      
+      setAuthError(message);
+      
+      // Limpiar la URL sin recargar la página
+      window.history.replaceState({}, '', window.location.pathname);
+      
+      // Auto-ocultar después de 10 segundos
+      setTimeout(() => setAuthError(null), 10000);
+    }
+  }, []);
 
   // Obtener ubicación del usuario
   useEffect(() => {
@@ -669,6 +695,31 @@ export default function Home() {
 
       {/* Modal del juego - Componente separado */}
       <GameModal game={modalGame} origin={modalOrigin} onClose={closeModal} />
+
+      {/* Error de autenticación - Toast notification */}
+      {authError && (
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] max-w-md w-full mx-4">
+          <div className="bg-[#f23f43] text-white rounded-lg shadow-2xl p-4 flex items-start gap-3 animate-in slide-in-from-top duration-300">
+            <div className="flex-shrink-0 mt-0.5">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-sm mb-1">Error de Autenticación</h3>
+              <p className="text-sm opacity-90">{authError}</p>
+            </div>
+            <button
+              onClick={() => setAuthError(null)}
+              className="flex-shrink-0 hover:bg-white/20 rounded p-1 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* User Profile - Discord Style */}
       <UserProfile />

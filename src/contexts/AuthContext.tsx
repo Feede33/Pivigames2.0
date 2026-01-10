@@ -50,7 +50,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'discord',
         options: {
-          // No especificar redirectTo para que use la configuración de Supabase
+          // Solicitar explícitamente el scope de email
+          scopes: 'identify email',
           skipBrowserRedirect: false,
         },
       });
@@ -61,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.error('Error signing in with Discord:', error);
-      alert('Error al iniciar sesión con Discord. Verifica la configuración.');
+      alert('Error al iniciar sesión con Discord. Asegúrate de que tu email de Discord esté verificado.');
     }
   };
 
