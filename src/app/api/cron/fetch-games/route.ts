@@ -84,7 +84,7 @@ export async function GET(request: Request) {
       details: [] as any[]
     };
 
-    const TARGET_GAMES = 200;
+    const TARGET_GAMES = 1000;
     
     // Obtener lista completa de juegos de Steam
     const allSteamGames = await getAllSteamGames();
@@ -103,7 +103,7 @@ export async function GET(request: Request) {
     
     // Mezclar y tomar una muestra aleatoria
     const shuffledGames = shuffleArray(allSteamGames);
-    const candidates = shuffledGames.slice(0, Math.min(1000, allSteamGames.length));
+    const candidates = shuffledGames.slice(0, Math.min(5000, allSteamGames.length));
     
     // Procesar candidatos
     for (const appId of candidates) {
