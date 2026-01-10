@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Pencil, ChevronRight, Copy, LogOut } from 'lucide-react';
+import { Settings } from 'lucide-react';
 
 export default function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,28 +31,18 @@ export default function UserProfile() {
     );
   }
 
-  // Usuario logueado - estilo Discord
+  // Usuario logueado - estilo Discord horizontal
   const avatarUrl = user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`;
   const username = user.user_metadata?.custom_claims?.global_name || user.user_metadata?.full_name || user.user_metadata?.name || 'Usuario';
-  const discriminator = user.user_metadata?.username || 'user1111';
-
-  const copyUserId = () => {
-    navigator.clipboard.writeText(user.id);
-    // Aquí podrías agregar un toast notification
-  };
 
   return (
     <div className="fixed bottom-8 left-12 z-50">
-      {/* Barra inferior con avatar clickeable */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-64 bg-[#232428] hover:bg-[#2b2d31] transition-colors rounded-lg shadow-xl overflow-hidden"
-      >
+      <div className="w-64 bg-background/95 backdrop-blur-sm border-t border-r border-border rounded-full shadow-xl">
         <div className="flex items-center justify-between p-2 gap-2">
           {/* Avatar y Info del Usuario */}
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <div className="relative">
-              <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-[#3ba55d]">
+              <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-border">
                 <img
                   src={avatarUrl}
                   alt={username}
@@ -60,16 +50,27 @@ export default function UserProfile() {
                 />
               </div>
               {/* Indicador de estado online */}
-              <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#3ba55d] rounded-full border-2 border-[#232428]" />
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
             </div>
             
-            <div className="flex-1 min-w-0 text-left">
-              <p className="text-sm font-semibold text-white truncate">{username}</p>
-              <p className="text-xs text-[#b5bac1] truncate">{discriminator}</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold truncate">{username}</p>
+              <p className="text-xs text-muted-foreground truncate">Online</p>
             </div>
           </div>
+
+          {/* Controles */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-1.5 hover:bg-accent rounded transition-colors"
+              title="User Settings"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+          </div>
         </div>
-      </button>
+      </div>
 
       {/* Modal estilo Discord */}
       {isOpen && (
@@ -113,7 +114,7 @@ export default function UserProfile() {
               {/* Nombre de usuario */}
               <div className="mb-4">
                 <h2 className="text-xl font-bold text-white mb-0.5">{username}</h2>
-                <p className="text-sm text-[#b5bac1]">{discriminator}</p>
+                <p className="text-sm text-[#b5bac1]">{user.user_metadata?.username || 'user1111'}</p>
               </div>
 
               {/* Divider */}
@@ -124,7 +125,9 @@ export default function UserProfile() {
                 {/* Editar perfil */}
                 <button className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-[#404249] transition-colors group">
                   <div className="flex items-center gap-3">
-                    <Pencil className="w-5 h-5 text-[#b5bac1]" />
+                    <svg className="w-5 h-5 text-[#b5bac1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
                     <span className="text-sm font-medium text-[#dbdee1]">Editar perfil</span>
                   </div>
                   <span className="text-xs font-bold text-white bg-[#5865f2] px-2 py-0.5 rounded">NUEVO</span>
@@ -143,7 +146,9 @@ export default function UserProfile() {
                       </div>
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-[#b5bac1]" />
+                  <svg className="w-5 h-5 text-[#b5bac1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </button>
               </div>
 
@@ -160,15 +165,19 @@ export default function UserProfile() {
                     </svg>
                     <span className="text-sm font-medium text-[#dbdee1]">Cambiar de cuenta</span>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-[#b5bac1]" />
+                  <svg className="w-5 h-5 text-[#b5bac1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </button>
 
                 {/* Copiar ID del usuario */}
                 <button 
-                  onClick={copyUserId}
+                  onClick={() => navigator.clipboard.writeText(user.id)}
                   className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[#404249] transition-colors group"
                 >
-                  <Copy className="w-5 h-5 text-[#b5bac1]" />
+                  <svg className="w-5 h-5 text-[#b5bac1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
                   <span className="text-sm font-medium text-[#dbdee1]">Copiar ID del usuario</span>
                 </button>
               </div>
@@ -181,7 +190,9 @@ export default function UserProfile() {
                 onClick={signOut}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[#da373c] transition-colors group"
               >
-                <LogOut className="w-5 h-5 text-[#f23f43] group-hover:text-white transition-colors" />
+                <svg className="w-5 h-5 text-[#f23f43] group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
                 <span className="text-sm font-medium text-[#f23f43] group-hover:text-white transition-colors">Cerrar sesión</span>
               </button>
             </div>
