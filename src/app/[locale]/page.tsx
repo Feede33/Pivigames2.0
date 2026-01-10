@@ -9,7 +9,6 @@ import { getGames, enrichGameWithSteamData, type GameWithSteamData, getSteamSpec
 import { proxySteamImage } from "@/lib/image-proxy"
 import { useTranslations, type Locale } from "@/lib/i18n"
 import LanguageSwitcher from "@/components/LanguageSwitcher"
-import { getSteamLanguage } from "@/lib/steam-languages"
 
 
 // Tipo para ofertas de Steam con datos enriquecidos
@@ -106,11 +105,8 @@ export default function Home({ params }: { params: Promise<{ locale: string }> }
       
       setLoadingSpecials(true);
       try {
-        // Obtener idioma de Steam basado en el locale actual
-        const steamLang = getSteamLanguage(locale);
-        
-        // 1. Obtener ofertas de Steam API con precios regionales e idioma
-        const response = await fetch(`/api/steam/specials?cc=${userCountry}&l=${steamLang}&count=20`);
+        // Las APIs detectarán el idioma automáticamente desde la URL
+        const response = await fetch(`/api/steam/specials?cc=${userCountry}&count=20`);
         if (!response.ok) {
           throw new Error('Failed to fetch Steam specials');
         }
@@ -142,7 +138,7 @@ export default function Home({ params }: { params: Promise<{ locale: string }> }
       }
     }
     loadSteamSpecials();
-  }, [userCountry, locale]); // Agregar locale como dependencia
+  }, [userCountry]); // Remover locale de dependencias
 
   // Cargar juegos desde Supabase y enriquecerlos con datos de Steam
   useEffect(() => {
@@ -268,8 +264,8 @@ export default function Home({ params }: { params: Promise<{ locale: string }> }
     
     // Cargar datos completos de Steam en segundo plano
     try {
-      const steamLang = getSteamLanguage(locale);
-      const response = await fetch(`/api/steam/${special.id}?cc=${userCountry}&l=${steamLang}`);
+      // Las APIs detectarán el idioma automáticamente desde la URL
+      const response = await fetch(`/api/steam/${special.id}?cc=${userCountry}`);
       if (response.ok) {
         const steamData = await response.json();
         
@@ -331,7 +327,7 @@ export default function Home({ params }: { params: Promise<{ locale: string }> }
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <LanguageSwitcher currentLocale={locale} />
+            <LanguageSwitcher />
             <UserProfile />
           </div>
         </div>

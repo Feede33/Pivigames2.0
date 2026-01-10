@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSteamLanguageFromHeader } from '@/lib/steam-languages';
+import { getSteamLanguageFromHeader, getSteamLanguage } from '@/lib/steam-languages';
 
 export async function GET(
   request: NextRequest,
@@ -12,10 +12,27 @@ export async function GET(
     const searchParams = request.nextUrl.searchParams;
     const countryCode = searchParams.get('cc') || 'us';
     
-    // Obtener idioma desde query params o header Accept-Language
-    const langParam = searchParams.get('l');
-    const acceptLanguage = request.headers.get('accept-language');
-    const steamLanguage = langParam || getSteamLanguageFromHeader(acceptLanguage);
+    // Obtener idioma desde query params, referer (URL), o header Accept-Language
+    let steamLanguage = searchParams.get('l');
+    
+    if (!steamLanguage) {
+      // Intentar extraer el locale de la URL del referer
+      const referer = request.headers.get('referer');
+      if (referer) {
+        const match = referer.match(/\/(es|en|pt|fr|de|it|ru|ja|ko|zh|ar)\//);
+        if (match) {
+          steamLanguage = getSteamLanguage(match[1]);
+        }
+      }
+    }
+    
+    // Si aún no hay idioma, usar Accept-Language
+    if (!steamLanguage) {
+      const acceptLanguage = request.headers.get('accept-language');
+      steamLanguage = getSteamLanguageFromHeader(acceptLanguage);
+    }
+
+    console.log(`[Steam API] Fetching appid ${appid} in language: ${steamLanguage}`);
 
     // Steam Store API con código de país para precios regionales e idioma
     const response = await fetch(
