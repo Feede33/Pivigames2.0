@@ -7,11 +7,12 @@
 3. Dale un nombre (ej: "Pivigames")
 4. Ve a la sección "OAuth2"
 5. Copia el **Client ID** y **Client Secret**
-6. En "Redirects", agrega:
+6. En "Redirects", agrega AMBAS URLs:
    ```
-   https://TU_PROYECTO.supabase.co/auth/v1/callback
+   http://localhost:3000/auth/callback
+   https://TU_DOMINIO.vercel.app/auth/callback
    ```
-   (Reemplaza TU_PROYECTO con tu ID de Supabase)
+   (Reemplaza TU_DOMINIO con tu dominio de producción)
 
 ## Paso 2: Configurar en Supabase
 
@@ -19,7 +20,13 @@
 2. Ve a **Authentication** > **Providers**
 3. Busca **Discord** y habilítalo
 4. Pega el **Client ID** y **Client Secret** de Discord
-5. Guarda los cambios
+5. En "Site URL", pon: `http://localhost:3000` (desarrollo) o tu dominio de producción
+6. En "Redirect URLs", agrega:
+   ```
+   http://localhost:3000/auth/callback
+   https://TU_DOMINIO.vercel.app/auth/callback
+   ```
+7. Guarda los cambios
 
 ## Paso 3: Variables de Entorno
 
