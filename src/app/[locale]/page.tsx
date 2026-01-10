@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight, Play, Info, Star } from 'lucide-react';
 import GameModal from "@/components/GameModal"
 import UserProfile from "@/components/UserProfile"
@@ -30,19 +31,13 @@ type SteamSpecialEnriched = {
   downloadLink?: string | null;
 };
 
-export default function Home({ params }: { params: Promise<{ locale: string }> }) {
+export default function Home() {
+  // Obtener locale desde useParams (client-side)
+  const params = useParams();
+  const locale = (params?.locale as Locale) || 'es';
+  const t = useTranslations(locale);
+  
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [locale, setLocale] = useState<Locale>('es');
-  const [t, setT] = useState(useTranslations('es'));
-
-  // Resolver params en useEffect
-  useEffect(() => {
-    params.then(({ locale: resolvedLocale }) => {
-      const validLocale = (resolvedLocale === 'en' ? 'en' : 'es') as Locale;
-      setLocale(validLocale);
-      setT(useTranslations(validLocale));
-    });
-  }, [params]);
   const [modalGame, setModalGame] = useState<GameWithSteamData | null>(null);
   const [modalOrigin, setModalOrigin] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const [games, setGames] = useState<GameWithSteamData[]>([]);
