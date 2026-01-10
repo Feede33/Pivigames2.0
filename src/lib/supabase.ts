@@ -53,9 +53,14 @@ export async function getGames(): Promise<Game[]> {
 }
 
 // Función para enriquecer un juego con datos de Steam (solo cliente)
-export async function enrichGameWithSteamData(game: Game): Promise<GameWithSteamData> {
+export async function enrichGameWithSteamData(game: Game, locale?: string): Promise<GameWithSteamData> {
   try {
-    const response = await fetch(`/api/steam/${game.steam_appid}`);
+    // Construir URL con parámetro de idioma si se proporciona
+    const url = locale 
+      ? `/api/steam/${game.steam_appid}?l=${locale}`
+      : `/api/steam/${game.steam_appid}`;
+    
+    const response = await fetch(url);
     if (!response.ok) throw new Error('Steam API error');
     
     const steamData = await response.json();

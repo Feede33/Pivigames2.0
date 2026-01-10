@@ -151,9 +151,9 @@ export default function Home() {
           return;
         }
 
-        // Luego enriquecer cada juego con datos de Steam
+        // Luego enriquecer cada juego con datos de Steam, pasando el locale
         const enrichedGames = await Promise.all(
-          gamesFromDB.map(game => enrichGameWithSteamData(game))
+          gamesFromDB.map(game => enrichGameWithSteamData(game, locale))
         );
 
         console.log('Enriched games:', enrichedGames);
@@ -168,7 +168,7 @@ export default function Home() {
       }
     }
     loadGames();
-  }, []);
+  }, [locale]); // Agregar locale como dependencia para recargar cuando cambie
 
   // Infinite scroll - por ahora solo detecta scroll
   useEffect(() => {
