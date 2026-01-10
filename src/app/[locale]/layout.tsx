@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/contexts/AuthContext"
-import type { Locale } from "@/lib/i18n";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,19 +19,25 @@ export const metadata: Metadata = {
   description: "Unlimited games, movies, and more",
 };
 
+type Locale = 'es' | 'en';
+
 export async function generateStaticParams() {
-  return [{ locale: 'es' }, { locale: 'en' }];
+  return [{ locale: 'es' as const }, { locale: 'en' as const }];
 }
 
-export default function LocaleLayout({
+type LayoutProps = {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+};
+
+export default async function LocaleLayout({
   children,
   params,
-}: {
-  children: React.ReactNode;
-  params: { locale: Locale };
-}) {
+}: LayoutProps) {
+  const { locale } = await params;
+  
   return (
-    <html lang={params.locale} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head />
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider

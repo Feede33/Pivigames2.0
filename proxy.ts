@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // Obtener el idioma del navegador
   const acceptLanguage = request.headers.get('accept-language');
   const pathname = request.nextUrl.pathname;

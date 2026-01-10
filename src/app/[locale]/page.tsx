@@ -30,9 +30,19 @@ type SteamSpecialEnriched = {
   downloadLink?: string | null;
 };
 
-export default function Home({ params }: { params: { locale: Locale } }) {
-  const t = useTranslations(params.locale);
+export default function Home({ params }: { params: Promise<{ locale: string }> }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [locale, setLocale] = useState<Locale>('es');
+  const [t, setT] = useState(useTranslations('es'));
+
+  // Resolver params en useEffect
+  useEffect(() => {
+    params.then(({ locale: resolvedLocale }) => {
+      const validLocale = (resolvedLocale === 'en' ? 'en' : 'es') as Locale;
+      setLocale(validLocale);
+      setT(useTranslations(validLocale));
+    });
+  }, [params]);
   const [modalGame, setModalGame] = useState<GameWithSteamData | null>(null);
   const [modalOrigin, setModalOrigin] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const [games, setGames] = useState<GameWithSteamData[]>([]);
@@ -316,7 +326,7 @@ export default function Home({ params }: { params: { locale: Locale } }) {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <LanguageSwitcher currentLocale={params.locale} />
+            <LanguageSwitcher currentLocale={locale} />
             <UserProfile />
           </div>
         </div>
