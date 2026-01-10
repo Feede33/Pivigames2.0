@@ -69,11 +69,7 @@ https://pivigames2-0.vercel.app/**
    ↓
 4. Discord redirige a Supabase con el código
    ↓
-5. Supabase intercambia el código por tokens
-   ↓
-6. Supabase redirige a tu app (Site URL)
-   ↓
-7. Tu app detecta la sesión automáticamente
+5. Supabase intercdd
    ↓
 8. ¡Usuario logueado! 🎉
 ```
@@ -90,7 +86,7 @@ En la sección "Redirects" deberías ver SOLO:
      [Add Another]
 ```
 
-## ⚠️ Importante
+## ⚠️ Importantedddd
 
 - ❌ NO uses `http://localhost:3000/auth/callback` en Discord
 - ❌ NO uses `https://pivigames2-0.vercel.app/auth/callback` en Discord
