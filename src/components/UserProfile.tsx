@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Settings } from 'lucide-react';
+import { Pencil, ChevronRight, Copy, LogOut } from 'lucide-react';
 
 export default function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,18 +31,28 @@ export default function UserProfile() {
     );
   }
 
-  // Usuario logueado - estilo Discord horizontal
+  // Usuario logueado - estilo Discord
   const avatarUrl = user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`;
   const username = user.user_metadata?.custom_claims?.global_name || user.user_metadata?.full_name || user.user_metadata?.name || 'Usuario';
+  const discriminator = user.user_metadata?.username || 'user1111';
+
+  const copyUserId = () => {
+    navigator.clipboard.writeText(user.id);
+    // Aquí podrías agregar un toast notification
+  };
 
   return (
     <div className="fixed bottom-8 left-12 z-50">
-      <div className="w-64 bg-background/95 backdrop-blur-sm border-t border-r border-border rounded-full shadow-xl">
+      {/* Barra inferior con avatar clickeable */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-64 bg-[#232428] hover:bg-[#2b2d31] transition-colors rounded-lg shadow-xl overflow-hidden"
+      >
         <div className="flex items-center justify-between p-2 gap-2">
           {/* Avatar y Info del Usuario */}
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <div className="relative">
-              <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-border">
+              <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-[#3ba55d]">
                 <img
                   src={avatarUrl}
                   alt={username}
@@ -50,89 +60,129 @@ export default function UserProfile() {
                 />
               </div>
               {/* Indicador de estado online */}
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
+              <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#3ba55d] rounded-full border-2 border-[#232428]" />
             </div>
             
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">{username}</p>
-              <p className="text-xs text-muted-foreground truncate">Online</p>
+            <div className="flex-1 min-w-0 text-left">
+              <p className="text-sm font-semibold text-white truncate">{username}</p>
+              <p className="text-xs text-[#b5bac1] truncate">{discriminator}</p>
             </div>
           </div>
-
-          {/* Controles */}
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-1.5 hover:bg-accent rounded transition-colors"
-              title="User Settings"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
-          </div>
         </div>
-      </div>
+      </button>
 
-      {/* Dropdown Menu */}
+      {/* Modal estilo Discord */}
       {isOpen && (
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-40"
+            className="fixed inset-0 z-40 bg-black/50"
             onClick={() => setIsOpen(false)}
           ></div>
           
-          {/* Menu */}
-          <div className="absolute bottom-16 left-0 z-50 w-64 bg-background/95 backdrop-blur-sm rounded-xl border border-border shadow-2xl overflow-hidden">
-            {/* Header */}
-            <div className="p-4 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 border-b border-border">
-              <div className="flex items-center gap-3">
-                <img
-                  src={avatarUrl}
-                  alt={username}
-                  className="w-12 h-12 rounded-full border-2 border-white/20"
-                />
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-sm truncate">{username}</h3>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {user.email}
-                  </p>
+          {/* Menu Modal */}
+          <div className="absolute bottom-20 left-0 z-50 w-[340px] bg-[#111214] rounded-2xl shadow-2xl overflow-hidden border border-[#1e1f22]">
+            {/* Header con gradiente azul Discord */}
+            <div className="relative h-[120px] bg-gradient-to-br from-[#5865f2] to-[#7289da] overflow-hidden">
+              {/* Patrón de fondo opcional */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full blur-3xl"></div>
+                <div className="absolute bottom-0 right-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+              </div>
+              
+              {/* Avatar grande */}
+              <div className="absolute -bottom-12 left-4">
+                <div className="relative">
+                  <div className="h-24 w-24 rounded-full overflow-hidden border-[6px] border-[#111214] bg-[#111214]">
+                    <img
+                      src={avatarUrl}
+                      alt={username}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {/* Status badge */}
+                  <div className="absolute bottom-1 right-1 w-6 h-6 bg-[#3ba55d] rounded-full border-[4px] border-[#111214] flex items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Menu Items */}
-            <div className="p-2">
-              <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-accent transition-colors flex items-center gap-2 group text-sm">
-                <svg className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                <span>Mi Perfil</span>
-              </button>
+            {/* Contenido del perfil */}
+            <div className="pt-16 px-4 pb-4">
+              {/* Nombre de usuario */}
+              <div className="mb-4">
+                <h2 className="text-xl font-bold text-white mb-0.5">{username}</h2>
+                <p className="text-sm text-[#b5bac1]">{discriminator}</p>
+              </div>
 
-              <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-accent transition-colors flex items-center gap-2 group text-sm">
-                <svg className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-                <span>Favoritos</span>
-              </button>
+              {/* Divider */}
+              <div className="h-px bg-[#3f4147] mb-3"></div>
 
-              <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-accent transition-colors flex items-center gap-2 group text-sm">
-                <svg className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>Historial</span>
-              </button>
+              {/* Opciones del menú */}
+              <div className="space-y-1">
+                {/* Editar perfil */}
+                <button className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-[#404249] transition-colors group">
+                  <div className="flex items-center gap-3">
+                    <Pencil className="w-5 h-5 text-[#b5bac1]" />
+                    <span className="text-sm font-medium text-[#dbdee1]">Editar perfil</span>
+                  </div>
+                  <span className="text-xs font-bold text-white bg-[#5865f2] px-2 py-0.5 rounded">NUEVO</span>
+                </button>
 
-              <div className="my-2 border-t border-border"></div>
+                {/* Invisible */}
+                <button className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-[#404249] transition-colors group">
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full border-2 border-[#b5bac1] flex items-center justify-center">
+                      <div className="w-2 h-2 bg-[#b5bac1] rounded-full"></div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-[#dbdee1]">Invisible</span>
+                      <div className="w-5 h-5 bg-[#f0b232] rounded-full flex items-center justify-center">
+                        <span className="text-xs font-bold text-[#111214]">!</span>
+                      </div>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-[#b5bac1]" />
+                </button>
+              </div>
 
+              {/* Divider */}
+              <div className="h-px bg-[#3f4147] my-3"></div>
+
+              {/* Más opciones */}
+              <div className="space-y-1">
+                {/* Cambiar de cuenta */}
+                <button className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-[#404249] transition-colors group">
+                  <div className="flex items-center gap-3">
+                    <svg className="w-5 h-5 text-[#b5bac1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span className="text-sm font-medium text-[#dbdee1]">Cambiar de cuenta</span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-[#b5bac1]" />
+                </button>
+
+                {/* Copiar ID del usuario */}
+                <button 
+                  onClick={copyUserId}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[#404249] transition-colors group"
+                >
+                  <Copy className="w-5 h-5 text-[#b5bac1]" />
+                  <span className="text-sm font-medium text-[#dbdee1]">Copiar ID del usuario</span>
+                </button>
+              </div>
+
+              {/* Divider */}
+              <div className="h-px bg-[#3f4147] my-3"></div>
+
+              {/* Cerrar sesión */}
               <button
                 onClick={signOut}
-                className="w-full text-left px-3 py-2 rounded-lg hover:bg-red-500/10 transition-colors flex items-center gap-2 group text-red-400 hover:text-red-300 text-sm"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[#da373c] transition-colors group"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                <span className="font-medium">Cerrar Sesión</span>
+                <LogOut className="w-5 h-5 text-[#f23f43] group-hover:text-white transition-colors" />
+                <span className="text-sm font-medium text-[#f23f43] group-hover:text-white transition-colors">Cerrar sesión</span>
               </button>
             </div>
           </div>
