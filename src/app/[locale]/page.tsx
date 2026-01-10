@@ -100,8 +100,8 @@ export default function Home() {
       
       setLoadingSpecials(true);
       try {
-        // Las APIs detectarán el idioma automáticamente desde la URL
-        const response = await fetch(`/api/steam/specials?cc=${userCountry}&count=20`);
+        // Pasar el idioma actual a la API de Steam
+        const response = await fetch(`/api/steam/specials?cc=${userCountry}&count=20&l=${locale}`);
         if (!response.ok) {
           throw new Error('Failed to fetch Steam specials');
         }
@@ -133,7 +133,7 @@ export default function Home() {
       }
     }
     loadSteamSpecials();
-  }, [userCountry]); // Remover locale de dependencias
+  }, [userCountry, locale]); // Agregar locale para recargar cuando cambie el idioma
 
   // Cargar juegos desde Supabase y enriquecerlos con datos de Steam
   useEffect(() => {
@@ -259,8 +259,8 @@ export default function Home() {
     
     // Cargar datos completos de Steam en segundo plano
     try {
-      // Las APIs detectarán el idioma automáticamente desde la URL
-      const response = await fetch(`/api/steam/${special.id}?cc=${userCountry}`);
+      // Pasar el idioma actual a la API de Steam
+      const response = await fetch(`/api/steam/${special.id}?cc=${userCountry}&l=${locale}`);
       if (response.ok) {
         const steamData = await response.json();
         
@@ -703,7 +703,7 @@ export default function Home() {
         </div>
 
       {/* Modal del juego - Componente separado */}
-      <GameModal game={modalGame} origin={modalOrigin} onClose={closeModal} />
+      <GameModal game={modalGame} origin={modalOrigin} onClose={closeModal} locale={locale} />
 
       {/* Error de autenticación - Toast notification */}
       {authError && (

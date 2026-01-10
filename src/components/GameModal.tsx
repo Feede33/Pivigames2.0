@@ -63,9 +63,10 @@ type Props = {
   game: GameWithSteamData | null;
   origin?: { x: number; y: number; width: number; height: number } | null;
   onClose: () => void;
+  locale?: string; // Agregar locale como prop opcional
 };
 
-export default function GameModal({ game, onClose }: Props) {
+export default function GameModal({ game, onClose, locale = 'es' }: Props) {
   const [ready, setReady] = useState(false);
   const [visible, setVisible] = useState(false);
   const [screenshotIndex, setScreenshotIndex] = useState(0);
@@ -104,7 +105,7 @@ export default function GameModal({ game, onClose }: Props) {
   useEffect(() => {
     if (game?.steam_appid && userLocation) {
       setLoadingSteam(true);
-      fetch(`/api/steam/${game.steam_appid}?cc=${userLocation.steam_country_code}`)
+      fetch(`/api/steam/${game.steam_appid}?cc=${userLocation.steam_country_code}&l=${locale}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.error) {
@@ -118,7 +119,7 @@ export default function GameModal({ game, onClose }: Props) {
         .catch((err) => console.error('Error loading Steam data:', err))
         .finally(() => setLoadingSteam(false));
     }
-  }, [game?.steam_appid, userLocation]);
+  }, [game?.steam_appid, userLocation, locale]); // Agregar locale para recargar cuando cambie
 
   // Screenshots - prioriza los de steamData, luego los del game
   const screenshots = steamData?.screenshots?.length

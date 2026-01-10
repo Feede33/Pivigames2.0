@@ -1,3 +1,5 @@
+import type { Locale } from './i18n';
+
 // Mapeo de códigos de idioma ISO 639-1 a códigos de Steam
 // Steam usa nombres completos en inglés para sus idiomas
 export const steamLanguageMap: Record<string, string> = {
