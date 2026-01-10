@@ -9,148 +9,72 @@ error_description=Error getting user email from external provider
 
 ## ¿Por qué sucede?
 
-Discord no está compartiendo el email del usuario con tu aplicación. Esto puede pasar por 3 razones:
+Discord no está compartiendo el email del usuario. Esto sucede porque:
 
-### 1. **El usuario no tiene email verificado en Discord** ⚠️
-   - Discord SOLO comparte emails verificados
+### **El usuario NO tiene su email verificado en Discord** ⚠️
+   - Discord SOLO comparte emails verificados por seguridad
    - Si el usuario no verificó su email, Discord rechaza compartirlo
-
-### 2. **Falta el scope `email` en la configuración de Supabase** 
-   - Discord requiere que solicites explícitamente el permiso de email
-   - Por defecto solo da acceso a `identify` (nombre, avatar, ID)
-
-### 3. **Configuración incorrecta en Discord Developer Portal**
-   - Los scopes deben estar habilitados en la aplicación de Discord
+   - Esto es una política de seguridad de Discord, no un error de tu app
 
 ---
 
-## ✅ Solución Completa
+## ✅ Solución para el Usuario
 
-### Paso 1: Verificar Configuración en Discord Developer Portal
+### El usuario debe verificar su email en Discord:
 
-1. Ve a https://discord.com/developers/applications
-2. Selecciona tu aplicación
-3. Ve a **OAuth2** → **General**
-4. En **Default Authorization Link**, asegúrate de que esté en "In-app Authorization"
-5. En **Scopes**, verifica que estén seleccionados:
-   - ✅ `identify` (información básica del usuario)
-   - ✅ `email` (dirección de email)
+1. **Abrir Discord** (app o web)
+2. Ir a **Configuración de Usuario** (⚙️ abajo a la izquierda)
+3. Ir a **Mi Cuenta**
+4. Buscar la sección de **Email**
+5. Si dice "No verificado", hacer clic en **"Verificar Email"**
+6. Revisar la bandeja de entrada (y spam)
+7. Hacer clic en el link de verificación de Discord
+8. **Volver a tu sitio y hacer login nuevamente**
 
-### Paso 2: Configurar Scopes en Supabase
+---
 
-1. Ve a tu proyecto en Supabase Dashboard
-2. Ve a **Authentication** → **Providers** → **Discord**
-3. En el campo **"Scopes"**, asegúrate de que diga:
-   ```
-   identify email
-   ```
-4. Si no existe el campo, está bien - el código ya lo maneja
-5. Guarda los cambios
+## 🔍 Verificación Técnica
 
-### Paso 3: Código Actualizado (Ya aplicado)
+### El código YA está configurado correctamente:
 
-El código en `AuthContext.tsx` ahora incluye explícitamente el scope de email:
-
+En `src/contexts/AuthContext.tsx`:
 ```typescript
 const { error } = await supabase.auth.signInWithOAuth({
   provider: 'discord',
   options: {
-    scopes: 'identify email', // ← Solicita explícitamente el email
+    scopes: 'identify email', // ✅ Ya solicita el email
     skipBrowserRedirect: false,
   },
 });
 ```
 
-### Paso 4: Instrucciones para los Usuarios
+### Verificar en Discord Developer Portal:
 
-**Si un usuario tiene este error, debe:**
+1. Ve a https://discord.com/developers/applications
+2. Selecciona tu aplicación
+3. Ve a **OAuth2** → **General**
+4. En **Default Authorization Link**, debe estar en "In-app Authorization"
+5. Los scopes se manejan desde el código, NO desde Discord Portal
 
-1. **Verificar su email en Discord:**
-   - Abrir Discord
-   - Ir a **Configuración de Usuario** → **Mi Cuenta**
-   - Si el email no está verificado, hacer clic en "Verificar Email"
-   - Revisar su bandeja de entrada y hacer clic en el link de verificación
+### Verificar Redirect URLs en Discord:
 
-2. **Volver a intentar el login:**
-   - Una vez verificado el email, volver a tu sitio
-   - Hacer clic en "Login con Discord"
-   - Ahora debería funcionar correctamente
-
----
-
-## 🎯 Alternativa: Hacer el Email Opcional
-
-Si quieres permitir login sin email verificado, puedes modificar la configuración de Supabase:
-
-### Opción A: Usar solo `identify` (sin email)
-
-**Ventajas:**
-- ✅ Funciona aunque el usuario no tenga email verificado
-- ✅ Más usuarios pueden hacer login
-
-**Desventajas:**
-- ❌ No tendrás el email del usuario
-- ❌ No podrás enviar notificaciones por email
-- ❌ Más difícil recuperar cuentas
-
-**Implementación:**
-```typescript
-// En AuthContext.tsx
-scopes: 'identify' // Solo información básica, sin email
+Asegúrate de tener estas URLs en **OAuth2** → **Redirects**:
 ```
-
-### Opción B: Manejar el error gracefully
-
-Ya implementado en el código:
-```typescript
-catch (error) {
-  console.error('Error signing in with Discord:', error);
-  alert('Error al iniciar sesión con Discord. Asegúrate de que tu email de Discord esté verificado.');
-}
+http://localhost:3000/auth/callback
+https://pivigames2-0.vercel.app/auth/callback
 ```
 
 ---
 
-## 📋 Checklist de Verificación
+## 💡 Mensaje para Usuarios en tu Sitio
 
-Antes de que un usuario intente hacer login, verifica:
-
-- [ ] Discord Developer Portal tiene los scopes `identify email`
-- [ ] Supabase tiene Discord habilitado con los scopes correctos
-- [ ] Las redirect URLs coinciden exactamente en Discord y Supabase
-- [ ] El usuario tiene su email verificado en Discord
-- [ ] Las variables de entorno están configuradas en Vercel
-
----
-
-## 🔍 Debugging
-
-### Ver qué scopes está usando Discord:
-
-1. Abre las DevTools del navegador (F12)
-2. Ve a la pestaña **Network**
-3. Haz clic en "Login con Discord"
-4. Busca la petición a `discord.com/api/oauth2/authorize`
-5. Revisa el parámetro `scope` en la URL
-6. Debe decir: `scope=identify%20email` (identify email en URL encoding)
-
-### Ver el error completo en Supabase:
-
-1. Ve a Supabase Dashboard
-2. Ve a **Authentication** → **Logs**
-3. Busca el error del usuario
-4. Verás más detalles sobre por qué falló
-
----
-
-## 💡 Mensaje para Usuarios
-
-Puedes agregar este mensaje en tu página de login:
+Puedes agregar este aviso en tu página de login:
 
 ```
-⚠️ Nota: Para iniciar sesión con Discord, necesitas tener tu email verificado.
+⚠️ Importante: Para iniciar sesión con Discord, 
+necesitas tener tu email verificado en Discord.
 
-Si ves un error, por favor:
+Si ves un error:
 1. Abre Discord
 2. Ve a Configuración → Mi Cuenta
 3. Verifica tu email
@@ -159,23 +83,81 @@ Si ves un error, por favor:
 
 ---
 
-## 🚀 Próximos Pasos
+## 🎯 Notificación Automática
 
-Una vez solucionado:
+Ya implementado en `page.tsx` - cuando un usuario tiene este error, verá automáticamente:
 
-1. **Prueba con diferentes usuarios** para confirmar que funciona
-2. **Agrega un mensaje de error más amigable** en la UI
-3. **Considera agregar login alternativo** (Google, GitHub) como backup
-4. **Documenta el proceso** para futuros usuarios
+> ⚠️ Para iniciar sesión con Discord, necesitas tener tu email verificado. 
+> Por favor verifica tu email en Discord e intenta nuevamente.
 
 ---
 
-## 📞 Soporte
+## 🔧 Debugging
 
-Si el problema persiste después de seguir estos pasos:
+### Ver el error en tiempo real:
 
-1. Verifica los logs de Supabase
-2. Revisa la consola del navegador
-3. Confirma que Discord Developer Portal esté configurado correctamente
-4. Prueba con tu propia cuenta primero (que sabes que funciona)
-5. Compara las diferencias entre tu cuenta y la del usuario con problemas
+1. Abre DevTools (F12)
+2. Ve a la pestaña **Console**
+3. Intenta hacer login
+4. Verás el error completo de Discord
+
+### Ver logs en Supabase:
+
+1. Ve a Supabase Dashboard
+2. **Authentication** → **Logs**
+3. Busca el intento de login fallido
+4. Verás: "Error getting user email from external provider"
+
+---
+
+## ❓ FAQ
+
+### ¿Por qué a ti te funciona pero a otros no?
+
+Porque TU email de Discord está verificado, pero el de ellos no.
+
+### ¿Puedo hacer el email opcional?
+
+Sí, pero NO es recomendado porque:
+- ❌ No podrás identificar usuarios únicamente
+- ❌ No podrás enviar notificaciones
+- ❌ Problemas de seguridad y recuperación de cuenta
+
+### ¿Hay alternativa al email?
+
+Sí, Discord también proporciona:
+- `id` - ID único del usuario (siempre disponible)
+- `username` - Nombre de usuario (siempre disponible)
+- `avatar` - Avatar del usuario (siempre disponible)
+
+Pero el email es importante para:
+- Identificación única confiable
+- Comunicación con usuarios
+- Recuperación de cuentas
+- Cumplimiento legal (GDPR, etc.)
+
+---
+
+## 🚀 Resumen
+
+**El problema NO es tu código** ✅
+
+**El problema es:** El usuario no tiene su email verificado en Discord
+
+**La solución es:** El usuario debe verificar su email en Discord
+
+**Tu app ya maneja esto correctamente** mostrando un mensaje de error claro
+
+---
+
+## 📞 Si el problema persiste
+
+Si después de verificar el email el error continúa:
+
+1. Cerrar sesión completamente de Discord
+2. Volver a iniciar sesión en Discord
+3. Confirmar que el email ahora dice "Verificado"
+4. Limpiar cookies del navegador
+5. Intentar el login nuevamente en tu sitio
+
+Si aún así falla, puede ser un problema temporal de Discord API.

@@ -1,0 +1,46 @@
+'use client';
+
+import { usePathname, useRouter } from 'next/navigation';
+import { Globe } from 'lucide-react';
+import type { Locale } from '@/lib/i18n';
+
+const languages = {
+  es: { name: 'Español', flag: '🇪🇸' },
+  en: { name: 'English', flag: '🇺🇸' },
+};
+
+export default function LanguageSwitcher({ currentLocale }: { currentLocale: Locale }) {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const switchLanguage = (newLocale: Locale) => {
+    // Reemplazar el locale en la URL
+    const newPath = pathname.replace(`/${currentLocale}`, `/${newLocale}`);
+    router.push(newPath);
+  };
+
+  return (
+    <div className="relative group">
+      <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-muted/50 transition">
+        <Globe className="w-4 h-4" />
+        <span className="text-sm">{languages[currentLocale].flag}</span>
+      </button>
+      
+      {/* Dropdown */}
+      <div className="absolute right-0 mt-2 w-40 bg-background border border-border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+        {(Object.keys(languages) as Locale[]).map((locale) => (
+          <button
+            key={locale}
+            onClick={() => switchLanguage(locale)}
+            className={`w-full px-4 py-2 text-left text-sm hover:bg-muted/50 transition first:rounded-t-lg last:rounded-b-lg flex items-center gap-2 ${
+              locale === currentLocale ? 'bg-muted/30 font-semibold' : ''
+            }`}
+          >
+            <span>{languages[locale].flag}</span>
+            <span>{languages[locale].name}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
