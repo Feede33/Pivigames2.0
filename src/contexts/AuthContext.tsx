@@ -50,14 +50,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'discord',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          // No especificar redirectTo para que use la configuración de Supabase
           skipBrowserRedirect: false,
         },
       });
-      if (error) throw error;
+      
+      if (error) {
+        console.error('OAuth error:', error);
+        throw error;
+      }
     } catch (error) {
       console.error('Error signing in with Discord:', error);
-      alert('Error al iniciar sesión con Discord');
+      alert('Error al iniciar sesión con Discord. Verifica la configuración.');
     }
   };
 
