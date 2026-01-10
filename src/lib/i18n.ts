@@ -68,6 +68,9 @@ export const translations = {
       facebook: 'Facebook',
       copyLink: 'Copiar Enlace',
     },
+    games: {
+      availableToDownload: 'Juegos Disponibles para Descargar',
+    },
   },
   // English
   en: {
@@ -136,6 +139,9 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'Copy Link',
+    },
+    games: {
+      availableToDownload: 'Available Games to Download',
     },
   },
   // Português
@@ -206,6 +212,9 @@ export const translations = {
       facebook: 'Facebook',
       copyLink: 'Copiar Link',
     },
+    games: {
+      availableToDownload: 'Jogos Disponíveis para Download',
+    },
   },
   // Français
   fr: {
@@ -274,6 +283,9 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'Copier le Lien',
+    },
+    games: {
+      availableToDownload: 'Jeux Disponibles à Télécharger',
     },
   },
   // Deutsch
@@ -344,6 +356,9 @@ export const translations = {
       facebook: 'Facebook',
       copyLink: 'Link Kopieren',
     },
+    games: {
+      availableToDownload: 'Verfügbare Spiele zum Herunterladen',
+    },
   },
   // Italiano
   it: {
@@ -412,6 +427,9 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'Copia Link',
+    },
+    games: {
+      availableToDownload: 'Giochi Disponibili per il Download',
     },
   },
   // Русский
@@ -482,6 +500,9 @@ export const translations = {
       facebook: 'Facebook',
       copyLink: 'Копировать Ссылку',
     },
+    games: {
+      availableToDownload: 'Доступные Игры для Скачивания',
+    },
   },
   // 日本語
   ja: {
@@ -550,6 +571,9 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'リンクをコピー',
+    },
+    games: {
+      availableToDownload: 'ダウンロード可能なゲーム',
     },
   },
   // 한국어
@@ -620,6 +644,9 @@ export const translations = {
       facebook: 'Facebook',
       copyLink: '링크 복사',
     },
+    games: {
+      availableToDownload: '다운로드 가능한 게임',
+    },
   },
   // 中文简体
   zh: {
@@ -689,6 +716,9 @@ export const translations = {
       facebook: 'Facebook',
       copyLink: '复制链接',
     },
+    games: {
+      availableToDownload: '可下载的游戏',
+    },
   },
   // العربية
   ar: {
@@ -757,6 +787,9 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'نسخ الرابط',
+    },
+    games: {
+      availableToDownload: 'الألعاب المتاحة للتحميل',
     },
   },
 } as const;

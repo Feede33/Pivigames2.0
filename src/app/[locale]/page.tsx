@@ -653,7 +653,7 @@ export default function Home() {
         {!loading && games.length > 0 && (
           <section>
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold">Juegos Disponibles para Descargar</h3>
+              <h3 className="text-2xl font-bold">{t.games.availableToDownload}</h3>
             </div>
             <div className="grid grid-cols-7 gap-6 pt-2">
                 {allGames.map((game) => (
