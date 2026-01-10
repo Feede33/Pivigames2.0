@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { POPULAR_STEAM_GAMES } from '@/lib/steam-games';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -14,11 +15,29 @@ const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 horas
 async function getAllSteamGames(): Promise<string[]> {
   // Usar cache si está disponible y no ha expirado
   if (steamGamesCache !== null && Date.now() - cacheTimestamp < CACHE_DURATION) {
+    console.log(`Using cached Steam games list (${steamGamesCache.length} games)`);
     return [...steamGamesCache];
   }
 
   try {
-    const response = await fetch('https://api.steampowered.com/ISteamApps/GetAppList/v2/');
+    console.log('Fetching Steam games list from API...');
+    const response = await fetch('https://api.steampowered.com/ISteamApps/GetAppList/v2/', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; GameFetcher/1.0)',
+      },
+    });
+    
+    if (!response.ok) {
+      console.error(`Steam API returned status ${response.status}`);
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      console.error(`Steam API returned non-JSON content: ${contentType}`);
+      throw new Error('Invalid content type');
+    }
+    
     const data = await response.json();
     
     if (data?.applist?.apps) {
@@ -28,13 +47,24 @@ async function getAllSteamGames(): Promise<string[]> {
       cacheTimestamp = Date.now();
       console.log(`Loaded ${games.length} games from Steam API`);
       return games;
+    } else {
+      console.error('Invalid Steam API response structure');
+      throw new Error('Invalid response structure');
     }
   } catch (error) {
     console.error('Error fetching Steam games list:', error);
   }
 
   // Si falla, retornar cache anterior si existe, sino array vacío
-  return steamGamesCache !== null ? [...steamGamesCache] : [];
+  if (steamGamesCache !== null) {
+    console.log(`Using stale cache (${steamGamesCache.length} games)`);
+    return [...steamGamesCache];
+  }
+  
+  // Último recurso: usar el array hardcodeado
+  console.log(`Using fallback game list (${POPULAR_STEAM_GAMES.length} games)`);
+  const uniqueGames = Array.from(new Set(POPULAR_STEAM_GAMES));
+  return uniqueGames;
 }
 
 // Verificar si un App ID ya existe en la base de datos
@@ -90,13 +120,13 @@ export async function GET(request: Request) {
     const allSteamGames = await getAllSteamGames();
     
     if (allSteamGames.length === 0) {
-      console.error('Failed to fetch Steam games list');
+      console.error('No games available from any source');
       return NextResponse.json({
         success: false,
-        message: 'Failed to fetch Steam games list',
+        message: 'No games available from any source',
         results,
         timestamp: new Date().toISOString()
-      });
+      }, { status: 500 });
     }
     
     console.log(`Total Steam games available: ${allSteamGames.length}`);
