@@ -55,6 +55,8 @@ export default function Home() {
   const [userCountry, setUserCountry] = useState<string>('us');
   const [loadingSpecials, setLoadingSpecials] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [loadedGamesCount, setLoadedGamesCount] = useState(0);
+  const [totalGamesCount, setTotalGamesCount] = useState(0);
   const GAMES_PER_PAGE = 20;
 
   // Detectar errores de autenticación en la URL
@@ -158,16 +160,38 @@ export default function Home() {
           setGames([]);
           setHasMore(false);
           setLoading(false);
+          setTotalGamesCount(0);
           return;
         }
 
-        // Enriquecer cada juego con datos de Steam, pasando el locale y el índice
-        const enrichedGames = await Promise.all(
-          gamesFromDB.map((game, index) => enrichGameWithSteamData(game, locale, index))
-        );
+        setTotalGamesCount(gamesFromDB.length);
+        setLoadedGamesCount(0);
 
-        console.log('Enriched games:', enrichedGames);
-        setGames(enrichedGames);
+        // Cargar juegos progresivamente en lugar de esperar a todos
+        const enrichedGames: GameWithSteamData[] = [];
+        
+        for (let i = 0; i < gamesFromDB.length; i++) {
+          const game = gamesFromDB[i];
+          
+          // Agregar delay progresivo cada 50 juegos
+          if (i > 0 && i % 50 === 0) {
+            const batchNumber = Math.floor(i / 50);
+            const delayMs = batchNumber * 750;
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+          }
+          
+          // Enriquecer el juego
+          const enrichedGame = await enrichGameWithSteamData(game, locale, i);
+          enrichedGames.push(enrichedGame);
+          
+          // Actualizar el estado cada 5 juegos para mostrar progreso
+          if ((i + 1) % 5 === 0 || i === gamesFromDB.length - 1) {
+            setGames([...enrichedGames]);
+            setLoadedGamesCount(enrichedGames.length);
+          }
+        }
+
+        console.log('All games loaded:', enrichedGames);
         setHasMore(enrichedGames.length >= GAMES_PER_PAGE);
       } catch (error) {
         console.error('Error loading games:', error);
@@ -320,7 +344,14 @@ export default function Home() {
         />
 
         {/* Games Grid */}
-        <GamesGrid games={games} loading={loading} t={t as any} onGameClickAction={handleGameClick} />
+        <GamesGrid 
+          games={games} 
+          loading={loading} 
+          t={t as any} 
+          onGameClickAction={handleGameClick}
+          loadedCount={loadedGamesCount}
+          totalCount={totalGamesCount}
+        />
       </div>
 
       {/* Modal */}

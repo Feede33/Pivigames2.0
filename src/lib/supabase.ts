@@ -60,22 +60,6 @@ export async function enrichGameWithSteamData(
   index?: number
 ): Promise<GameWithSteamData> {
   try {
-    // Agregar delay progresivo cada 50 juegos para evitar rate limiting de Steam
-    // Esto distribuye las peticiones en el tiempo:
-    // - Juegos 0-49: sin delay
-    // - Juegos 50-99: +750ms de delay
-    // - Juegos 100-149: +1500ms de delay
-    // - Y así sucesivamente...
-    // Esto evita los errores 404 por demasiadas peticiones simultáneas
-    if (index !== undefined && index > 0) {
-      const batchNumber = Math.floor(index / 50);
-      const delayMs = batchNumber * 750; // 750ms por cada batch de 50 juegos
-      
-      if (delayMs > 0) {
-        await new Promise(resolve => setTimeout(resolve, delayMs));
-      }
-    }
-    
     // Construir URL con parámetro de idioma si se proporciona
     const url = locale 
       ? `/api/steam/${game.steam_appid}?l=${locale}`
