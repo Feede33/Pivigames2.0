@@ -1,6 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSteamLanguageFromHeader, getSteamLanguage } from '@/lib/steam-languages';
 
+// Función auxiliar para reintentar fetch con backoff exponencial
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
+  let lastError: Error | null = null;
+  
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
+      
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (response.ok) {
+        return response;
+      }
+      
+      // Si es 429 (rate limit) o 503 (service unavailable), reintentar
+      if (response.status === 429 || response.status === 503) {
+        const waitTime = Math.pow(2, i) * 1000; // Backoff exponencial
+        console.log(`[Steam API] Rate limited or unavailable, retrying in ${waitTime}ms...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+      
+      // Para otros errores, no reintentar
+      return response;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error('Unknown error');
+      
+      // Si es timeout o error de red, reintentar
+      if (i < maxRetries - 1) {
+        const waitTime = Math.pow(2, i) * 1000;
+        console.log(`[Steam API] Request failed, retrying in ${waitTime}ms...`, lastError.message);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      }
+    }
+  }
+  
+  throw lastError || new Error('Max retries exceeded');
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ appid: string }> }
@@ -38,19 +83,22 @@ export async function GET(
     console.log(`[Steam API] Fetching appid ${appid} in language: ${steamLanguage}`);
 
     // Steam Store API con código de país para precios regionales e idioma
-    const response = await fetch(
+    const response = await fetchWithRetry(
       `https://store.steampowered.com/api/appdetails?appids=${appid}&l=${steamLanguage}&cc=${countryCode}`,
       { 
-        next: { revalidate: 3600 }, // Cache por 1 hora
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'application/json',
+          'Accept-Language': steamLanguage,
         },
-        cache: 'no-store', // Deshabilitar caché temporalmente para debugging
+        cache: 'no-store',
       }
     );
 
     if (!response.ok) {
-      console.error(`Steam API returned ${response.status} for appid ${appid}`);
+      console.error(`[Steam API] Error ${response.status} for appid ${appid}`);
+      const errorText = await response.text().catch(() => 'No error details');
+      console.error(`[Steam API] Error details:`, errorText);
       throw new Error(`Steam API error: ${response.status}`);
     }
 
@@ -77,9 +125,6 @@ export async function GET(
     
     // Detectar si background es una URL dinámica de baja calidad
     const isDynamicBackground = gameData.background?.includes('storepagebackground');
-    
-    // Intentar obtener page_bg_raw de alta calidad (1920x1080 o superior)
-    const highQualityBg = `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${appid}/page_bg_raw.jpg`;
     
     let bestBackground = '';
     
@@ -229,12 +274,38 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('Steam API Error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch game data';
+    console.error(`[Steam API] Error fetching appid ${appid}:`, error);
+    
+    // Determinar el tipo de error
+    let errorMessage = 'Failed to fetch game data';
+    let statusCode = 500;
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      
+      // Si es timeout o abort
+      if (error.name === 'AbortError') {
+        errorMessage = 'Request timeout - Steam API took too long to respond';
+        statusCode = 504;
+      }
+      // Si es error de red
+      else if (error.message.includes('fetch failed') || error.message.includes('ECONNREFUSED')) {
+        errorMessage = 'Network error - Unable to reach Steam API';
+        statusCode = 503;
+      }
+    }
+    
+    console.error(`[Steam API] Returning error ${statusCode}: ${errorMessage}`);
+    
     return NextResponse.json(
-      { error: 'Steam API error', details: errorMessage },
       { 
-        status: 500,
+        error: 'Steam API error', 
+        details: errorMessage,
+        appid,
+        timestamp: new Date().toISOString(),
+      },
+      { 
+        status: statusCode,
         headers: {
           'Cache-Control': 'no-store, no-cache, must-revalidate',
         },

@@ -95,8 +95,7 @@ export async function searchGames(query: string, limit: number = 10): Promise<Ga
 // Función para enriquecer un juego con datos de Steam (solo cliente)
 export async function enrichGameWithSteamData(
   game: Game, 
-  locale?: string, 
-  index?: number
+  locale?: string
 ): Promise<GameWithSteamData> {
   try {
     // Construir URL con parámetro de idioma y timestamp para evitar caché
@@ -112,7 +111,11 @@ export async function enrichGameWithSteamData(
         'Pragma': 'no-cache',
       },
     });
-    if (!response.ok) throw new Error('Steam API error');
+    
+    if (!response.ok) {
+      console.warn(`Steam API returned ${response.status} for ${game.steam_appid}, using fallback data`);
+      throw new Error(`Steam API error: ${response.status}`);
+    }
     
     const steamData = await response.json();
     
@@ -136,8 +139,8 @@ export async function enrichGameWithSteamData(
     
     return {
       ...game,
-      title: steamData.name || 'Unknown Game',
-      genre: steamData.genres?.join(', ') || 'Unknown',
+      title: steamData.name || game.title || 'Unknown Game',
+      genre: steamData.genres?.join(', ') || game.genre || 'Unknown',
       image: verticalCover, // Portada vertical para grids
       image_fallback: imageFallback, // Fallback si library_600x900 no existe
       cover_image: steamData.header_image || '', // Header horizontal para carruseles
@@ -149,17 +152,21 @@ export async function enrichGameWithSteamData(
     } as GameWithSteamData;
   } catch (err) {
     console.error(`Error loading Steam data for ${game.steam_appid}:`, err);
-    // Retornar datos por defecto si falla
+    
+    // Retornar datos básicos del juego si falla la API de Steam
+    // Usar datos de la DB si están disponibles
+    const fallbackImage = `https://cdn.cloudflare.steamstatic.com/steam/apps/${game.steam_appid}/header.jpg`;
+    
     return {
       ...game,
-      title: 'Unknown Game',
-      genre: 'Unknown',
-      image: '',
-      image_fallback: '',
-      cover_image: '',
-      rating: 0,
-      wallpaper: '',
-      description: 'No description available',
+      title: game.title || `Game ${game.steam_appid}`,
+      genre: game.genre || 'Unknown',
+      image: fallbackImage,
+      image_fallback: fallbackImage,
+      cover_image: fallbackImage,
+      rating: 7.0,
+      wallpaper: fallbackImage,
+      description: 'Unable to load game details. Please try again later.',
       screenshots: []
     } as GameWithSteamData;
   }

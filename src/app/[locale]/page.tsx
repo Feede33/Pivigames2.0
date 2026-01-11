@@ -202,7 +202,7 @@ export default function Home() {
       const batch = gamesFromDB.slice(i, i + BATCH_SIZE);
       
       const enrichedBatch = await Promise.all(
-        batch.map((game, index) => enrichGameWithSteamData(game, locale, i + index))
+        batch.map((game) => enrichGameWithSteamData(game, locale))
       );
       
       enrichedGames.push(...enrichedBatch);
@@ -359,6 +359,7 @@ export default function Home() {
           'Pragma': 'no-cache',
         },
       });
+      
       if (response.ok) {
         const steamData = await response.json();
 
@@ -379,9 +380,15 @@ export default function Home() {
         };
 
         setModalGame(fullGame);
+      } else {
+        // Si falla la API de Steam, mantener los datos básicos del special
+        console.warn(`Steam API failed for ${special.id} (${response.status}), using basic data`);
+        // El juego temporal ya está configurado, no hacer nada más
       }
     } catch (error) {
-      console.error('Error loading full game data:', error);
+      console.error(`Error loading Steam data for ${special.id}:`, error);
+      // Si hay error, mantener los datos básicos del special
+      // El juego temporal ya está configurado, no hacer nada más
     }
   };
 
