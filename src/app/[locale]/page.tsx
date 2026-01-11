@@ -50,6 +50,7 @@ export default function Home() {
   } | null>(null);
   const [games, setGames] = useState<GameWithSteamData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [heroLoading, setHeroLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [steamSpecials, setSteamSpecials] = useState<SteamSpecialEnriched[]>([]);
   const [userCountry, setUserCountry] = useState<string>('us');
@@ -152,6 +153,7 @@ export default function Home() {
   useEffect(() => {
     async function loadGames() {
       setLoading(true);
+      setHeroLoading(true);
       try {
         const gamesFromDB = await getGames();
         console.log('Games from DB:', gamesFromDB);
@@ -160,6 +162,7 @@ export default function Home() {
           setGames([]);
           setHasMore(false);
           setLoading(false);
+          setHeroLoading(false);
           setTotalGamesCount(0);
           return;
         }
@@ -184,7 +187,12 @@ export default function Home() {
           const enrichedGame = await enrichGameWithSteamData(game, locale, i);
           enrichedGames.push(enrichedGame);
           
-          // Actualizar el estado cada 5 juegos para mostrar progreso
+          // Mostrar hero tan pronto como tengamos 10 juegos
+          if (i === 9 && heroLoading) {
+            setHeroLoading(false);
+          }
+          
+          // Actualizar el estado cada 10 juegos para mostrar progreso
           if ((i + 1) % 10 === 0 || i === gamesFromDB.length - 1) {
             setGames([...enrichedGames]);
             setLoadedGamesCount(enrichedGames.length);
@@ -199,6 +207,7 @@ export default function Home() {
         setHasMore(false);
       } finally {
         setLoading(false);
+        setHeroLoading(false);
       }
     }
     loadGames();
@@ -331,7 +340,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Slider */}
-      <HeroSlider games={heroGames} loading={loading} t={t as any} onGameClick={handleGameClick} />
+      <HeroSlider games={heroGames} loading={heroLoading} t={t as any} onGameClick={handleGameClick} />
 
       {/* Content */}
       <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">
