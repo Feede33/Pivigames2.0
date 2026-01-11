@@ -124,7 +124,14 @@ export default function Home() {
       setLoadingSpecials(true);
       try {
         const response = await fetch(
-          `/api/steam/specials?cc=${userCountry}&count=20&l=${locale}`
+          `/api/steam/specials?cc=${userCountry}&count=20&l=${locale}&t=${Date.now()}`,
+          {
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+            },
+          }
         );
         if (!response.ok) {
           throw new Error('Failed to fetch Steam specials');
@@ -345,7 +352,13 @@ export default function Home() {
 
     // Cargar datos completos de Steam en segundo plano
     try {
-      const response = await fetch(`/api/steam/${special.id}?cc=${userCountry}&l=${locale}`);
+      const response = await fetch(`/api/steam/${special.id}?cc=${userCountry}&l=${locale}&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+        },
+      });
       if (response.ok) {
         const steamData = await response.json();
 

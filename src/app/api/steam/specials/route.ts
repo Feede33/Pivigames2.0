@@ -36,11 +36,18 @@ export async function GET(request: NextRequest) {
     // Steam Featured API - obtiene juegos destacados y en oferta
     const response = await fetch(
       `https://store.steampowered.com/api/featuredcategories?cc=${countryCode}&l=${steamLanguage}`,
-      { next: { revalidate: 1800 } } // Cache por 30 minutos
+      { 
+        next: { revalidate: 1800 }, // Cache por 30 minutos
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
+        cache: 'no-store', // Deshabilitar caché temporalmente para debugging
+      }
     );
 
     if (!response.ok) {
-      throw new Error('Failed to fetch Steam specials');
+      console.error(`Steam Specials API returned ${response.status}`);
+      throw new Error(`Steam API error: ${response.status}`);
     }
 
     const data = await response.json();
@@ -84,13 +91,25 @@ export async function GET(request: NextRequest) {
       country_code: countryCode,
       count: formattedGames.length,
       games: formattedGames,
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
     });
 
   } catch (error) {
     console.error('Steam Specials API Error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch Steam specials';
     return NextResponse.json(
-      { error: 'Failed to fetch Steam specials' },
-      { status: 500 }
+      { error: 'Steam API error', details: errorMessage },
+      { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+        },
+      }
     );
   }
 }

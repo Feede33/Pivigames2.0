@@ -108,11 +108,17 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
   useEffect(() => {
     if (game?.steam_appid && userLocation) {
       setLoadingSteam(true);
-      fetch(`/api/steam/${game.steam_appid}?cc=${userLocation.steam_country_code}&l=${locale}`)
+      fetch(`/api/steam/${game.steam_appid}?cc=${userLocation.steam_country_code}&l=${locale}&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+        },
+      })
         .then((res) => res.json())
         .then((data) => {
           if (data.error) {
-            console.warn('Steam API error:', data.error);
+            console.warn('Steam API error:', data.error, data.details);
             return;
           }
           console.log('Steam data loaded:', data);

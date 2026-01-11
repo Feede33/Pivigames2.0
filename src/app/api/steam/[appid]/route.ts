@@ -40,11 +40,18 @@ export async function GET(
     // Steam Store API con código de país para precios regionales e idioma
     const response = await fetch(
       `https://store.steampowered.com/api/appdetails?appids=${appid}&l=${steamLanguage}&cc=${countryCode}`,
-      { next: { revalidate: 3600 } } // Cache por 1 hora
+      { 
+        next: { revalidate: 3600 }, // Cache por 1 hora
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
+        cache: 'no-store', // Deshabilitar caché temporalmente para debugging
+      }
     );
 
     if (!response.ok) {
-      throw new Error('Failed to fetch from Steam API');
+      console.error(`Steam API returned ${response.status} for appid ${appid}`);
+      throw new Error(`Steam API error: ${response.status}`);
     }
 
     const data = await response.json();
@@ -179,7 +186,7 @@ export async function GET(
       (priceInfo.discount_percent > 0 ? priceInfo.final_formatted : priceInfo.initial_formatted) : 
       currentPrice;
 
-    return NextResponse.json({
+    const responseData = {
       appid: gameData.steam_appid,
       name: gameData.name,
       type: gameData.type,
@@ -211,12 +218,27 @@ export async function GET(
       lowest_recorded_price: lowestRecordedPrice,
       is_free: gameData.is_free || false,
       steam_appid: gameData.steam_appid,
+    };
+
+    // Retornar con headers de caché apropiados
+    return NextResponse.json(responseData, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
     });
   } catch (error) {
     console.error('Steam API Error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch game data';
     return NextResponse.json(
-      { error: 'Failed to fetch game data' },
-      { status: 500 }
+      { error: 'Steam API error', details: errorMessage },
+      { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+        },
+      }
     );
   }
 }

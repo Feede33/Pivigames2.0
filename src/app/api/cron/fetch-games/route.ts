@@ -6,12 +6,12 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Cache para juegos de SteamSpy
-let steamSpyCache: string[] | null = null;
+let steamSpyCache: Array<{ appid: string; name: string }> | null = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 horas
 
-// Obtener juegos desde SteamSpy API
-async function getSteamSpyGames(page: number = 0): Promise<string[]> {
+// Obtener juegos desde SteamSpy API con títulos
+async function getSteamSpyGames(page: number = 0): Promise<Array<{ appid: string; name: string }>> {
   try {
     console.log(`Fetching SteamSpy page ${page}...`);
     const response = await fetch(
@@ -31,9 +31,14 @@ async function getSteamSpyGames(page: number = 0): Promise<string[]> {
     const data = await response.json();
     
     // SteamSpy devuelve un objeto donde las keys son los App IDs
-    const appIds = Object.keys(data);
-    console.log(`Fetched ${appIds.length} games from SteamSpy page ${page}`);
-    return appIds;
+    // y cada valor tiene el nombre del juego
+    const games = Object.entries(data).map(([appid, gameData]: [string, any]) => ({
+      appid,
+      name: gameData.name || 'Unknown Game'
+    }));
+    
+    console.log(`Fetched ${games.length} games from SteamSpy page ${page}`);
+    return games;
   } catch (error) {
     console.error(`Error fetching SteamSpy page ${page}:`, error);
     return [];
@@ -41,25 +46,25 @@ async function getSteamSpyGames(page: number = 0): Promise<string[]> {
 }
 
 // Obtener múltiples páginas de SteamSpy
-async function getAllSteamSpyGames(maxPages: number = 3): Promise<string[]> {
+async function getAllSteamSpyGames(maxPages: number = 3): Promise<Array<{ appid: string; name: string }>> {
   // Usar cache si está disponible y no ha expirado
   if (steamSpyCache !== null && Date.now() - cacheTimestamp < CACHE_DURATION) {
     console.log(`Using cached SteamSpy games (${steamSpyCache.length} games)`);
     return [...steamSpyCache];
   }
 
-  const allAppIds: string[] = [];
+  const allGames: Array<{ appid: string; name: string }> = [];
   
   // Obtener múltiples páginas (cada página tiene ~1000 juegos)
   for (let page = 0; page < maxPages; page++) {
-    const appIds = await getSteamSpyGames(page);
+    const games = await getSteamSpyGames(page);
     
-    if (appIds.length === 0) {
+    if (games.length === 0) {
       console.log(`No more games found at page ${page}, stopping`);
       break;
     }
     
-    allAppIds.push(...appIds);
+    allGames.push(...games);
     
     // Rate limit: 1 request per minute según SteamSpy
     // Pero en producción solo hacemos 1 página por ejecución para ser conservadores
@@ -70,13 +75,13 @@ async function getAllSteamSpyGames(maxPages: number = 3): Promise<string[]> {
   }
   
   // Guardar en cache
-  if (allAppIds.length > 0) {
-    steamSpyCache = allAppIds;
+  if (allGames.length > 0) {
+    steamSpyCache = allGames;
     cacheTimestamp = Date.now();
-    console.log(`Cached ${allAppIds.length} games from SteamSpy`);
+    console.log(`Cached ${allGames.length} games from SteamSpy`);
   }
   
-  return allAppIds;
+  return allGames;
 }
 
 // Mezclar array (Fisher-Yates shuffle)
@@ -90,15 +95,16 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 // Insertar juegos en batch
-async function insertGamesBatch(appIds: string[]): Promise<{ inserted: number; errors: number }> {
+async function insertGamesBatch(games: Array<{ appid: string; name: string }>): Promise<{ inserted: number; errors: number }> {
   const BATCH_SIZE = 500;
   let totalInserted = 0;
   let totalErrors = 0;
 
-  for (let i = 0; i < appIds.length; i += BATCH_SIZE) {
-    const batch = appIds.slice(i, i + BATCH_SIZE);
-    const gamesToInsert = batch.map(appId => ({
-      steam_appid: appId,
+  for (let i = 0; i < games.length; i += BATCH_SIZE) {
+    const batch = games.slice(i, i + BATCH_SIZE);
+    const gamesToInsert = batch.map(game => ({
+      steam_appid: game.appid,
+      title: game.name,
       links: null
     }));
 
@@ -117,7 +123,7 @@ async function insertGamesBatch(appIds: string[]): Promise<{ inserted: number; e
       } else {
         const inserted = data?.length || 0;
         totalInserted += inserted;
-        if (totalInserted % 1000 === 0 || i + BATCH_SIZE >= appIds.length) {
+        if (totalInserted % 1000 === 0 || i + BATCH_SIZE >= games.length) {
           console.log(`Progress: ${totalInserted} games processed`);
         }
       }

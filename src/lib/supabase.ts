@@ -5,12 +5,14 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Tipo simplificado - solo almacenamos steam_appid y links
-// Toda la información del juego se obtiene de la API de Steam
+// Tipo simplificado - almacenamos steam_appid, links, title y genre
+// Información adicional se obtiene de la API de Steam
 export type Game = {
   id: number;
   steam_appid: string; // ID de Steam (obligatorio)
   links?: string; // Link único de descarga para cada juego
+  title?: string; // Título del juego (para búsquedas)
+  genre?: string; // Género del juego (para búsquedas)
 };
 
 // Tipo para ofertas de Steam
@@ -73,13 +75,13 @@ export async function getTotalGamesCount(): Promise<number> {
   return count || 0;
 }
 
-// Función para buscar juegos por título o steam_appid
+// Función para buscar juegos por título, género o steam_appid
 export async function searchGames(query: string, limit: number = 10): Promise<Game[]> {
   const { data, error } = await supabase
     .from('games')
     .select('*')
     .not('links', 'is', null)
-    .or(`steam_appid.eq.${query},steam_appid.ilike.%${query}%`)
+    .or(`title.ilike.%${query}%,genre.ilike.%${query}%,steam_appid.eq.${query}`)
     .limit(limit);
 
   if (error) {
@@ -97,12 +99,19 @@ export async function enrichGameWithSteamData(
   index?: number
 ): Promise<GameWithSteamData> {
   try {
-    // Construir URL con parámetro de idioma si se proporciona
+    // Construir URL con parámetro de idioma y timestamp para evitar caché
+    const timestamp = Date.now();
     const url = locale 
-      ? `/api/steam/${game.steam_appid}?l=${locale}`
-      : `/api/steam/${game.steam_appid}`;
+      ? `/api/steam/${game.steam_appid}?l=${locale}&t=${timestamp}`
+      : `/api/steam/${game.steam_appid}?t=${timestamp}`;
     
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+      },
+    });
     if (!response.ok) throw new Error('Steam API error');
     
     const steamData = await response.json();
