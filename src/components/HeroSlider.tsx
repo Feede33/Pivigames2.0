@@ -4,16 +4,16 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Play, Info } from 'lucide-react';
 import WallpaperImage from './WallpaperImage';
 import type { GameWithSteamData } from '@/lib/supabase';
-import type { TranslationKeys } from '@/lib/i18n';
+
 
 type Props = {
   games: GameWithSteamData[];
   loading: boolean;
   t: any; // Acepta cualquier objeto de traducción
-  onGameClick: (game: GameWithSteamData, event: React.MouseEvent<HTMLDivElement>) => void;
+  onGameClickAction: (game: GameWithSteamData, event: React.MouseEvent<HTMLDivElement>) => void;
 };
 
-export default function HeroSlider({ games, loading, t, onGameClick }: Props) {
+export default function HeroSlider({ games, loading, t, onGameClickAction }: Props) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = () => {
@@ -44,6 +44,7 @@ export default function HeroSlider({ games, loading, t, onGameClick }: Props) {
   }
 
   return (
+    
     <div className="relative h-[90vh] flex items-center overflow-hidden bg-black">
       {/* Wallpaper */}
       <WallpaperImage
@@ -51,7 +52,7 @@ export default function HeroSlider({ games, loading, t, onGameClick }: Props) {
         alt={games[currentSlide].title}
         className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
       />
-      
+
       {/* Gradientes */}
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent z-10 pointer-events-none" />
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black via-black/80 to-transparent z-10 pointer-events-none" />
@@ -76,9 +77,8 @@ export default function HeroSlider({ games, loading, t, onGameClick }: Props) {
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`h-1 rounded-full transition-all ${
-              index === currentSlide ? 'w-8 bg-primary' : 'w-4 bg-muted-foreground/50'
-            }`}
+            className={`h-1 rounded-full transition-all ${index === currentSlide ? 'w-8 bg-primary' : 'w-4 bg-muted-foreground/50'
+              }`}
           />
         ))}
       </div>
@@ -90,9 +90,15 @@ export default function HeroSlider({ games, loading, t, onGameClick }: Props) {
           <span className="text-success font-bold">
             {Math.round(games[currentSlide].rating * 10)}% {t.hero.match}
           </span>
-          <span className="border border-border px-2 py-1 text-sm">18+</span>
-          <span className="text-muted-foreground">2024</span>
-          <span className="border border-border px-2 py-1 text-sm">4K</span>
+          <span className="text-gray-400 text-sm">
+            {games[currentSlide].release_year || 'N/A'}
+          </span>
+          <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
+            {games[currentSlide].required_age ? `${games[currentSlide].required_age}+` : '18+'}
+          </span>
+          <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
+            HD
+          </span>
         </div>
         <p className="text-lg mb-6 text-muted-foreground">
           {games[currentSlide].description}
@@ -100,7 +106,7 @@ export default function HeroSlider({ games, loading, t, onGameClick }: Props) {
         <div className="flex gap-4">
           <button
             onClick={() =>
-              onGameClick(games[currentSlide], {
+              onGameClickAction(games[currentSlide], {
                 currentTarget: {
                   getBoundingClientRect: () => ({
                     left: window.innerWidth / 2 - 100,

@@ -468,10 +468,10 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                       : `${Math.round(game.rating * 10)}% Rating`}
                   </span>
                   <span className="text-gray-400 text-sm">
-                    {steamData?.release_year || '2024'}
+                    {steamData?.release_year || 'Error'}
                   </span>
                   <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
-                    {steamData?.required_age ? `${steamData.required_age}+` : '18+'}
+                    {steamData?.required_age ? `${steamData.required_age}+` : 'Error'}
                   </span>
                   <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
                     HD

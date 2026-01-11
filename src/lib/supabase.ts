@@ -36,6 +36,8 @@ export type GameWithSteamData = Game & {
   description: string;
   trailer?: string;
   screenshots?: string[];
+  release_year?: number | null;
+  required_age?: number;
 };
 
 // Función para obtener solo los juegos de la DB (sin datos de Steam)
@@ -202,7 +204,9 @@ export async function enrichGameWithSteamData(
       wallpaper: wallpaperUrl,
       description: steamData.short_description || '',
       trailer: steamData.videos?.[0]?.mp4?.max || steamData.videos?.[0]?.mp4?.['480'] || '',
-      screenshots: steamData.screenshots?.map((s: any) => s.full) || []
+      screenshots: steamData.screenshots?.map((s: any) => s.full) || [],
+      release_year: steamData.release_year,
+      required_age: steamData.required_age
     } as GameWithSteamData;
   } catch (err) {
     console.error(`Error loading Steam data for ${game.steam_appid}:`, err);
@@ -221,7 +225,9 @@ export async function enrichGameWithSteamData(
       rating: 7.0,
       wallpaper: fallbackImage,
       description: 'Unable to load game details. Please try again later.',
-      screenshots: []
+      screenshots: [],
+      release_year: null,
+      required_age: 0
     } as GameWithSteamData;
   }
 }
