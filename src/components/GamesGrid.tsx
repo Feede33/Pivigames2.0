@@ -19,7 +19,7 @@ export default function GamesGrid({ games, loading, t, onGameClickAction, loaded
   }
 
   return (
-    <section>
+    <section data-games-grid>
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-2xl font-bold">{t.games.availableToDownload}</h3>
         {totalCount !== undefined && totalCount > 0 && (

@@ -59,7 +59,9 @@ export default function Home() {
     height: number;
   } | null>(null);
   const [games, setGames] = useState<GameWithSteamData[]>([]);
+  const [heroGames, setHeroGames] = useState<GameWithSteamData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [heroLoading, setHeroLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [steamSpecials, setSteamSpecials] = useState<SteamSpecialEnriched[]>([]);
   const [userCountry, setUserCountry] = useState<string>('us');
@@ -170,14 +172,18 @@ export default function Home() {
   // Cargar juegos desde Supabase y enriquecerlos con datos de Steam
   useEffect(() => {
     async function loadGames() {
-      setLoading(true);
+      // Solo mostrar loading en la primera carga
+      if (currentPage === 0) {
+        setLoading(true);
+      }
+      
       try {
         const gamesFromDB = await getGames(currentPage, GAMES_PER_PAGE);
         console.log(`Games from DB (page ${currentPage}):`, gamesFromDB.length);
 
         if (gamesFromDB.length === 0) {
           setGames([]);
-          setLoading(false);
+          if (currentPage === 0) setLoading(false);
           return;
         }
 
@@ -200,10 +206,16 @@ export default function Home() {
           // Actualizar el estado después de cada lote
           setGames([...enrichedGames]);
           
-          // Después del primer lote, desactivar loading para mostrar el hero
-          if (i === 0) {
+          // Solo en la primera página, guardar los primeros 10 juegos para el hero
+          if (currentPage === 0 && i === 0 && heroGames.length === 0) {
+            setHeroGames(enrichedGames.slice(0, 10));
+            setHeroLoading(false);
+            console.log('Hero games cached:', enrichedGames.slice(0, 10).length);
+          }
+          
+          // Desactivar loading general después del primer lote de la primera página
+          if (i === 0 && currentPage === 0) {
             setLoading(false);
-            console.log('Hero should now be visible with', enrichedGames.length, 'games');
           }
           
           // Delay entre lotes
@@ -216,8 +228,6 @@ export default function Home() {
       } catch (error) {
         console.error('Error loading games:', error);
         setGames([]);
-      } finally {
-        setLoading(false);
       }
     }
     loadGames();
@@ -229,7 +239,14 @@ export default function Home() {
     if (pageNumber < 0 || pageNumber >= totalPages || pageNumber === currentPage) return;
     
     setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Scroll suave hasta el grid de juegos (después del hero)
+    setTimeout(() => {
+      const gamesSection = document.querySelector('[data-games-grid]');
+      if (gamesSection) {
+        gamesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   };
 
   // Handlers
@@ -311,9 +328,6 @@ export default function Home() {
     }
   };
 
-  // Organizar juegos
-  const heroGames = games.length > 0 ? games.slice(0, 10) : [];
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
@@ -341,7 +355,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Slider */}
-      <HeroSlider games={heroGames} loading={loading} t={t as any} onGameClick={handleGameClick} />
+      <HeroSlider games={heroGames} loading={heroLoading} t={t as any} onGameClick={handleGameClick} />
 
       {/* Content */}
       <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">
