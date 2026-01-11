@@ -10,6 +10,7 @@ import GamesGrid from '@/components/GamesGrid';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import {
   getGames,
+  getTotalGamesCount,
   enrichGameWithSteamData,
   type GameWithSteamData,
   getSteamSpecials,
@@ -50,15 +51,16 @@ export default function Home() {
   } | null>(null);
   const [games, setGames] = useState<GameWithSteamData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [heroLoading, setHeroLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
   const [steamSpecials, setSteamSpecials] = useState<SteamSpecialEnriched[]>([]);
   const [userCountry, setUserCountry] = useState<string>('us');
   const [loadingSpecials, setLoadingSpecials] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [loadedGamesCount, setLoadedGamesCount] = useState(0);
   const [totalGamesCount, setTotalGamesCount] = useState(0);
-  const GAMES_PER_PAGE = 20;
+  const GAMES_PER_PAGE = 100;
 
   // Detectar errores de autenticación en la URL
   useEffect(() => {
@@ -149,26 +151,34 @@ export default function Home() {
     loadSteamSpecials();
   }, [userCountry, locale]);
 
+  // Obtener el total de juegos al inicio
+  useEffect(() => {
+    async function fetchTotalCount() {
+      const total = await getTotalGamesCount();
+      setTotalGamesCount(total);
+      console.log('Total games in DB:', total);
+    }
+    fetchTotalCount();
+  }, []);
+
   // Cargar juegos desde Supabase y enriquecerlos con datos de Steam
   useEffect(() => {
     async function loadGames() {
       setLoading(true);
       try {
-        const gamesFromDB = await getGames();
-        console.log('Games from DB:', gamesFromDB);
+        const gamesFromDB = await getGames(0, GAMES_PER_PAGE);
+        console.log('Games from DB (page 0):', gamesFromDB.length);
 
         if (gamesFromDB.length === 0) {
           setGames([]);
           setHasMore(false);
           setLoading(false);
-          setTotalGamesCount(0);
           return;
         }
 
-        setTotalGamesCount(gamesFromDB.length);
         setLoadedGamesCount(0);
 
-        // Cargar juegos en lotes de 50 simultáneos (reducido para evitar saturar)
+        // Cargar juegos en lotes de 50 simultáneos
         const enrichedGames: GameWithSteamData[] = [];
         const BATCH_SIZE = 50;
 
@@ -194,14 +204,15 @@ export default function Home() {
             console.log('Hero should now be visible with', enrichedGames.length, 'games');
           }
           
-          // Delay entre lotes (excepto después del primero que ya se mostró)
+          // Delay entre lotes
           if (i + BATCH_SIZE < gamesFromDB.length) {
             await new Promise(resolve => setTimeout(resolve, 1000));
           }
         }
 
-        console.log('All games loaded:', enrichedGames.length);
-        setHasMore(enrichedGames.length >= GAMES_PER_PAGE);
+        console.log('First page loaded:', enrichedGames.length);
+        setHasMore(gamesFromDB.length === GAMES_PER_PAGE);
+        setCurrentPage(0);
       } catch (error) {
         console.error('Error loading games:', error);
         setGames([]);
@@ -213,23 +224,73 @@ export default function Home() {
     loadGames();
   }, [locale]);
 
+  // Función para cargar más juegos (infinite scroll)
+  const loadMoreGames = async () => {
+    if (loadingMore || !hasMore) return;
+
+    setLoadingMore(true);
+    try {
+      const nextPage = currentPage + 1;
+      const gamesFromDB = await getGames(nextPage, GAMES_PER_PAGE);
+      console.log(`Loading page ${nextPage}:`, gamesFromDB.length, 'games');
+
+      if (gamesFromDB.length === 0) {
+        setHasMore(false);
+        setLoadingMore(false);
+        return;
+      }
+
+      // Cargar nuevos juegos en lotes de 50
+      const BATCH_SIZE = 50;
+      const newEnrichedGames: GameWithSteamData[] = [];
+
+      for (let i = 0; i < gamesFromDB.length; i += BATCH_SIZE) {
+        const batch = gamesFromDB.slice(i, i + BATCH_SIZE);
+        
+        const enrichedBatch = await Promise.all(
+          batch.map((game, index) => enrichGameWithSteamData(game, locale, i + index))
+        );
+        
+        newEnrichedGames.push(...enrichedBatch);
+        
+        // Actualizar el estado progresivamente
+        setGames(prev => [...prev, ...newEnrichedGames]);
+        setLoadedGamesCount(games.length + newEnrichedGames.length);
+        
+        // Delay entre lotes
+        if (i + BATCH_SIZE < gamesFromDB.length) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+
+      setCurrentPage(nextPage);
+      setHasMore(gamesFromDB.length === GAMES_PER_PAGE);
+    } catch (error) {
+      console.error('Error loading more games:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
   // Infinite scroll
   useEffect(() => {
     const handleScroll = () => {
-      if (loading || !hasMore) return;
+      if (loadingMore || !hasMore || loading) return;
 
       const scrollHeight = document.documentElement.scrollHeight;
       const scrollTop = document.documentElement.scrollTop;
       const clientHeight = document.documentElement.clientHeight;
 
-      if (scrollHeight - scrollTop - clientHeight < 200) {
-        console.log('Near bottom - could load more games');
+      // Cargar más cuando estemos a 500px del final
+      if (scrollHeight - scrollTop - clientHeight < 500) {
+        console.log('Near bottom - loading more games');
+        loadMoreGames();
       }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [loading, hasMore]);
+  }, [loadingMore, hasMore, loading, currentPage]);
 
   // Handlers
   const handleGameClick = (
@@ -340,7 +401,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Slider */}
-      <HeroSlider games={heroGames} loading={heroLoading} t={t as any} onGameClick={handleGameClick} />
+      <HeroSlider games={heroGames} loading={loading} t={t as any} onGameClick={handleGameClick} />
 
       {/* Content */}
       <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">
@@ -361,6 +422,25 @@ export default function Home() {
           loadedCount={loadedGamesCount}
           totalCount={totalGamesCount}
         />
+
+        {/* Loading more indicator */}
+        {loadingMore && (
+          <div className="text-center py-8">
+            <div className="inline-flex items-center gap-3 text-muted-foreground">
+              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              <span>Cargando más juegos...</span>
+            </div>
+          </div>
+        )}
+
+        {/* No more games indicator */}
+        {!hasMore && games.length > 0 && (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">
+              Has visto todos los {totalGamesCount} juegos disponibles
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Modal */}

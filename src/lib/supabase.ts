@@ -38,12 +38,17 @@ export type GameWithSteamData = Game & {
 
 // Función para obtener solo los juegos de la DB (sin datos de Steam)
 // SOLO muestra juegos que tienen link de descarga (links IS NOT NULL)
-export async function getGames(): Promise<Game[]> {
+// Soporta paginación para cargar juegos progresivamente
+export async function getGames(page: number = 0, pageSize: number = 100): Promise<Game[]> {
+  const from = page * pageSize;
+  const to = from + pageSize - 1;
+  
   const { data, error } = await supabase
     .from('games')
     .select('*')
     .not('links', 'is', null) // Filtrar solo juegos con link de descarga
-    .order('id', { ascending: false });
+    .order('id', { ascending: false })
+    .range(from, to);
 
   if (error) {
     console.error('Error fetching games:', error);
@@ -51,6 +56,21 @@ export async function getGames(): Promise<Game[]> {
   }
 
   return data as Game[];
+}
+
+// Función para obtener el total de juegos disponibles
+export async function getTotalGamesCount(): Promise<number> {
+  const { count, error } = await supabase
+    .from('games')
+    .select('*', { count: 'exact', head: true })
+    .not('links', 'is', null);
+
+  if (error) {
+    console.error('Error fetching games count:', error);
+    return 0;
+  }
+
+  return count || 0;
 }
 
 // Función para enriquecer un juego con datos de Steam (solo cliente)
