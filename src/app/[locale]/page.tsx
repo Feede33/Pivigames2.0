@@ -7,7 +7,7 @@ import UserProfile from '@/components/UserProfile';
 import HeroSlider from '@/components/HeroSlider';
 import SteamOffers from '@/components/SteamOffers';
 import GamesGrid from '@/components/GamesGrid';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
+import LanguageSelector from '@/components/LanguageSelector';
 import { SearchSystem } from '@/components/ui/search-system';
 import {
   Pagination,
@@ -416,17 +416,16 @@ export default function Home() {
               games={games}
               allGamesCache={gamesCache}
               onGameClickAction={handleGameClick}
-              placeholder="Buscar juegos..."
               locale={locale}
             />
-            <LanguageSwitcher />
+            <LanguageSelector />
             <UserProfile />
           </div>
         </div>
       </nav>
 
       {/* Hero Slider */}
-      <HeroSlider games={heroGames} loading={heroLoading} t={t as any} onGameClick={handleGameClick} />
+      <HeroSlider games={heroGames} loading={heroLoading} t={t as any} onGameClickAction={handleGameClick} />
 
       {/* Content */}
       <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">

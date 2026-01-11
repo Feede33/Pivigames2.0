@@ -5,6 +5,8 @@ import { Search, X, Loader2 } from 'lucide-react';
 import { searchGames, enrichGameWithSteamData } from '@/lib/supabase';
 import type { GameWithSteamData } from '@/lib/supabase';
 import { useTranslations, type Locale } from '@/lib/i18n';
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
 
 type SearchSystemProps = {
   games: GameWithSteamData[];
