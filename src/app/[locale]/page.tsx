@@ -60,17 +60,13 @@ export default function Home() {
   } | null>(null);
   const [games, setGames] = useState<GameWithSteamData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [steamSpecials, setSteamSpecials] = useState<SteamSpecialEnriched[]>([]);
   const [userCountry, setUserCountry] = useState<string>('us');
   const [loadingSpecials, setLoadingSpecials] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
-  const [loadedGamesCount, setLoadedGamesCount] = useState(0);
   const [totalGamesCount, setTotalGamesCount] = useState(0);
   const GAMES_PER_PAGE = 100;
-  const MAX_AUTO_LOAD_PAGES = 12; // Después de 1200 juegos, usar paginación manual
 
   // Detectar errores de autenticación en la URL
   useEffect(() => {
@@ -176,17 +172,14 @@ export default function Home() {
     async function loadGames() {
       setLoading(true);
       try {
-        const gamesFromDB = await getGames(0, GAMES_PER_PAGE);
-        console.log('Games from DB (page 0):', gamesFromDB.length);
+        const gamesFromDB = await getGames(currentPage, GAMES_PER_PAGE);
+        console.log(`Games from DB (page ${currentPage}):`, gamesFromDB.length);
 
         if (gamesFromDB.length === 0) {
           setGames([]);
-          setHasMore(false);
           setLoading(false);
           return;
         }
-
-        setLoadedGamesCount(0);
 
         // Cargar juegos en lotes de 50 simultáneos
         const enrichedGames: GameWithSteamData[] = [];
@@ -206,7 +199,6 @@ export default function Home() {
           
           // Actualizar el estado después de cada lote
           setGames([...enrichedGames]);
-          setLoadedGamesCount(enrichedGames.length);
           
           // Después del primer lote, desactivar loading para mostrar el hero
           if (i === 0) {
@@ -220,146 +212,25 @@ export default function Home() {
           }
         }
 
-        console.log('First page loaded:', enrichedGames.length);
-        setHasMore(gamesFromDB.length === GAMES_PER_PAGE);
-        setCurrentPage(0);
+        console.log('Page loaded:', enrichedGames.length);
       } catch (error) {
         console.error('Error loading games:', error);
         setGames([]);
-        setHasMore(false);
       } finally {
         setLoading(false);
       }
     }
     loadGames();
-  }, [locale]);
+  }, [locale, currentPage]);
 
-  // Función para cargar más juegos (infinite scroll)
-  const loadMoreGames = async () => {
-    if (loadingMore || !hasMore) return;
-
-    setLoadingMore(true);
-    try {
-      const nextPage = currentPage + 1;
-      const gamesFromDB = await getGames(nextPage, GAMES_PER_PAGE);
-      console.log(`Loading page ${nextPage}:`, gamesFromDB.length, 'games');
-
-      if (gamesFromDB.length === 0) {
-        setHasMore(false);
-        setLoadingMore(false);
-        return;
-      }
-
-      // Cargar nuevos juegos en lotes de 50
-      const BATCH_SIZE = 50;
-      const newEnrichedGames: GameWithSteamData[] = [];
-
-      for (let i = 0; i < gamesFromDB.length; i += BATCH_SIZE) {
-        const batch = gamesFromDB.slice(i, i + BATCH_SIZE);
-        
-        const enrichedBatch = await Promise.all(
-          batch.map((game, index) => enrichGameWithSteamData(game, locale, i + index))
-        );
-        
-        newEnrichedGames.push(...enrichedBatch);
-        
-        // Actualizar el estado progresivamente
-        setGames(prev => [...prev, ...newEnrichedGames]);
-        setLoadedGamesCount(games.length + newEnrichedGames.length);
-        
-        // Delay entre lotes
-        if (i + BATCH_SIZE < gamesFromDB.length) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        }
-      }
-
-      setCurrentPage(nextPage);
-      setHasMore(gamesFromDB.length === GAMES_PER_PAGE);
-    } catch (error) {
-      console.error('Error loading more games:', error);
-    } finally {
-      setLoadingMore(false);
-    }
-  };
-
-  // Función para ir a una página específica (paginación manual)
-  const goToPage = async (pageNumber: number) => {
-    if (loadingMore || pageNumber === currentPage) return;
-
-    setLoadingMore(true);
+  // Función para cambiar de página
+  const goToPage = (pageNumber: number) => {
+    const totalPages = Math.ceil(totalGamesCount / GAMES_PER_PAGE);
+    if (pageNumber < 0 || pageNumber >= totalPages || pageNumber === currentPage) return;
+    
+    setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    try {
-      const gamesFromDB = await getGames(pageNumber, GAMES_PER_PAGE);
-      console.log(`Loading page ${pageNumber}:`, gamesFromDB.length, 'games');
-
-      if (gamesFromDB.length === 0) {
-        setHasMore(false);
-        setLoadingMore(false);
-        return;
-      }
-
-      // Cargar juegos en lotes de 50
-      const BATCH_SIZE = 50;
-      const newEnrichedGames: GameWithSteamData[] = [];
-
-      for (let i = 0; i < gamesFromDB.length; i += BATCH_SIZE) {
-        const batch = gamesFromDB.slice(i, i + BATCH_SIZE);
-        
-        const enrichedBatch = await Promise.all(
-          batch.map((game, index) => enrichGameWithSteamData(game, locale, i + index))
-        );
-        
-        newEnrichedGames.push(...enrichedBatch);
-        
-        // Si es la primera página después de 1200, reemplazar; si no, agregar
-        if (pageNumber >= MAX_AUTO_LOAD_PAGES) {
-          // Mantener los primeros 1200 juegos y reemplazar el resto
-          const baseGames = games.slice(0, MAX_AUTO_LOAD_PAGES * GAMES_PER_PAGE);
-          setGames([...baseGames, ...newEnrichedGames]);
-        } else {
-          setGames(prev => [...prev, ...newEnrichedGames]);
-        }
-        
-        setLoadedGamesCount((pageNumber + 1) * GAMES_PER_PAGE);
-        
-        // Delay entre lotes
-        if (i + BATCH_SIZE < gamesFromDB.length) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        }
-      }
-
-      setCurrentPage(pageNumber);
-      setHasMore(gamesFromDB.length === GAMES_PER_PAGE);
-    } catch (error) {
-      console.error('Error loading page:', error);
-    } finally {
-      setLoadingMore(false);
-    }
   };
-
-  // Infinite scroll (solo hasta 1200 juegos)
-  useEffect(() => {
-    const handleScroll = () => {
-      if (loadingMore || !hasMore || loading) return;
-      
-      // Desactivar auto-scroll después de 1200 juegos
-      if (currentPage >= MAX_AUTO_LOAD_PAGES - 1) return;
-
-      const scrollHeight = document.documentElement.scrollHeight;
-      const scrollTop = document.documentElement.scrollTop;
-      const clientHeight = document.documentElement.clientHeight;
-
-      // Cargar más cuando estemos a 500px del final
-      if (scrollHeight - scrollTop - clientHeight < 500) {
-        console.log('Near bottom - loading more games');
-        loadMoreGames();
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [loadingMore, hasMore, loading, currentPage]);
 
   // Handlers
   const handleGameClick = (
@@ -488,22 +359,12 @@ export default function Home() {
           loading={loading} 
           t={t as any} 
           onGameClickAction={handleGameClick}
-          loadedCount={loadedGamesCount}
+          loadedCount={games.length}
           totalCount={totalGamesCount}
         />
 
-        {/* Loading more indicator */}
-        {loadingMore && (
-          <div className="text-center py-8">
-            <div className="inline-flex items-center gap-3 text-muted-foreground">
-              <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-              <span>Cargando más juegos...</span>
-            </div>
-          </div>
-        )}
-
-        {/* Paginación manual después de 1200 juegos */}
-        {currentPage >= MAX_AUTO_LOAD_PAGES - 1 && totalGamesCount > MAX_AUTO_LOAD_PAGES * GAMES_PER_PAGE && (
+        {/* Paginación */}
+        {totalGamesCount > GAMES_PER_PAGE && (
           <div className="py-8">
             <Pagination>
               <PaginationContent>
@@ -512,25 +373,39 @@ export default function Home() {
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      if (currentPage > 0) goToPage(currentPage - 1);
+                      goToPage(currentPage - 1);
                     }}
                     className={currentPage === 0 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                   />
                 </PaginationItem>
                 
-                {/* Páginas */}
-                {Array.from({ length: Math.min(5, Math.ceil(totalGamesCount / GAMES_PER_PAGE)) }, (_, i) => {
+                {/* Primera página */}
+                {currentPage > 2 && (
+                  <>
+                    <PaginationItem>
+                      <PaginationLink
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          goToPage(0);
+                        }}
+                        className="cursor-pointer"
+                      >
+                        1
+                      </PaginationLink>
+                    </PaginationItem>
+                    {currentPage > 3 && (
+                      <PaginationItem>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    )}
+                  </>
+                )}
+                
+                {/* Páginas alrededor de la actual */}
+                {Array.from({ length: 5 }, (_, i) => {
+                  const pageNumber = currentPage - 2 + i;
                   const totalPages = Math.ceil(totalGamesCount / GAMES_PER_PAGE);
-                  let pageNumber: number;
-                  
-                  // Mostrar páginas alrededor de la actual
-                  if (currentPage < 3) {
-                    pageNumber = i;
-                  } else if (currentPage > totalPages - 4) {
-                    pageNumber = totalPages - 5 + i;
-                  } else {
-                    pageNumber = currentPage - 2 + i;
-                  }
                   
                   if (pageNumber < 0 || pageNumber >= totalPages) return null;
                   
@@ -551,10 +426,27 @@ export default function Home() {
                   );
                 })}
                 
+                {/* Última página */}
                 {currentPage < Math.ceil(totalGamesCount / GAMES_PER_PAGE) - 3 && (
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
+                  <>
+                    {currentPage < Math.ceil(totalGamesCount / GAMES_PER_PAGE) - 4 && (
+                      <PaginationItem>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    )}
+                    <PaginationItem>
+                      <PaginationLink
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          goToPage(Math.ceil(totalGamesCount / GAMES_PER_PAGE) - 1);
+                        }}
+                        className="cursor-pointer"
+                      >
+                        {Math.ceil(totalGamesCount / GAMES_PER_PAGE)}
+                      </PaginationLink>
+                    </PaginationItem>
+                  </>
                 )}
                 
                 <PaginationItem>
@@ -562,8 +454,7 @@ export default function Home() {
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      const totalPages = Math.ceil(totalGamesCount / GAMES_PER_PAGE);
-                      if (currentPage < totalPages - 1) goToPage(currentPage + 1);
+                      goToPage(currentPage + 1);
                     }}
                     className={currentPage >= Math.ceil(totalGamesCount / GAMES_PER_PAGE) - 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                   />
@@ -572,17 +463,8 @@ export default function Home() {
             </Pagination>
             
             <div className="text-center mt-4 text-sm text-muted-foreground">
-              Página {currentPage + 1} de {Math.ceil(totalGamesCount / GAMES_PER_PAGE)}
+              Página {currentPage + 1} de {Math.ceil(totalGamesCount / GAMES_PER_PAGE)} • Mostrando {games.length} de {totalGamesCount} juegos
             </div>
-          </div>
-        )}
-
-        {/* No more games indicator */}
-        {!hasMore && games.length > 0 && currentPage < MAX_AUTO_LOAD_PAGES - 1 && (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">
-              Has visto todos los {totalGamesCount} juegos disponibles
-            </p>
           </div>
         )}
       </div>
