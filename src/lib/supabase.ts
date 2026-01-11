@@ -73,6 +73,23 @@ export async function getTotalGamesCount(): Promise<number> {
   return count || 0;
 }
 
+// Función para buscar juegos por título o steam_appid
+export async function searchGames(query: string, limit: number = 10): Promise<Game[]> {
+  const { data, error } = await supabase
+    .from('games')
+    .select('*')
+    .not('links', 'is', null)
+    .or(`steam_appid.eq.${query},steam_appid.ilike.%${query}%`)
+    .limit(limit);
+
+  if (error) {
+    console.error('Error searching games:', error);
+    return [];
+  }
+
+  return data as Game[];
+}
+
 // Función para enriquecer un juego con datos de Steam (solo cliente)
 export async function enrichGameWithSteamData(
   game: Game, 

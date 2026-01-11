@@ -397,6 +397,7 @@ export default function Home() {
               allGamesCache={gamesCache}
               onGameClickAction={handleGameClick}
               placeholder="Buscar juegos..."
+              locale={locale}
             />
             <LanguageSwitcher />
             <UserProfile />

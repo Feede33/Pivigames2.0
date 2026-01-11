@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { searchGames, enrichGameWithSteamData } from '@/lib/supabase';
 import type { GameWithSteamData } from '@/lib/supabase';
 
 type SearchSystemProps = {
@@ -10,9 +11,10 @@ type SearchSystemProps = {
   allGamesCache: Map<number, GameWithSteamData[]>;
   onGameClickAction: (game: GameWithSteamData, event: React.MouseEvent<HTMLDivElement>) => void;
   placeholder?: string;
+  locale?: string;
 };
 
-export function SearchSystem({ games, allGamesCache, onGameClickAction, placeholder = 'Buscar juegos...' }: SearchSystemProps) {
+export function SearchSystem({ games, allGamesCache, onGameClickAction, placeholder = 'Buscar juegos...', locale = 'es' }: SearchSystemProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<GameWithSteamData[]>([]);
@@ -45,7 +47,7 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, placehol
     return () => document.removeEventListener('keydown', handleEscape);
   }, []);
 
-  // Buscar en todos los juegos (incluyendo caché)
+  // Buscar en todos los juegos (incluyendo caché y base de datos)
   useEffect(() => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
@@ -56,10 +58,10 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, placehol
     setIsSearching(true);
 
     // Debounce
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
       const query = searchQuery.toLowerCase().trim();
       
-      // Obtener todos los juegos del caché
+      // Primero buscar en el caché local
       const allGames: GameWithSteamData[] = [];
       allGamesCache.forEach((gamesInPage) => {
         allGames.push(...gamesInPage);
@@ -68,18 +70,37 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, placehol
       // Si no hay juegos en caché, usar los actuales
       const gamesToSearch = allGames.length > 0 ? allGames : games;
 
-      // Buscar por título o género
-      const results = gamesToSearch.filter(game => 
+      // Buscar por título o género en caché
+      let results = gamesToSearch.filter(game => 
         game.title.toLowerCase().includes(query) ||
-        game.genre.toLowerCase().includes(query)
-      ).slice(0, 10); // Limitar a 10 resultados
+        game.genre.toLowerCase().includes(query) ||
+        game.steam_appid === query
+      );
 
-      setSearchResults(results);
+      // Si no hay resultados en caché, buscar en la base de datos
+      if (results.length === 0) {
+        console.log('No results in cache, searching database...');
+        try {
+          const dbResults = await searchGames(query, 10);
+          
+          // Enriquecer los resultados con datos de Steam
+          const enrichedResults = await Promise.all(
+            dbResults.map(game => enrichGameWithSteamData(game, locale))
+          );
+          
+          results = enrichedResults;
+          console.log('Found in database:', results.length);
+        } catch (error) {
+          console.error('Error searching database:', error);
+        }
+      }
+
+      setSearchResults(results.slice(0, 10)); // Limitar a 10 resultados
       setIsSearching(false);
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, games, allGamesCache]);
+  }, [searchQuery, games, allGamesCache, locale]);
 
   const handleGameClick = (game: GameWithSteamData) => {
     // Crear un evento sintético para el modal
