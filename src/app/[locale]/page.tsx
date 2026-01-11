@@ -7,7 +7,7 @@ import UserProfile from '@/components/UserProfile';
 import HeroSlider from '@/components/HeroSlider';
 import SteamOffers from '@/components/SteamOffers';
 import GamesGrid from '@/components/GamesGrid';
-import { LanguageSelector } from '@/components/LanguageSelector';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { SearchSystem } from '@/components/ui/search-system';
 import {
   Pagination,
@@ -416,14 +416,17 @@ export default function Home() {
               games={games}
               allGamesCache={gamesCache}
               onGameClickAction={handleGameClick}
+              placeholder="Buscar juegos..."
               locale={locale}
             />
+            <LanguageSwitcher />
+            <UserProfile />
           </div>
         </div>
       </nav>
 
       {/* Hero Slider */}
-      <HeroSlider games={heroGames} loading={heroLoading} t={t as any} onGameClickAction={handleGameClick} />
+      <HeroSlider games={heroGames} loading={heroLoading} t={t as any} onGameClick={handleGameClick} />
 
       {/* Content */}
       <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">
@@ -551,19 +554,18 @@ export default function Home() {
               </PaginationContent>
             </Pagination>
             
-        
+            <div className="text-center mt-4 text-sm text-muted-foreground">
+              Página {currentPage + 1} de {Math.ceil(totalGamesCount / GAMES_PER_PAGE)} • Mostrando {games.length} de {totalGamesCount} juegos
+              {gamesCache.has(currentPage + 1) && currentPage + 1 < Math.ceil(totalGamesCount / GAMES_PER_PAGE) && (
+                <span className="ml-2 text-green-500">• Siguiente página lista ⚡</span>
+              )}
+            </div>
           </div>
         )}
       </div>
 
       {/* Modal */}
       <GameModal game={modalGame} origin={modalOrigin} onCloseAction={closeModal} locale={locale} />
-
-      {/* Language Selector */}
-      <LanguageSelector currentLocale={locale} />
-
-      {/* User Profile */}
-      <UserProfile />
 
       {/* Error de autenticación */}
       {authError && (
