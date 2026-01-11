@@ -77,36 +77,26 @@ export async function GET(
     let bestBackground = '';
     
     // Prioridad 1: page_bg_raw de alta calidad (verificar si existe)
-    try {
-      const bgCheck = await fetch(highQualityBg, { method: 'HEAD' });
-      if (bgCheck.ok) {
-        bestBackground = highQualityBg;
-        console.log(`✓ Using high-quality page_bg_raw for ${gameData.name}`);
-      }
-    } catch (e) {
-      // Si falla, continuar con otras opciones
-    }
+    // Nota: No verificamos con HEAD para evitar errores 500, asumimos que existe
+    // Si no existe, el navegador mostrará error pero no rompe la API
     
     // Prioridad 2: background_raw si existe y no es dinámico
-    if (!bestBackground && gameData.background_raw && !gameData.background_raw.includes('storepagebackground')) {
+    if (gameData.background_raw && !gameData.background_raw.includes('storepagebackground')) {
       bestBackground = gameData.background_raw;
       console.log(`✓ Using background_raw for ${gameData.name}`);
     }
-    
     // Prioridad 3: Primer screenshot en alta calidad si background es dinámico o de baja calidad
-    if (!bestBackground && screenshots.length > 0 && (isDynamicBackground || !gameData.background)) {
+    else if (screenshots.length > 0 && (isDynamicBackground || !gameData.background)) {
       bestBackground = screenshots[0].full;
       console.log(`⚠ Using first screenshot as background for ${gameData.name}`);
     }
-    
     // Prioridad 4: background normal si no es dinámico
-    if (!bestBackground && gameData.background && !isDynamicBackground) {
+    else if (gameData.background && !isDynamicBackground) {
       bestBackground = gameData.background;
       console.log(`⚠ Using standard background for ${gameData.name}`);
     }
-    
     // Prioridad 5: header_image como último recurso
-    if (!bestBackground) {
+    else {
       bestBackground = gameData.header_image;
       console.log(`⚠ Using header_image as fallback for ${gameData.name}`);
     }
