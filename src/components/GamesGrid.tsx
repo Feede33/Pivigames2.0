@@ -34,17 +34,6 @@ export default function GamesGrid({ games, loading, t, onGameClickAction }: Prop
                   src={proxySteamImage(game.image)}
                   alt={game.title}
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    // Si library_600x900 falla, usar el fallback (header_image o wallpaper)
-                    const target = e.target as HTMLImageElement;
-                    const fallbackSrc = game.image_fallback ? proxySteamImage(game.image_fallback) : '';
-                    
-                    // Solo cambiar si tenemos fallback y no lo hemos intentado
-                    if (fallbackSrc && !target.dataset.fallbackAttempted) {
-                      target.dataset.fallbackAttempted = 'true';
-                      target.src = fallbackSrc;
-                    }
-                  }}
                 />
               </div>
               <div className="absolute top-2 left-2">
