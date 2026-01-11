@@ -553,12 +553,7 @@ export default function Home() {
               </PaginationContent>
             </Pagination>
             
-            <div className="text-center mt-4 text-sm text-muted-foreground">
-              Página {currentPage + 1} de {Math.ceil(totalGamesCount / GAMES_PER_PAGE)} • Mostrando {games.length} de {totalGamesCount} juegos
-              {gamesCache.has(currentPage + 1) && currentPage + 1 < Math.ceil(totalGamesCount / GAMES_PER_PAGE) && (
-                <span className="ml-2 text-green-500">• Siguiente página lista ⚡</span>
-              )}
-            </div>
+          
           </div>
         )}
       </div>
