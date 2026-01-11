@@ -187,7 +187,7 @@ export default function Home() {
           const enrichedGame = await enrichGameWithSteamData(game, locale, i);
           enrichedGames.push(enrichedGame);
           
-          // Mostrar hero tan pronto como tengamos 6 juegos
+          // Mostrar hero tan pronto como tengamos 6 juegoss
           if (i === 6 && heroLoading) {
             setHeroLoading(false);
           }
