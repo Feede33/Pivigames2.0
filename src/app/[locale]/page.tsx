@@ -60,9 +60,11 @@ export default function Home() {
   } | null>(null);
   const [games, setGames] = useState<GameWithSteamData[]>([]);
   const [heroGames, setHeroGames] = useState<GameWithSteamData[]>([]);
+  const [gamesCache, setGamesCache] = useState<Map<number, GameWithSteamData[]>>(new Map());
   const [loading, setLoading] = useState(true);
   const [heroLoading, setHeroLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
+  const [prefetchingPage, setPrefetchingPage] = useState<number | null>(null);
   const [steamSpecials, setSteamSpecials] = useState<SteamSpecialEnriched[]>([]);
   const [userCountry, setUserCountry] = useState<string>('us');
   const [loadingSpecials, setLoadingSpecials] = useState(true);
@@ -169,6 +171,47 @@ export default function Home() {
     fetchTotalCount();
   }, []);
 
+  // Función para cargar y cachear una página
+  const loadAndCachePage = async (pageNumber: number): Promise<GameWithSteamData[]> => {
+    // Si ya está en caché, retornarla
+    if (gamesCache.has(pageNumber)) {
+      console.log(`Page ${pageNumber} loaded from cache`);
+      return gamesCache.get(pageNumber)!;
+    }
+
+    console.log(`Loading page ${pageNumber} from API...`);
+    const gamesFromDB = await getGames(pageNumber, GAMES_PER_PAGE);
+    
+    if (gamesFromDB.length === 0) {
+      return [];
+    }
+
+    // Cargar juegos en lotes de 50 simultáneos
+    const enrichedGames: GameWithSteamData[] = [];
+    const BATCH_SIZE = 50;
+
+    for (let i = 0; i < gamesFromDB.length; i += BATCH_SIZE) {
+      const batch = gamesFromDB.slice(i, i + BATCH_SIZE);
+      
+      const enrichedBatch = await Promise.all(
+        batch.map((game, index) => enrichGameWithSteamData(game, locale, i + index))
+      );
+      
+      enrichedGames.push(...enrichedBatch);
+      
+      // Pequeño delay entre lotes
+      if (i + BATCH_SIZE < gamesFromDB.length) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    }
+
+    // Guardar en caché
+    setGamesCache(prev => new Map(prev).set(pageNumber, enrichedGames));
+    console.log(`Page ${pageNumber} cached with ${enrichedGames.length} games`);
+    
+    return enrichedGames;
+  };
+
   // Cargar juegos desde Supabase y enriquecerlos con datos de Steam
   useEffect(() => {
     async function loadGames() {
@@ -178,65 +221,65 @@ export default function Home() {
       }
       
       try {
-        const gamesFromDB = await getGames(currentPage, GAMES_PER_PAGE);
-        console.log(`Games from DB (page ${currentPage}):`, gamesFromDB.length);
-
-        if (gamesFromDB.length === 0) {
+        // Cargar la página actual
+        const enrichedGames = await loadAndCachePage(currentPage);
+        
+        if (enrichedGames.length === 0) {
           setGames([]);
           if (currentPage === 0) setLoading(false);
           return;
         }
 
-        // Cargar juegos en lotes de 50 simultáneos
-        const enrichedGames: GameWithSteamData[] = [];
-        const BATCH_SIZE = 50;
-
-        for (let i = 0; i < gamesFromDB.length; i += BATCH_SIZE) {
-          const batch = gamesFromDB.slice(i, i + BATCH_SIZE);
-          
-          console.log(`Loading batch ${Math.floor(i / BATCH_SIZE) + 1}: games ${i} to ${i + batch.length}`);
-          
-          // Procesar 50 juegos en paralelo
-          const enrichedBatch = await Promise.all(
-            batch.map((game, index) => enrichGameWithSteamData(game, locale, i + index))
-          );
-          
-          enrichedGames.push(...enrichedBatch);
-          
-          // Actualizar el estado después de cada lote
-          setGames([...enrichedGames]);
-          
-          // Solo en la primera página, guardar los primeros 10 juegos para el hero
-          if (currentPage === 0 && i === 0 && heroGames.length === 0) {
-            setHeroGames(enrichedGames.slice(0, 10));
-            setHeroLoading(false);
-            console.log('Hero games cached:', enrichedGames.slice(0, 10).length);
-          }
-          
-          // Desactivar loading general después del primer lote de la primera página
-          if (i === 0 && currentPage === 0) {
-            setLoading(false);
-          }
-          
-          // Delay entre lotes
-          if (i + BATCH_SIZE < gamesFromDB.length) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-          }
+        setGames(enrichedGames);
+        
+        // Solo en la primera página, guardar los primeros 10 juegos para el hero
+        if (currentPage === 0 && heroGames.length === 0) {
+          setHeroGames(enrichedGames.slice(0, 10));
+          setHeroLoading(false);
+          console.log('Hero games cached:', enrichedGames.slice(0, 10).length);
+        }
+        
+        // Desactivar loading después de cargar la primera página
+        if (currentPage === 0) {
+          setLoading(false);
         }
 
-        console.log('Page loaded:', enrichedGames.length);
+        // Prefetch de la siguiente página en background
+        const totalPages = Math.ceil(totalGamesCount / GAMES_PER_PAGE);
+        const nextPage = currentPage + 1;
+        
+        if (nextPage < totalPages && !gamesCache.has(nextPage) && prefetchingPage !== nextPage) {
+          setPrefetchingPage(nextPage);
+          console.log(`Prefetching page ${nextPage}...`);
+          
+          // Cargar en background sin bloquear
+          loadAndCachePage(nextPage).then(() => {
+            console.log(`Page ${nextPage} prefetched successfully`);
+            setPrefetchingPage(null);
+          }).catch(err => {
+            console.error(`Error prefetching page ${nextPage}:`, err);
+            setPrefetchingPage(null);
+          });
+        }
       } catch (error) {
         console.error('Error loading games:', error);
         setGames([]);
       }
     }
     loadGames();
-  }, [locale, currentPage]);
+  }, [locale, currentPage, totalGamesCount]);
 
   // Función para cambiar de página
   const goToPage = (pageNumber: number) => {
     const totalPages = Math.ceil(totalGamesCount / GAMES_PER_PAGE);
     if (pageNumber < 0 || pageNumber >= totalPages || pageNumber === currentPage) return;
+    
+    // Si la página está en caché, el cambio será instantáneo
+    if (gamesCache.has(pageNumber)) {
+      console.log(`Instant page change to ${pageNumber} (from cache)`);
+    } else {
+      console.log(`Loading page ${pageNumber}...`);
+    }
     
     setCurrentPage(pageNumber);
     
@@ -423,6 +466,9 @@ export default function Home() {
                   
                   if (pageNumber < 0 || pageNumber >= totalPages) return null;
                   
+                  const isCached = gamesCache.has(pageNumber);
+                  const isPrefetching = prefetchingPage === pageNumber;
+                  
                   return (
                     <PaginationItem key={pageNumber}>
                       <PaginationLink
@@ -432,9 +478,13 @@ export default function Home() {
                           goToPage(pageNumber);
                         }}
                         isActive={currentPage === pageNumber}
-                        className="cursor-pointer"
+                        className={`cursor-pointer relative ${isCached && pageNumber !== currentPage ? 'ring-1 ring-green-500/50' : ''}`}
+                        title={isCached ? 'Página cacheada (carga instantánea)' : isPrefetching ? 'Precargando...' : ''}
                       >
                         {pageNumber + 1}
+                        {isPrefetching && (
+                          <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                        )}
                       </PaginationLink>
                     </PaginationItem>
                   );
@@ -478,6 +528,9 @@ export default function Home() {
             
             <div className="text-center mt-4 text-sm text-muted-foreground">
               Página {currentPage + 1} de {Math.ceil(totalGamesCount / GAMES_PER_PAGE)} • Mostrando {games.length} de {totalGamesCount} juegos
+              {gamesCache.has(currentPage + 1) && currentPage + 1 < Math.ceil(totalGamesCount / GAMES_PER_PAGE) && (
+                <span className="ml-2 text-green-500">• Siguiente página lista ⚡</span>
+              )}
             </div>
           </div>
         )}
