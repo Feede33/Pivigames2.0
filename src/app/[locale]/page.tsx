@@ -185,7 +185,7 @@ export default function Home() {
           enrichedGames.push(enrichedGame);
           
           // Actualizar el estado cada 5 juegos para mostrar progreso
-          if ((i + 1) % 5 === 0 || i === gamesFromDB.length - 1) {
+          if ((i + 1) % 10 === 0 || i === gamesFromDB.length - 1) {
             setGames([...enrichedGames]);
             setLoadedGamesCount(enrichedGames.length);
           }
