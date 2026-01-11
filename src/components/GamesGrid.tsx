@@ -22,16 +22,9 @@ export default function GamesGrid({ games, loading, t, onGameClickAction, loaded
     <section data-games-grid>
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-2xl font-bold">{t.games.availableToDownload}</h3>
-        {totalCount !== undefined && totalCount > 0 && (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">
-              {loadedCount || 0} / {totalCount} juegos cargados
-            </span>
-            {loading && loadedCount !== totalCount && (
-              <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            )}
-          </div>
-        )}
+        
+         
+       
       </div>
       <div className="grid grid-cols-7 gap-6 pt-2">
         {games.map((game) => (

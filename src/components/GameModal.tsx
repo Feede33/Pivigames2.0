@@ -79,6 +79,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [steamData, setSteamData] = useState<SteamData | null>(null);
   const [loadingSteam, setLoadingSteam] = useState(false);
+  const [steamError, setSteamError] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{
     country: string;
     country_code: string;
@@ -108,6 +109,9 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
   useEffect(() => {
     if (game?.steam_appid && userLocation) {
       setLoadingSteam(true);
+      setSteamError(null);
+      
+      // Intentar cargar datos de Steam con manejo robusto de errores
       fetch(`/api/steam/${game.steam_appid}?cc=${userLocation.steam_country_code}&l=${locale}&t=${Date.now()}`, {
         cache: 'no-store',
         headers: {
@@ -115,17 +119,39 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
           'Pragma': 'no-cache',
         },
       })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.error) {
-            console.warn('Steam API error:', data.error, data.details);
+        .then(async (res) => {
+          const data = await res.json();
+          
+          // Verificar si es un fallback
+          if (data._fallback) {
+            console.warn(`Steam API returned fallback data for ${game.steam_appid}:`, data._error);
+            setSteamError(data._error || 'Unable to load Steam data');
+            // No establecer steamData para usar datos del juego
             return;
           }
+          
+          if (!res.ok) {
+            // Si la API falla, registrar el error pero continuar sin datos de Steam
+            console.warn(`Steam API returned ${res.status} for ${game.steam_appid}, using fallback data`);
+            setSteamError(`Steam API error: ${res.status}`);
+            return;
+          }
+          
+          if (data.error) {
+            console.warn('Steam API error:', data.error, data.details);
+            setSteamError(data.details || data.error);
+            return;
+          }
+          
           console.log('Steam data loaded:', data);
           console.log('Price info:', data.price_info);
           setSteamData(data);
         })
-        .catch((err) => console.error('Error loading Steam data:', err))
+        .catch((err) => {
+          // Error de red o parsing, usar fallback
+          console.error(`Error loading Steam data for ${game.steam_appid}:`, err);
+          setSteamError('Network error loading Steam data');
+        })
         .finally(() => setLoadingSteam(false));
     }
   }, [game?.steam_appid, userLocation, locale]); // Agregar locale para recargar cuando cambie
@@ -453,6 +479,11 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                   <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
                     5.1
                   </span>
+                  {steamError && (
+                    <span className="text-yellow-500 text-xs ml-2" title={steamError}>
+                      ⚠ {t.modal.limitedInfo || 'Info limitada'}
+                    </span>
+                  )}
                 </>
               )}
             </div>

@@ -68,6 +68,7 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'Copiar Enlace',
+      limitedInfo: 'Información limitada disponible',
     },
     games: {
       availableToDownload: 'Juegos Disponibles para Descargar',
@@ -141,6 +142,7 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'Copy Link',
+      limitedInfo: 'Limited info available',
     },
     games: {
       availableToDownload: 'Available Games to Download',
@@ -214,6 +216,7 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'Copiar Link',
+      limitedInfo: 'Informações limitadas disponíveis',
     },
     games: {
       availableToDownload: 'Jogos Disponíveis para Download',
@@ -287,6 +290,7 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'Copier le Lien',
+      limitedInfo: 'Informations limitées disponibles',
     },
     games: {
       availableToDownload: 'Jeux Disponibles à Télécharger',
@@ -360,6 +364,7 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'Link Kopieren',
+      limitedInfo: 'Begrenzte Informationen verfügbar',
     },
     games: {
       availableToDownload: 'Verfügbare Spiele zum Herunterladen',
@@ -433,6 +438,7 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'Copia Link',
+      limitedInfo: 'Informazioni limitate disponibili',
     },
     games: {
       availableToDownload: 'Giochi Disponibili per il Download',
@@ -506,6 +512,7 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'Копировать Ссылку',
+      limitedInfo: 'Доступна ограниченная информация',
     },
     games: {
       availableToDownload: 'Доступные Игры для Скачивания',
@@ -579,6 +586,7 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'リンクをコピー',
+      limitedInfo: '限定情報のみ利用可能',
     },
     games: {
       availableToDownload: 'ダウンロード可能なゲーム',
@@ -652,6 +660,7 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: '링크 복사',
+      limitedInfo: '제한된 정보만 사용 가능',
     },
     games: {
       availableToDownload: '다운로드 가능한 게임',
@@ -725,6 +734,7 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: '复制链接',
+      limitedInfo: '可用信息有限',
     },
     games: {
       availableToDownload: '可下载的游戏',
@@ -798,6 +808,7 @@ export const translations = {
       discord: 'Discord',
       facebook: 'Facebook',
       copyLink: 'نسخ الرابط',
+      limitedInfo: 'معلومات محدودة متاحة',
     },
     games: {
       availableToDownload: 'الألعاب المتاحة للتحميل',

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Search, X, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { searchGames, enrichGameWithSteamData } from '@/lib/supabase';
 import type { GameWithSteamData } from '@/lib/supabase';
 
@@ -70,16 +69,45 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, placehol
       // Si no hay juegos en caché, usar los actuales
       const gamesToSearch = allGames.length > 0 ? allGames : games;
 
-      // Buscar por título o género en caché
-      let results = gamesToSearch.filter(game => 
-        game.title.toLowerCase().includes(query) ||
-        game.genre.toLowerCase().includes(query) ||
-        game.steam_appid === query
-      );
+      // Función para calcular relevancia
+      const calculateRelevance = (game: GameWithSteamData): number => {
+        const title = game.title.toLowerCase();
+        const genre = game.genre.toLowerCase();
+        
+        // Coincidencia exacta con steam_appid
+        if (game.steam_appid === query) return 1000;
+        
+        // Título empieza con el query
+        if (title.startsWith(query)) return 100;
+        
+        // Título contiene el query al inicio de una palabra
+        const words = title.split(/\s+/);
+        if (words.some(word => word.startsWith(query))) return 50;
+        
+        // Título contiene el query
+        if (title.includes(query)) return 25;
+        
+        // Género contiene el query
+        if (genre.includes(query)) return 10;
+        
+        return 0;
+      };
 
-      // Si no hay resultados en caché, buscar en la base de datos
-      if (results.length === 0) {
-        console.log('No results in cache, searching database...');
+      // Buscar y ordenar por relevancia en caché
+      let results = gamesToSearch
+        .map(game => ({ game, relevance: calculateRelevance(game) }))
+        .filter(({ relevance }) => relevance > 0)
+        .sort((a, b) => {
+          // Primero por relevancia
+          if (b.relevance !== a.relevance) return b.relevance - a.relevance;
+          // Luego alfabéticamente
+          return a.game.title.localeCompare(b.game.title);
+        })
+        .map(({ game }) => game);
+
+      // Si no hay resultados en caché o el query es largo, buscar en la base de datos
+      if (results.length === 0 || query.length >= 3) {
+        console.log('Searching database...');
         try {
           const dbResults = await searchGames(query, 10);
           
@@ -88,8 +116,16 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, placehol
             dbResults.map(game => enrichGameWithSteamData(game, locale))
           );
           
-          results = enrichedResults;
-          console.log('Found in database:', results.length);
+          // Combinar resultados del caché y la DB, eliminando duplicados
+          const combinedResults = [...results];
+          enrichedResults.forEach(dbGame => {
+            if (!combinedResults.some(g => g.steam_appid === dbGame.steam_appid)) {
+              combinedResults.push(dbGame);
+            }
+          });
+          
+          results = combinedResults;
+          console.log('Total results:', results.length);
         } catch (error) {
           console.error('Error searching database:', error);
         }

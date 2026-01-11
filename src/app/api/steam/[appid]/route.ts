@@ -297,19 +297,56 @@ export async function GET(
     
     console.error(`[Steam API] Returning error ${statusCode}: ${errorMessage}`);
     
-    return NextResponse.json(
-      { 
-        error: 'Steam API error', 
-        details: errorMessage,
-        appid,
-        timestamp: new Date().toISOString(),
+    // En lugar de devolver solo error, devolver datos básicos de fallback
+    // Esto permite que el cliente muestre algo en lugar de fallar completamente
+    const fallbackData = {
+      appid: parseInt(appid),
+      name: `Game ${appid}`,
+      type: 'game',
+      short_description: 'Unable to load game details from Steam. Please try again later.',
+      detailed_description: null,
+      about: null,
+      screenshots: [],
+      videos: [],
+      header_image: `https://cdn.cloudflare.steamstatic.com/steam/apps/${appid}/header.jpg`,
+      background: `https://cdn.cloudflare.steamstatic.com/steam/apps/${appid}/page_bg_generated_v6b.jpg`,
+      background_raw: null,
+      genres: [],
+      categories: [],
+      languages: [],
+      platforms: {
+        windows: true,
+        mac: false,
+        linux: false,
       },
-      { 
-        status: statusCode,
-        headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate',
-        },
-      }
-    );
+      developers: [],
+      publishers: [],
+      release_date: null,
+      release_year: null,
+      metacritic: null,
+      required_age: 0,
+      pc_requirements: {
+        minimum: null,
+        recommended: null,
+      },
+      price: null,
+      price_info: null,
+      current_price: null,
+      lowest_recorded_price: null,
+      is_free: false,
+      steam_appid: parseInt(appid),
+      _error: errorMessage,
+      _fallback: true,
+    };
+    
+    // Devolver 200 con datos de fallback en lugar de error
+    // Esto evita que el cliente falle y permite mostrar información básica
+    return NextResponse.json(fallbackData, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'X-Steam-Error': errorMessage,
+        'X-Fallback-Data': 'true',
+      },
+    });
   }
 }

@@ -76,20 +76,74 @@ export async function getTotalGamesCount(): Promise<number> {
 }
 
 // Función para buscar juegos por título, género o steam_appid
+// Búsqueda mejorada con priorización:
+// 1. Coincidencia exacta con steam_appid
+// 2. Título que empieza con el query
+// 3. Título que contiene el query
+// 4. Género que contiene el query
 export async function searchGames(query: string, limit: number = 10): Promise<Game[]> {
+  const trimmedQuery = query.trim();
+  
+  // Si el query es muy corto (1-2 caracteres), solo buscar al inicio del título
+  if (trimmedQuery.length <= 2) {
+    const { data, error } = await supabase
+      .from('games')
+      .select('*')
+      .not('links', 'is', null)
+      .or(`title.ilike.${trimmedQuery}%,steam_appid.eq.${trimmedQuery}`)
+      .limit(limit);
+
+    if (error) {
+      console.error('Error searching games:', error);
+      return [];
+    }
+
+    return data as Game[];
+  }
+  
+  // Para queries más largos, buscar en cualquier parte pero ordenar por relevancia
   const { data, error } = await supabase
     .from('games')
     .select('*')
     .not('links', 'is', null)
-    .or(`title.ilike.%${query}%,genre.ilike.%${query}%,steam_appid.eq.${query}`)
-    .limit(limit);
+    .or(`title.ilike.%${trimmedQuery}%,genre.ilike.%${trimmedQuery}%,steam_appid.eq.${trimmedQuery}`)
+    .limit(limit * 2); // Obtener más resultados para ordenar
 
   if (error) {
     console.error('Error searching games:', error);
     return [];
   }
 
-  return data as Game[];
+  // Ordenar por relevancia en el cliente
+  const results = (data as Game[]).sort((a, b) => {
+    const aTitle = a.title?.toLowerCase() || '';
+    const bTitle = b.title?.toLowerCase() || '';
+    const queryLower = trimmedQuery.toLowerCase();
+    
+    // Prioridad 1: steam_appid exacto
+    if (a.steam_appid === trimmedQuery) return -1;
+    if (b.steam_appid === trimmedQuery) return 1;
+    
+    // Prioridad 2: Título empieza con el query
+    const aStartsWith = aTitle.startsWith(queryLower);
+    const bStartsWith = bTitle.startsWith(queryLower);
+    if (aStartsWith && !bStartsWith) return -1;
+    if (!aStartsWith && bStartsWith) return 1;
+    
+    // Prioridad 3: Posición del query en el título (más cerca del inicio = mejor)
+    const aIndex = aTitle.indexOf(queryLower);
+    const bIndex = bTitle.indexOf(queryLower);
+    if (aIndex !== -1 && bIndex !== -1) {
+      if (aIndex !== bIndex) return aIndex - bIndex;
+    }
+    if (aIndex !== -1 && bIndex === -1) return -1;
+    if (aIndex === -1 && bIndex !== -1) return 1;
+    
+    // Prioridad 4: Alfabético
+    return aTitle.localeCompare(bTitle);
+  });
+
+  return results.slice(0, limit);
 }
 
 // Función para enriquecer un juego con datos de Steam (solo cliente)
