@@ -177,9 +177,9 @@ export default function Home() {
           const game = gamesFromDB[i];
           
           // Agregar delay progresivo cada 50 juegos
-          if (i > 0 && i % 50 === 0) {
+          if (i > 0 && i % 150 === 0) {
             const batchNumber = Math.floor(i / 50);
-            const delayMs = batchNumber * 750;
+            const delayMs = batchNumber * 450;
             await new Promise(resolve => setTimeout(resolve, delayMs));
           }
           
@@ -187,13 +187,13 @@ export default function Home() {
           const enrichedGame = await enrichGameWithSteamData(game, locale, i);
           enrichedGames.push(enrichedGame);
           
-          // Mostrar hero tan pronto como tengamos 10 juegos
-          if (i === 9 && heroLoading) {
+          // Mostrar hero tan pronto como tengamos 6 juegos
+          if (i === 6 && heroLoading) {
             setHeroLoading(false);
           }
           
           // Actualizar el estado cada 10 juegos para mostrar progreso
-          if ((i + 1) % 10 === 0 || i === gamesFromDB.length - 1) {
+          if ((i + 1) % 30 === 0 || i === gamesFromDB.length - 1) {
             setGames([...enrichedGames]);
             setLoadedGamesCount(enrichedGames.length);
           }
