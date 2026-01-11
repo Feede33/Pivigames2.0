@@ -8,6 +8,7 @@ import HeroSlider from '@/components/HeroSlider';
 import SteamOffers from '@/components/SteamOffers';
 import GamesGrid from '@/components/GamesGrid';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { SearchSystem } from '@/components/ui/search-system';
 import {
   Pagination,
   PaginationContent,
@@ -391,6 +392,12 @@ export default function Home() {
             </div>
           </div>
           <div className="flex items-center gap-4">
+            <SearchSystem 
+              games={games}
+              allGamesCache={gamesCache}
+              onGameClickAction={handleGameClick}
+              placeholder="Buscar juegos..."
+            />
             <LanguageSwitcher />
             <UserProfile />
           </div>
