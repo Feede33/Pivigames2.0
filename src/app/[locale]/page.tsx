@@ -168,14 +168,16 @@ export default function Home() {
         setTotalGamesCount(gamesFromDB.length);
         setLoadedGamesCount(0);
 
-        // Cargar juegos en lotes de 100 simultáneos
+        // Cargar juegos en lotes de 50 simultáneos (reducido para evitar saturar)
         const enrichedGames: GameWithSteamData[] = [];
-        const BATCH_SIZE = 100;
+        const BATCH_SIZE = 50;
 
         for (let i = 0; i < gamesFromDB.length; i += BATCH_SIZE) {
           const batch = gamesFromDB.slice(i, i + BATCH_SIZE);
           
-          // Procesar 100 juegos en paralelo
+          console.log(`Loading batch ${Math.floor(i / BATCH_SIZE) + 1}: games ${i} to ${i + batch.length}`);
+          
+          // Procesar 50 juegos en paralelo
           const enrichedBatch = await Promise.all(
             batch.map((game, index) => enrichGameWithSteamData(game, locale, i + index))
           );
@@ -186,13 +188,19 @@ export default function Home() {
           setGames([...enrichedGames]);
           setLoadedGamesCount(enrichedGames.length);
           
-          // Pequeño delay entre lotes para evitar saturar la API
+          // Después del primer lote, desactivar loading para mostrar el hero
+          if (i === 0) {
+            setLoading(false);
+            console.log('Hero should now be visible with', enrichedGames.length, 'games');
+          }
+          
+          // Delay entre lotes (excepto después del primero que ya se mostró)
           if (i + BATCH_SIZE < gamesFromDB.length) {
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1000));
           }
         }
 
-        console.log('All games loaded:', enrichedGames);
+        console.log('All games loaded:', enrichedGames.length);
         setHasMore(enrichedGames.length >= GAMES_PER_PAGE);
       } catch (error) {
         console.error('Error loading games:', error);
