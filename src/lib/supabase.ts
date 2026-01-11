@@ -27,6 +27,7 @@ export type GameWithSteamData = Game & {
   title: string;
   genre: string;
   image: string;
+  image_fallback?: string; // Fallback si image no existe
   cover_image: string;
   rating: number;
   wallpaper: string;
@@ -77,13 +78,19 @@ export async function enrichGameWithSteamData(game: Game, locale?: string): Prom
     
     // Obtener la imagen de portada vertical (mejor para grids)
     // Steam proporciona diferentes tamaños de imágenes
+    // Prioridad: library_600x900 > library_hero > header_image > wallpaper
     const verticalCover = `https://cdn.cloudflare.steamstatic.com/steam/apps/${game.steam_appid}/library_600x900.jpg`;
+    const libraryHero = `https://cdn.cloudflare.steamstatic.com/steam/apps/${game.steam_appid}/library_hero.jpg`;
+    
+    // Usar header_image o wallpaper como fallback si library_600x900 no existe
+    const imageFallback = steamData.header_image || wallpaperUrl || '';
     
     return {
       ...game,
       title: steamData.name || 'Unknown Game',
       genre: steamData.genres?.join(', ') || 'Unknown',
-      image: verticalCover, // Portada vertical para grids
+      image: verticalCover, // Portada vertical para grids (con fallback en el componente)
+      image_fallback: imageFallback, // Fallback si library_600x900 no existe
       cover_image: steamData.header_image || '', // Header horizontal para carruseles
       rating: steamData.metacritic ? steamData.metacritic / 10 : 7.5,
       wallpaper: wallpaperUrl,
@@ -99,6 +106,7 @@ export async function enrichGameWithSteamData(game: Game, locale?: string): Prom
       title: 'Unknown Game',
       genre: 'Unknown',
       image: '',
+      image_fallback: '',
       cover_image: '',
       rating: 0,
       wallpaper: '',
