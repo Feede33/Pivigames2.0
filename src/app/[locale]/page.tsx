@@ -161,9 +161,9 @@ export default function Home() {
           return;
         }
 
-        // Enriquecer cada juego con datos de Steam, pasando el locale
+        // Enriquecer cada juego con datos de Steam, pasando el locale y el índice
         const enrichedGames = await Promise.all(
-          gamesFromDB.map((game) => enrichGameWithSteamData(game, locale))
+          gamesFromDB.map((game, index) => enrichGameWithSteamData(game, locale, index))
         );
 
         console.log('Enriched games:', enrichedGames);
