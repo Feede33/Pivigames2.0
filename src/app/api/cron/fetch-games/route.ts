@@ -126,10 +126,10 @@ export async function GET(request: Request) {
       details: [] as any[]
     };
 
-    const TARGET_GAMES = 1000;
+    const TARGET_GAMES = 12000;
     
-    // Obtener juegos desde SteamSpy (3 páginas = ~3000 juegos)
-    const allGames = await getAllSteamSpyGames(3);
+    // Obtener juegos desde SteamSpy (15 páginas = ~15000 juegos para tener margen)
+    const allGames = await getAllSteamSpyGames(15);
     
     if (allGames.length === 0) {
       console.error('Failed to fetch games from SteamSpy');
@@ -174,7 +174,7 @@ export async function GET(request: Request) {
           continue;
         }
 
-        if (results.inserted % 100 === 0) {
+        if (results.inserted % 500 === 0 && results.inserted > 0) {
           console.log(`Progress: ${results.inserted}/${TARGET_GAMES} inserted`);
         }
         
