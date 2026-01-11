@@ -73,6 +73,15 @@ export const translations = {
     games: {
       availableToDownload: 'Juegos Disponibles para Descargar',
     },
+    search: {
+      button: 'Buscar',
+      placeholder: 'Buscar juegos...',
+      noResults: 'No se encontraron juegos',
+      typeToSearch: 'Escribe para buscar juegos...',
+      showing: 'Mostrando',
+      result: 'resultado',
+      results: 'resultados',
+    },
   },
   // English
   en: {
@@ -146,6 +155,15 @@ export const translations = {
     },
     games: {
       availableToDownload: 'Available Games to Download',
+    },
+    search: {
+      button: 'Search',
+      placeholder: 'Search games...',
+      noResults: 'No games found',
+      typeToSearch: 'Type to search games...',
+      showing: 'Showing',
+      result: 'result',
+      results: 'results',
     },
   },
   // Português
@@ -221,6 +239,15 @@ export const translations = {
     games: {
       availableToDownload: 'Jogos Disponíveis para Download',
     },
+    search: {
+      button: 'Buscar',
+      placeholder: 'Buscar jogos...',
+      noResults: 'Nenhum jogo encontrado',
+      typeToSearch: 'Digite para buscar jogos...',
+      showing: 'Mostrando',
+      result: 'resultado',
+      results: 'resultados',
+    },
   },
   // Français
   fr: {
@@ -294,6 +321,15 @@ export const translations = {
     },
     games: {
       availableToDownload: 'Jeux Disponibles à Télécharger',
+    },
+    search: {
+      button: 'Rechercher',
+      placeholder: 'Rechercher des jeux...',
+      noResults: 'Aucun jeu trouvé',
+      typeToSearch: 'Tapez pour rechercher des jeux...',
+      showing: 'Affichage de',
+      result: 'résultat',
+      results: 'résultats',
     },
   },
   // Deutsch
@@ -369,6 +405,15 @@ export const translations = {
     games: {
       availableToDownload: 'Verfügbare Spiele zum Herunterladen',
     },
+    search: {
+      button: 'Suchen',
+      placeholder: 'Spiele suchen...',
+      noResults: 'Keine Spiele gefunden',
+      typeToSearch: 'Tippen Sie, um Spiele zu suchen...',
+      showing: 'Anzeigen von',
+      result: 'Ergebnis',
+      results: 'Ergebnisse',
+    },
   },
   // Italiano
   it: {
@@ -442,6 +487,15 @@ export const translations = {
     },
     games: {
       availableToDownload: 'Giochi Disponibili per il Download',
+    },
+    search: {
+      button: 'Cerca',
+      placeholder: 'Cerca giochi...',
+      noResults: 'Nessun gioco trovato',
+      typeToSearch: 'Digita per cercare giochi...',
+      showing: 'Mostrando',
+      result: 'risultato',
+      results: 'risultati',
     },
   },
   // Русский
@@ -517,6 +571,15 @@ export const translations = {
     games: {
       availableToDownload: 'Доступные Игры для Скачивания',
     },
+    search: {
+      button: 'Поиск',
+      placeholder: 'Поиск игр...',
+      noResults: 'Игры не найдены',
+      typeToSearch: 'Введите для поиска игр...',
+      showing: 'Показано',
+      result: 'результат',
+      results: 'результатов',
+    },
   },
   // 日本語
   ja: {
@@ -590,6 +653,15 @@ export const translations = {
     },
     games: {
       availableToDownload: 'ダウンロード可能なゲーム',
+    },
+    search: {
+      button: '検索',
+      placeholder: 'ゲームを検索...',
+      noResults: 'ゲームが見つかりません',
+      typeToSearch: '入力してゲームを検索...',
+      showing: '表示中',
+      result: '件',
+      results: '件',
     },
   },
   // 한국어
@@ -665,6 +737,15 @@ export const translations = {
     games: {
       availableToDownload: '다운로드 가능한 게임',
     },
+    search: {
+      button: '검색',
+      placeholder: '게임 검색...',
+      noResults: '게임을 찾을 수 없습니다',
+      typeToSearch: '게임을 검색하려면 입력하세요...',
+      showing: '표시 중',
+      result: '개 결과',
+      results: '개 결과',
+    },
   },
   // 中文简体
   zh: {
@@ -739,6 +820,15 @@ export const translations = {
     games: {
       availableToDownload: '可下载的游戏',
     },
+    search: {
+      button: '搜索',
+      placeholder: '搜索游戏...',
+      noResults: '未找到游戏',
+      typeToSearch: '输入以搜索游戏...',
+      showing: '显示',
+      result: '个结果',
+      results: '个结果',
+    },
   },
   // العربية
   ar: {
@@ -812,6 +902,15 @@ export const translations = {
     },
     games: {
       availableToDownload: 'الألعاب المتاحة للتحميل',
+    },
+    search: {
+      button: 'بحث',
+      placeholder: 'البحث عن الألعاب...',
+      noResults: 'لم يتم العثور على ألعاب',
+      typeToSearch: 'اكتب للبحث عن الألعاب...',
+      showing: 'عرض',
+      result: 'نتيجة',
+      results: 'نتائج',
     },
   },
 } as const;

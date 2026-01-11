@@ -4,16 +4,17 @@ import { useState, useEffect, useRef } from 'react';
 import { Search, X, Loader2 } from 'lucide-react';
 import { searchGames, enrichGameWithSteamData } from '@/lib/supabase';
 import type { GameWithSteamData } from '@/lib/supabase';
+import { useTranslations, type Locale } from '@/lib/i18n';
 
 type SearchSystemProps = {
   games: GameWithSteamData[];
   allGamesCache: Map<number, GameWithSteamData[]>;
   onGameClickAction: (game: GameWithSteamData, event: React.MouseEvent<HTMLDivElement>) => void;
-  placeholder?: string;
   locale?: string;
 };
 
-export function SearchSystem({ games, allGamesCache, onGameClickAction, placeholder = 'Buscar juegos...', locale = 'es' }: SearchSystemProps) {
+export function SearchSystem({ games, allGamesCache, onGameClickAction, locale = 'es' }: SearchSystemProps) {
+  const t = useTranslations(locale as Locale);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<GameWithSteamData[]>([]);
@@ -167,7 +168,7 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, placehol
         className="flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/50 hover:bg-secondary transition-colors"
       >
         <Search className="w-4 h-4" />
-        <span className="hidden md:inline text-sm">Buscar</span>
+        <span className="hidden md:inline text-sm">{t.search.button}</span>
       </button>
 
       {/* Search Dropdown */}
@@ -181,7 +182,7 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, placehol
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={placeholder}
+              placeholder={t.search.placeholder}
               className="flex-1 bg-transparent outline-none text-sm"
             />
             {searchQuery && (
@@ -202,7 +203,7 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, placehol
               </div>
             ) : searchQuery && searchResults.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground text-sm">
-                No se encontraron juegos
+                {t.search.noResults}
               </div>
             ) : searchResults.length > 0 ? (
               <div className="divide-y divide-border">
@@ -231,7 +232,7 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, placehol
               </div>
             ) : (
               <div className="text-center py-8 text-muted-foreground text-sm">
-                Escribe para buscar juegos...
+                {t.search.typeToSearch}
               </div>
             )}
           </div>
@@ -239,7 +240,7 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, placehol
           {/* Footer */}
           {searchResults.length > 0 && (
             <div className="p-2 border-t border-border bg-secondary/20 text-center text-xs text-muted-foreground">
-              Mostrando {searchResults.length} resultado{searchResults.length !== 1 ? 's' : ''}
+              {t.search.showing} {searchResults.length} {searchResults.length === 1 ? t.search.result : t.search.results}
             </div>
           )}
         </div>
