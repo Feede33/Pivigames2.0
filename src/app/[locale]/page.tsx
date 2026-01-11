@@ -153,7 +153,6 @@ export default function Home() {
   useEffect(() => {
     async function loadGames() {
       setLoading(true);
-      setHeroLoading(true);
       try {
         const gamesFromDB = await getGames();
         console.log('Games from DB:', gamesFromDB);
@@ -162,7 +161,6 @@ export default function Home() {
           setGames([]);
           setHasMore(false);
           setLoading(false);
-          setHeroLoading(false);
           setTotalGamesCount(0);
           return;
         }
@@ -170,32 +168,27 @@ export default function Home() {
         setTotalGamesCount(gamesFromDB.length);
         setLoadedGamesCount(0);
 
-        // Cargar juegos progresivamente en lugar de esperar a todos
+        // Cargar juegos en lotes de 100 simultáneos
         const enrichedGames: GameWithSteamData[] = [];
-        
-        for (let i = 0; i < gamesFromDB.length; i++) {
-          const game = gamesFromDB[i];
+        const BATCH_SIZE = 100;
+
+        for (let i = 0; i < gamesFromDB.length; i += BATCH_SIZE) {
+          const batch = gamesFromDB.slice(i, i + BATCH_SIZE);
           
-          // Agregar delay progresivo cada 50 juegos
-          if (i > 0 && i % 150 === 0) {
-            const batchNumber = Math.floor(i / 50);
-            const delayMs = batchNumber * 450;
-            await new Promise(resolve => setTimeout(resolve, delayMs));
-          }
+          // Procesar 100 juegos en paralelo
+          const enrichedBatch = await Promise.all(
+            batch.map((game, index) => enrichGameWithSteamData(game, locale, i + index))
+          );
           
-          // Enriquecer el juego
-          const enrichedGame = await enrichGameWithSteamData(game, locale, i);
-          enrichedGames.push(enrichedGame);
+          enrichedGames.push(...enrichedBatch);
           
-          // Mostrar hero tan pronto como tengamos 6 juegoss
-          if (i === 6 && heroLoading) {
-            setHeroLoading(false);
-          }
+          // Actualizar el estado después de cada lote
+          setGames([...enrichedGames]);
+          setLoadedGamesCount(enrichedGames.length);
           
-          // Actualizar el estado cada 10 juegos para mostrar progreso
-          if ((i + 1) % 30 === 0 || i === gamesFromDB.length - 1) {
-            setGames([...enrichedGames]);
-            setLoadedGamesCount(enrichedGames.length);
+          // Pequeño delay entre lotes para evitar saturar la API
+          if (i + BATCH_SIZE < gamesFromDB.length) {
+            await new Promise(resolve => setTimeout(resolve, 500));
           }
         }
 
@@ -207,7 +200,6 @@ export default function Home() {
         setHasMore(false);
       } finally {
         setLoading(false);
-        setHeroLoading(false);
       }
     }
     loadGames();
