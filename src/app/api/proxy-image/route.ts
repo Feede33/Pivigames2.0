@@ -46,20 +46,11 @@ export async function GET(request: NextRequest) {
     if (!response.ok) {
       console.error(`Failed to fetch image: ${imageUrl} - Status: ${response.status}`);
       
-      // Retornar imagen placeholder transparente 1x1
-      const transparentPixel = Buffer.from(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-        'base64'
+      // Retornar 404 para que el navegador maneje el error
+      return NextResponse.json(
+        { error: 'Image not found' },
+        { status: 404 }
       );
-      
-      return new NextResponse(transparentPixel, {
-        status: 200,
-        headers: {
-          'Content-Type': 'image/png',
-          'Cache-Control': 'public, max-age=60', // Cache corto para placeholders
-          'Access-Control-Allow-Origin': '*',
-        },
-      });
     }
 
     const imageBuffer = await response.arrayBuffer();
@@ -76,19 +67,10 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Image proxy error:', error);
     
-    // Retornar imagen placeholder en lugar de error 500
-    const transparentPixel = Buffer.from(
-      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-      'base64'
+    // Retornar 404 en lugar de placeholder
+    return NextResponse.json(
+      { error: 'Failed to proxy image' },
+      { status: 404 }
     );
-    
-    return new NextResponse(transparentPixel, {
-      status: 200,
-      headers: {
-        'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=60',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
   }
 }
