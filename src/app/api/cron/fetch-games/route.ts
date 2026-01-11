@@ -79,17 +79,6 @@ async function getAllSteamSpyGames(maxPages: number = 3): Promise<string[]> {
   return allAppIds;
 }
 
-// Verificar si un App ID ya existe en la base de datos
-async function appIdExists(appId: string): Promise<boolean> {
-  const { data } = await supabase
-    .from('games')
-    .select('steam_appid')
-    .eq('steam_appid', appId)
-    .single();
-  
-  return !!data;
-}
-
 // Mezclar array (Fisher-Yates shuffle)
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -98,6 +87,47 @@ function shuffleArray<T>(array: T[]): T[] {
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
+}
+
+// Insertar juegos en batch
+async function insertGamesBatch(appIds: string[]): Promise<{ inserted: number; errors: number }> {
+  const BATCH_SIZE = 500;
+  let totalInserted = 0;
+  let totalErrors = 0;
+
+  for (let i = 0; i < appIds.length; i += BATCH_SIZE) {
+    const batch = appIds.slice(i, i + BATCH_SIZE);
+    const gamesToInsert = batch.map(appId => ({
+      steam_appid: appId,
+      links: null
+    }));
+
+    try {
+      const { data, error } = await supabase
+        .from('games')
+        .upsert(gamesToInsert, { 
+          onConflict: 'steam_appid',
+          ignoreDuplicates: true 
+        })
+        .select();
+
+      if (error) {
+        console.error(`Batch insert error:`, error);
+        totalErrors += batch.length;
+      } else {
+        const inserted = data?.length || 0;
+        totalInserted += inserted;
+        if (totalInserted % 1000 === 0 || i + BATCH_SIZE >= appIds.length) {
+          console.log(`Progress: ${totalInserted} games processed`);
+        }
+      }
+    } catch (error) {
+      console.error(`Failed to insert batch:`, error);
+      totalErrors += batch.length;
+    }
+  }
+
+  return { inserted: totalInserted, errors: totalErrors };
 }
 
 export async function GET(request: Request) {
@@ -118,14 +148,6 @@ export async function GET(request: Request) {
 
     console.log('Cron job started at:', new Date().toISOString());
 
-    const results = {
-      total: 0,
-      inserted: 0,
-      skipped: 0,
-      errors: 0,
-      details: [] as any[]
-    };
-
     const TARGET_GAMES = 12000;
     
     // Obtener juegos desde SteamSpy (15 páginas = ~15000 juegos para tener margen)
@@ -136,67 +158,33 @@ export async function GET(request: Request) {
       return NextResponse.json({
         success: false,
         message: 'Failed to fetch games from SteamSpy',
-        results,
         timestamp: new Date().toISOString()
       }, { status: 500 });
     }
     
     console.log(`Total games available: ${allGames.length}`);
     
-    // Mezclar y procesar
+    // Mezclar y tomar solo los que necesitamos
     const shuffledGames = shuffleArray(allGames);
+    const gamesToProcess = shuffledGames.slice(0, TARGET_GAMES);
     
-    for (const appId of shuffledGames) {
-      if (results.inserted >= TARGET_GAMES) break;
-      
-      try {
-        // Verificar si ya existe en nuestra DB
-        const exists = await appIdExists(appId);
-        
-        if (exists) {
-          results.skipped++;
-          continue;
-        }
+    console.log(`Processing ${gamesToProcess.length} games in batches...`);
+    
+    // Insertar en batch
+    const { inserted, errors } = await insertGamesBatch(gamesToProcess);
 
-        // Insertar nuevo juego
-        const { data, error } = await supabase
-          .from('games')
-          .insert({
-            steam_appid: appId,
-            links: null
-          })
-          .select()
-          .single();
-
-        if (error) {
-          console.error(`Error inserting App ID ${appId}:`, error);
-          results.errors++;
-          continue;
-        }
-
-        if (results.inserted % 500 === 0 && results.inserted > 0) {
-          console.log(`Progress: ${results.inserted}/${TARGET_GAMES} inserted`);
-        }
-        
-        results.inserted++;
-        results.total++;
-        results.details.push({
-          appId,
-          status: 'inserted',
-          id: data.id
-        });
-        
-      } catch (error) {
-        console.error(`Failed to process App ID ${appId}:`, error);
-        results.errors++;
-      }
-    }
+    const results = {
+      total: gamesToProcess.length,
+      inserted,
+      errors,
+      timestamp: new Date().toISOString()
+    };
 
     console.log('Final results:', results);
 
     return NextResponse.json({
       success: true,
-      message: `Inserted ${results.inserted} new games`,
+      message: `Processed ${inserted} games (${errors} errors)`,
       results,
       timestamp: new Date().toISOString()
     });
