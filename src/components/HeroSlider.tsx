@@ -9,7 +9,7 @@ import type { GameWithSteamData } from '@/lib/supabase';
 type Props = {
   games: GameWithSteamData[];
   loading: boolean;
-  t: any; // Acepta cualquier objeto de traducción
+  t: any;
   onGameClickAction: (game: GameWithSteamData, event: React.MouseEvent<HTMLDivElement>) => void;
 };
 
@@ -26,17 +26,17 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
 
   if (loading) {
     return (
-      <div className="relative h-[80vh] flex items-center justify-center">
-        <div className="text-2xl text-muted-foreground">{t.loading.games}</div>
+      <div className="relative h-[70vh] sm:h-[80vh] flex items-center justify-center">
+        <div className="text-xl sm:text-2xl text-muted-foreground">{t.loading.games}</div>
       </div>
     );
   }
 
   if (games.length === 0) {
     return (
-      <div className="relative h-[80vh] flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold mb-4">{t.empty.noGames}</h2>
+      <div className="relative h-[70vh] sm:h-[80vh] flex items-center justify-center">
+        <div className="text-center px-4">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4">{t.empty.noGames}</h2>
           <p className="text-muted-foreground">{t.empty.addGames}</p>
         </div>
       </div>
@@ -44,8 +44,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
   }
 
   return (
-    
-    <div className="relative h-[60vh] md:h-[75vh] lg:h-[90vh] flex items-center overflow-hidden bg-black">
+    <div className="relative h-[70vh] sm:h-[75vh] md:h-[80vh] lg:h-[90vh] flex items-center overflow-hidden bg-black">
       {/* Wallpaper */}
       <WallpaperImage
         src={games[currentSlide].wallpaper}
@@ -53,57 +52,70 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
       />
 
-      {/* Gradientes */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 md:via-black/50 to-transparent z-10 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 right-0 h-32 md:h-40 bg-gradient-to-t from-black via-black/80 to-transparent z-10 pointer-events-none" />
+      {/* Gradientes optimizados para mobile */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 sm:via-black/70 md:via-black/50 to-transparent z-10 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-40 sm:h-32 md:h-40 bg-gradient-to-t from-black via-black/90 to-transparent z-10 pointer-events-none" />
 
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows - más pequeños en mobile */}
       <button
         onClick={prevSlide}
-        className="absolute left-2 md:left-4 z-30 bg-background/50 hover:bg-background/80 p-2 md:p-3 rounded-full transition"
+        className="absolute left-2 sm:left-3 md:left-4 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/60 p-1.5 sm:p-2 md:p-3 rounded-full transition backdrop-blur-sm"
+        aria-label="Previous slide"
       >
-        <ChevronLeft className="w-5 h-5 md:w-8 md:h-8" />
+        <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-8 md:h-8" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-2 md:right-4 z-30 bg-background/50 hover:bg-background/80 p-2 md:p-3 rounded-full transition"
+        className="absolute right-2 sm:right-3 md:right-4 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/60 p-1.5 sm:p-2 md:p-3 rounded-full transition backdrop-blur-sm"
+        aria-label="Next slide"
       >
-        <ChevronRight className="w-5 h-5 md:w-8 md:h-8" />
+        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-8 md:h-8" />
       </button>
 
-      {/* Slide Indicators */}
-      <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-1.5 md:gap-2">
+      {/* Slide Indicators - líneas horizontales */}
+      <div className="absolute bottom-3 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-1 sm:gap-1.5">
         {games.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`h-0.5 md:h-1 transition-all rounded-full ${index === currentSlide ? 'w-12 md:w-16 bg-primary' : 'w-12 md:w-16 bg-muted-foreground/40'
-              }`}
+            aria-label={`Go to slide ${index + 1}`}
+            style={{
+              width: index === currentSlide ? '32px' : '32px',
+              height: '3px',
+              backgroundColor: index === currentSlide ? 'rgb(239 68 68)' : 'rgba(156, 163, 175, 0.4)',
+              borderRadius: '2px',
+              transition: 'all 0.3s ease'
+            }}
           />
         ))}
       </div>
 
-      {/* Content */}
-      <div className="relative z-20 px-4 md:px-8 lg:pl-20 max-w-full md:max-w-2xl">
-        <h2 className="text-2xl md:text-4xl lg:text-6xl font-bold mb-2 md:mb-4 line-clamp-2">{games[currentSlide].title}</h2>
-        <div className="flex items-center gap-2 md:gap-4 mb-3 md:mb-4 flex-wrap">
-          <span className="text-success font-bold text-sm md:text-base">
+      {/* Content - optimizado para iPhone SE */}
+      <div className="relative z-20 px-3 sm:px-4 md:px-8 lg:pl-20 max-w-full sm:max-w-xl md:max-w-2xl pb-16 sm:pb-20">
+        <h2 className="text-xl sm:text-2xl md:text-4xl lg:text-6xl font-bold mb-1.5 sm:mb-2 md:mb-4 line-clamp-2 leading-tight">
+          {games[currentSlide].title}
+        </h2>
+        
+        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 mb-2 sm:mb-3 md:mb-4 flex-wrap">
+          <span className="text-success font-bold text-xs sm:text-sm md:text-base">
             {Math.round(games[currentSlide].rating * 10)}% {t.hero.match}
           </span>
-          <span className="text-gray-400 text-xs md:text-sm">
+          <span className="text-gray-400 text-xs sm:text-sm">
             {games[currentSlide].release_year || 'N/A'}
           </span>
-          <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
+          <span className="border border-gray-500 px-1 py-0.5 text-[10px] sm:text-xs text-gray-300">
             {games[currentSlide].required_age ? `${games[currentSlide].required_age}+` : '18+'}
           </span>
-          <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
+          <span className="border border-gray-500 px-1 py-0.5 text-[10px] sm:text-xs text-gray-300">
             HD
           </span>
         </div>
-        <p className="text-sm md:text-base lg:text-lg mb-4 md:mb-6 text-muted-foreground line-clamp-2 md:line-clamp-3">
+        
+        <p className="text-xs sm:text-sm md:text-base lg:text-lg mb-3 sm:mb-4 md:mb-6 text-gray-300 line-clamp-2 sm:line-clamp-2 md:line-clamp-3 leading-relaxed">
           {games[currentSlide].description}
         </p>
-        <div className="flex gap-2 md:gap-4 flex-wrap">
+        
+        <div className="flex gap-2 sm:gap-3 md:gap-4 flex-wrap">
           <button
             onClick={() =>
               onGameClickAction(games[currentSlide], {
@@ -117,13 +129,13 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
                 },
               } as React.MouseEvent<HTMLDivElement>)
             }
-            className="bg-primary text-primary-foreground px-4 md:px-8 py-2 md:py-3 rounded-full font-bold text-sm md:text-base flex items-center gap-2 hover:bg-primary/90 transition cursor-pointer"
+            className="bg-white text-black px-3 sm:px-4 md:px-8 py-1.5 sm:py-2 md:py-3 rounded-full font-bold text-xs sm:text-sm md:text-base flex items-center gap-1.5 sm:gap-2 hover:bg-gray-200 transition cursor-pointer"
           >
-            <Play className="w-4 h-4 md:w-5 md:h-5" />
+            <Play className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="currentColor" />
             {t.hero.play}
           </button>
-          <button className="bg-secondary text-secondary-foreground px-4 md:px-8 py-2 md:py-3 rounded-full font-bold text-sm md:text-base flex items-center gap-2 hover:bg-secondary/80 transition cursor-pointer">
-            <Info className="w-4 h-4 md:w-5 md:h-5" />
+          <button className="bg-gray-700/80 text-white px-3 sm:px-4 md:px-8 py-1.5 sm:py-2 md:py-3 rounded-full font-bold text-xs sm:text-sm md:text-base flex items-center gap-1.5 sm:gap-2 hover:bg-gray-600/80 transition cursor-pointer backdrop-blur-sm">
+            <Info className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />
             {t.hero.report}
           </button>
         </div>
