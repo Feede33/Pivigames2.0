@@ -167,44 +167,44 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, locale =
           setIsOpen(!isOpen);
           setTimeout(() => inputRef.current?.focus(), 100);
         }}
-        className="flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/50 hover:bg-secondary transition-colors"
+        className="flex items-center gap-1.5 md:gap-2 px-2 md:px-4 py-1.5 md:py-2 rounded-full bg-secondary/50 hover:bg-secondary transition-colors"
       >
-        <Search className="w-4 h-4" />
-        <span className="hidden md:inline text-sm">{t.search.button}</span>
+        <Search className="w-3.5 h-3.5 md:w-4 md:h-4" />
+        <span className="hidden lg:inline text-xs md:text-sm">{t.search.button}</span>
       </button>
 
       {/* Search Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-[400px] max-w-[90vw] bg-background border border-border rounded-lg shadow-2xl z-50 overflow-hidden">
+        <div className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-[400px] bg-background border border-border rounded-lg shadow-2xl z-50 overflow-hidden">
           {/* Search Input */}
-          <div className="flex items-center gap-2 p-4 border-b border-border">
-            <Search className="w-5 h-5 text-muted-foreground" />
+          <div className="flex items-center gap-2 p-3 md:p-4 border-b border-border">
+            <Search className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground flex-shrink-0" />
             <input
               ref={inputRef}
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t.search.placeholder}
-              className="flex-1 bg-transparent outline-none text-sm"
+              className="flex-1 bg-transparent outline-none text-xs md:text-sm min-w-0"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="p-1 hover:bg-secondary rounded-full transition-colors"
+                className="p-1 hover:bg-secondary rounded-full transition-colors flex-shrink-0"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3.5 h-3.5 md:w-4 md:h-4" />
               </button>
             )}
           </div>
 
           {/* Search Results */}
-          <div className="max-h-[400px] overflow-y-auto">
+          <div className="max-h-[60vh] md:max-h-[400px] overflow-y-auto">
             {isSearching ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <div className="flex items-center justify-center py-6 md:py-8">
+                <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin text-primary" />
               </div>
             ) : searchQuery && searchResults.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground text-sm">
+              <div className="text-center py-6 md:py-8 text-muted-foreground text-xs md:text-sm px-4">
                 {t.search.noResults}
               </div>
             ) : searchResults.length > 0 ? (
@@ -213,27 +213,27 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, locale =
                   <div
                     key={game.id}
                     onClick={() => handleGameClick(game)}
-                    className="flex items-center gap-3 p-3 hover:bg-secondary/50 cursor-pointer transition-colors"
+                    className="flex items-center gap-2 md:gap-3 p-2.5 md:p-3 hover:bg-secondary/50 cursor-pointer transition-colors"
                   >
                     <img
                       src={game.cover_image || game.image}
                       alt={game.title}
-                      className="w-16 h-10 object-cover rounded"
+                      className="w-12 h-8 md:w-16 md:h-10 object-cover rounded flex-shrink-0"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = game.image_fallback || '';
                       }}
                     />
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-sm truncate">{game.title}</h4>
-                      <p className="text-xs text-muted-foreground truncate">{game.genre}</p>
+                      <h4 className="font-semibold text-xs md:text-sm truncate">{game.title}</h4>
+                      <p className="text-[10px] md:text-xs text-muted-foreground truncate">{game.genre}</p>
                     </div>
-                    <div className="text-xs text-green-500 font-bold">FREE</div>
+                    <div className="text-[10px] md:text-xs text-green-500 font-bold flex-shrink-0">FREE</div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-muted-foreground text-sm">
+              <div className="text-center py-6 md:py-8 text-muted-foreground text-xs md:text-sm px-4">
                 {t.search.typeToSearch}
               </div>
             )}
@@ -241,7 +241,7 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, locale =
 
           {/* Footer */}
           {searchResults.length > 0 && (
-            <div className="p-2 border-t border-border bg-secondary/20 text-center text-xs text-muted-foreground">
+            <div className="p-1.5 md:p-2 border-t border-border bg-secondary/20 text-center text-[10px] md:text-xs text-muted-foreground">
               {t.search.showing} {searchResults.length} {searchResults.length === 1 ? t.search.result : t.search.results}
             </div>
           )}

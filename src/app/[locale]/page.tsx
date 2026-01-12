@@ -71,6 +71,7 @@ export default function Home() {
   const [loadingSpecials, setLoadingSpecials] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [totalGamesCount, setTotalGamesCount] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const GAMES_PER_PAGE = 100;
 
   // Detectar errores de autenticación en la URL
@@ -399,6 +400,8 @@ export default function Home() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 md:gap-8">
             <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-brand">Pivigames2.0</h1>
+            
+            {/* Desktop Menu */}
             <div className="hidden lg:flex gap-6 text-sm">
               <a href="#" className="hover:text-muted-foreground transition">
                 {t.nav.discover}
@@ -409,11 +412,13 @@ export default function Home() {
               <a href="#" className="hover:text-muted-foreground transition">
                 {t.nav.offers}
               </a>
+              <a href="https://steamdb.info/" target="_blank" rel="noopener noreferrer" className="hover:text-muted-foreground transition">
+                Historial de Precios
+              </a>
             </div>
           </div>
+          
           <div className="flex items-center gap-2 md:gap-4">
-            <UserProfile />
-
             <SearchSystem
               games={games}
               allGamesCache={gamesCache}
@@ -421,10 +426,71 @@ export default function Home() {
               locale={locale}
             />
             <LanguageSelector />
+            
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg hover:bg-muted/50 transition"
+            >
+              {mobileMenuOpen ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
+            
             <div className="hidden md:block">
+              <UserProfile />
             </div>
           </div>
         </div>
+        
+        {/* Mobile Menu Dropdown */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden absolute top-full left-0 right-0 mt-2 mx-4 bg-background/95 backdrop-blur-lg border border-border rounded-lg shadow-2xl overflow-hidden animate-in slide-in-from-top duration-200">
+            <div className="p-4 space-y-2">
+              <a 
+                href="#" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 rounded-lg hover:bg-muted/50 transition text-sm font-medium"
+              >
+                {t.nav.discover}
+              </a>
+              <a 
+                href="#" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 rounded-lg hover:bg-muted/50 transition text-sm font-medium"
+              >
+                {t.nav.browse}
+              </a>
+              <a 
+                href="#" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 rounded-lg hover:bg-muted/50 transition text-sm font-medium"
+              >
+                {t.nav.offers}
+              </a>
+              <a 
+                href="https://steamdb.info/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 rounded-lg hover:bg-muted/50 transition text-sm font-medium"
+              >
+                Historial de Precios
+              </a>
+              
+              {/* User Profile in Mobile Menu */}
+              <div className="pt-2 border-t border-border md:hidden">
+                <UserProfile />
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Hero Slider */}
