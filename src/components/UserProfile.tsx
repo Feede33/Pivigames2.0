@@ -16,7 +16,7 @@ export default function UserProfile() {
   // Si no hay usuario, mostrar botón de login compacto
   if (!user) {
     return (
-      <div className="fixed bottom-8 left-12 z-50">
+      <div className="flex z-50">
         <button
           onClick={signInWithDiscord}
           className="group flex items-center gap-3 bg-background/95 backdrop-blur-sm border border-border rounded-full px-4 py-2 hover:bg-accent transition-all duration-300 shadow-lg"
