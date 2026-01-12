@@ -59,10 +59,10 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
       {/* Navigation Arrows - más pequeños en mobile */}
       <button
         onClick={prevSlide}
-        className="absolute left-2 sm:left-3 md:left-4 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/60 p-1.5 sm:p-2 md:p-3 rounded-full transition backdrop-blur-sm"
+        className="absolute left-1/2 -translate-x-1/2 md:left-4 md:translate-x-0 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/60 p-2 md:p-3 rounded-full transition backdrop-blur-sm"
         aria-label="Previous slide"
       >
-        <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-8 md:h-8" />
+        <ChevronLeft className="w-5 h-5 md:w-8 md:h-8" />
       </button>
       <button
         onClick={nextSlide}
@@ -95,7 +95,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         <h2 className="text-xl sm:text-2xl md:text-4xl lg:text-6xl font-bold mb-1.5 sm:mb-2 md:mb-4 line-clamp-2 leading-tight">
           {games[currentSlide].title}
         </h2>
-        
+
         <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 mb-2 sm:mb-3 md:mb-4 flex-wrap">
           <span className="text-success font-bold text-xs sm:text-sm md:text-base">
             {Math.round(games[currentSlide].rating * 10)}% {t.hero.match}
@@ -110,11 +110,11 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
             HD
           </span>
         </div>
-        
+
         <p className="text-xs sm:text-sm md:text-base lg:text-lg mb-3 sm:mb-4 md:mb-6 text-gray-300 line-clamp-2 sm:line-clamp-2 md:line-clamp-3 leading-relaxed">
           {games[currentSlide].description}
         </p>
-        
+
         <div className="flex gap-2 sm:gap-3 md:gap-4 flex-wrap">
           <button
             onClick={() =>
