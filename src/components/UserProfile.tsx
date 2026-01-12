@@ -36,13 +36,13 @@ export default function UserProfile() {
   const username = user.user_metadata?.custom_claims?.global_name || user.user_metadata?.full_name || user.user_metadata?.name || 'Usuario';
 
   return (
-    <div className="fixed bottom-8 left-12 z-50">
-      <div className="w-64 bg-background/95 backdrop-blur-sm border-t border-r border-border rounded-full shadow-xl">
-        <div className="flex items-center justify-between p-2 gap-2">
+    <div className="fixed bottom-4 md:bottom-8 left-4 md:left-12 z-50">
+      <div className="w-48 md:w-64 bg-background/95 backdrop-blur-sm border-t border-r border-border rounded-full shadow-xl">
+        <div className="flex items-center justify-between p-1.5 md:p-2 gap-1 md:gap-2">
           {/* Avatar y Info del Usuario */}
-          <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 md:gap-2 flex-1 min-w-0">
             <div className="relative">
-              <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-border">
+              <div className="h-8 w-8 md:h-10 md:w-10 rounded-full overflow-hidden border-2 border-border">
                 <img
                   src={avatarUrl}
                   alt={username}
@@ -50,12 +50,12 @@ export default function UserProfile() {
                 />
               </div>
               {/* Indicador de estado online */}
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
+              <div className="absolute bottom-0 right-0 w-2 h-2 md:w-3 md:h-3 bg-green-500 rounded-full border-2 border-background" />
             </div>
             
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">{username}</p>
-              <p className="text-xs text-muted-foreground truncate">Online</p>
+              <p className="text-xs md:text-sm font-semibold truncate">{username}</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground truncate">Online</p>
             </div>
           </div>
 
@@ -63,10 +63,10 @@ export default function UserProfile() {
           <div className="flex items-center gap-1">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-1.5 hover:bg-accent rounded transition-colors"
+              className="p-1 md:p-1.5 hover:bg-accent rounded transition-colors"
               title="User Settings"
             >
-              <Settings className="w-4 h-4" />
+              <Settings className="w-3.5 h-3.5 md:w-4 md:h-4" />
             </button>
           </div>
         </div>

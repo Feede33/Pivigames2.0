@@ -189,7 +189,7 @@ export default function Home() {
 
     console.log(`Loading page ${pageNumber} from API...`);
     const gamesFromDB = await getGames(pageNumber, GAMES_PER_PAGE);
-    
+
     if (gamesFromDB.length === 0) {
       return [];
     }
@@ -200,13 +200,13 @@ export default function Home() {
 
     for (let i = 0; i < gamesFromDB.length; i += BATCH_SIZE) {
       const batch = gamesFromDB.slice(i, i + BATCH_SIZE);
-      
+
       const enrichedBatch = await Promise.all(
         batch.map((game) => enrichGameWithSteamData(game, locale))
       );
-      
+
       enrichedGames.push(...enrichedBatch);
-      
+
       // Pequeño delay entre lotes
       if (i + BATCH_SIZE < gamesFromDB.length) {
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -216,7 +216,7 @@ export default function Home() {
     // Guardar en caché
     setGamesCache(prev => new Map(prev).set(pageNumber, enrichedGames));
     console.log(`Page ${pageNumber} cached with ${enrichedGames.length} games`);
-    
+
     return enrichedGames;
   };
 
@@ -227,11 +227,11 @@ export default function Home() {
       if (currentPage === 0) {
         setLoading(true);
       }
-      
+
       try {
         // Cargar la página actual
         const enrichedGames = await loadAndCachePage(currentPage);
-        
+
         if (enrichedGames.length === 0) {
           setGames([]);
           if (currentPage === 0) setLoading(false);
@@ -239,14 +239,14 @@ export default function Home() {
         }
 
         setGames(enrichedGames);
-        
+
         // Solo en la primera página, guardar los primeros 10 juegos para el hero
         if (currentPage === 0 && heroGames.length === 0) {
           setHeroGames(enrichedGames.slice(0, 10));
           setHeroLoading(false);
           console.log('Hero games cached:', enrichedGames.slice(0, 10).length);
         }
-        
+
         // Desactivar loading después de cargar la primera página
         if (currentPage === 0) {
           setLoading(false);
@@ -255,11 +255,11 @@ export default function Home() {
         // Prefetch de la siguiente página en background
         const totalPages = Math.ceil(totalGamesCount / GAMES_PER_PAGE);
         const nextPage = currentPage + 1;
-        
+
         if (nextPage < totalPages && !gamesCache.has(nextPage) && prefetchingPage !== nextPage) {
           setPrefetchingPage(nextPage);
           console.log(`Prefetching page ${nextPage}...`);
-          
+
           // Cargar en background sin bloquear
           loadAndCachePage(nextPage).then(() => {
             console.log(`Page ${nextPage} prefetched successfully`);
@@ -281,16 +281,16 @@ export default function Home() {
   const goToPage = (pageNumber: number) => {
     const totalPages = Math.ceil(totalGamesCount / GAMES_PER_PAGE);
     if (pageNumber < 0 || pageNumber >= totalPages || pageNumber === currentPage) return;
-    
+
     // Si la página está en caché, el cambio será instantáneo
     if (gamesCache.has(pageNumber)) {
       console.log(`Instant page change to ${pageNumber} (from cache)`);
     } else {
       console.log(`Loading page ${pageNumber}...`);
     }
-    
+
     setCurrentPage(pageNumber);
-    
+
     // Scroll suave hasta el grid de juegos (después del hero)
     setTimeout(() => {
       const gamesSection = document.querySelector('[data-games-grid]');
@@ -359,7 +359,7 @@ export default function Home() {
           'Pragma': 'no-cache',
         },
       });
-      
+
       if (response.ok) {
         const steamData = await response.json();
 
@@ -395,11 +395,11 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
-      <nav className="fixed top-0 z-50 w-full bg-gradient-to-b from-background to-transparent px-8 py-4">
+      <nav className="fixed top-0 z-50 w-full bg-gradient-to-b from-background to-transparent px-4 md:px-8 py-3 md:py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <h1 className="text-3xl font-bold text-brand">Pivigames2.0</h1>
-            <div className="hidden md:flex gap-6 text-sm">
+          <div className="flex items-center gap-4 md:gap-8">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-brand">Pivigames2.0</h1>
+            <div className="hidden lg:flex gap-6 text-sm">
               <a href="#" className="hover:text-muted-foreground transition">
                 {t.nav.discover}
               </a>
@@ -411,15 +411,18 @@ export default function Home() {
               </a>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <SearchSystem 
+          <div className="flex items-center gap-2 md:gap-4">
+            <UserProfile />
+
+            <SearchSystem
               games={games}
               allGamesCache={gamesCache}
               onGameClickAction={handleGameClick}
               locale={locale}
             />
             <LanguageSelector />
-            <UserProfile />
+            <div className="hidden md:block">
+            </div>
           </div>
         </div>
       </nav>
@@ -428,7 +431,7 @@ export default function Home() {
       <HeroSlider games={heroGames} loading={heroLoading} t={t as any} onGameClickAction={handleGameClick} />
 
       {/* Content */}
-      <div className="relative px-8 pb-20 pt-10 space-y-12 bg-black">
+      <div className="relative px-4 md:px-6 lg:px-8 pb-20 pt-10 space-y-8 md:space-y-12 bg-black">
         {/* Steam Offers */}
         <SteamOffers
           specials={steamSpecials}
@@ -438,10 +441,10 @@ export default function Home() {
         />
 
         {/* Games Grid */}
-        <GamesGrid 
-          games={games} 
-          loading={loading} 
-          t={t as any} 
+        <GamesGrid
+          games={games}
+          loading={loading}
+          t={t as any}
           onGameClickAction={handleGameClick}
           loadedCount={games.length}
           totalCount={totalGamesCount}
@@ -453,7 +456,7 @@ export default function Home() {
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious 
+                  <PaginationPrevious
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
@@ -462,7 +465,7 @@ export default function Home() {
                     className={currentPage === 0 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                   />
                 </PaginationItem>
-                
+
                 {/* Primera página */}
                 {currentPage > 2 && (
                   <>
@@ -485,17 +488,17 @@ export default function Home() {
                     )}
                   </>
                 )}
-                
+
                 {/* Páginas alrededor de la actual */}
                 {Array.from({ length: 5 }, (_, i) => {
                   const pageNumber = currentPage - 2 + i;
                   const totalPages = Math.ceil(totalGamesCount / GAMES_PER_PAGE);
-                  
+
                   if (pageNumber < 0 || pageNumber >= totalPages) return null;
-                  
+
                   const isCached = gamesCache.has(pageNumber);
                   const isPrefetching = prefetchingPage === pageNumber;
-                  
+
                   return (
                     <PaginationItem key={pageNumber}>
                       <PaginationLink
@@ -516,7 +519,7 @@ export default function Home() {
                     </PaginationItem>
                   );
                 })}
-                
+
                 {/* Última página */}
                 {currentPage < Math.ceil(totalGamesCount / GAMES_PER_PAGE) - 3 && (
                   <>
@@ -539,9 +542,9 @@ export default function Home() {
                     </PaginationItem>
                   </>
                 )}
-                
+
                 <PaginationItem>
-                  <PaginationNext 
+                  <PaginationNext
                     href="#"
                     onClick={(e) => {
                       e.preventDefault();
@@ -552,8 +555,8 @@ export default function Home() {
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
-            
-          
+
+
           </div>
         )}
       </div>

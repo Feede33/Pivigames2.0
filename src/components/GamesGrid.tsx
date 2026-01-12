@@ -20,13 +20,13 @@ export default function GamesGrid({ games, loading, t, onGameClickAction, loaded
 
   return (
     <section data-games-grid>
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-2xl font-bold">{t.games.availableToDownload}</h3>
+      <div className="flex items-center justify-between mb-4 md:mb-6">
+        <h3 className="text-lg md:text-xl lg:text-2xl font-bold">{t.games.availableToDownload}</h3>
         
          
        
       </div>
-      <div className="grid grid-cols-7 gap-6 pt-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 md:gap-4 lg:gap-6 pt-2">
         {games.map((game) => (
           <div
             key={game.id}
@@ -59,15 +59,15 @@ export default function GamesGrid({ games, loading, t, onGameClickAction, loaded
               </div>
             </div>
             <div className="space-y-1">
-              <h4 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition h-10">
+              <h4 className="font-semibold text-xs md:text-sm line-clamp-2 group-hover:text-primary transition min-h-[2.5rem] md:h-10">
                 {game.title}
               </h4>
               <div className="flex items-center justify-between">
                 <span className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Star fill="yellow" stroke="yellow" strokeWidth={0.5} size={14} />
-                  {game.rating}
+                  <Star fill="yellow" stroke="yellow" strokeWidth={0.5} size={12} className="md:w-[14px] md:h-[14px]" />
+                  <span className="text-[10px] md:text-xs">{game.rating}</span>
                 </span>
-                <span className="text-sm font-bold text-green-500">FREE</span>
+                <span className="text-xs md:text-sm font-bold text-green-500">FREE</span>
               </div>
             </div>
           </div>
