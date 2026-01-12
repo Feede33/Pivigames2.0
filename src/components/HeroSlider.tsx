@@ -55,20 +55,20 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
       <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 sm:via-black/70 md:via-black/50 to-transparent z-10 pointer-events-none" />
       <div className="absolute bottom-0 left-0 right-0 h-40 sm:h-32 md:h-40 bg-gradient-to-t from-black via-black/90 to-transparent z-10 pointer-events-none" />
 
-      {/* Navigation Arrows - más separados del borde */}
+      {/* Navigation Arrows - centrados en móviles, laterales en desktop */}
       <button
         onClick={prevSlide}
-        className="absolute left-2 min-[375px]:left-6 md:left-8 lg:left-12 top-1/2 -translate-y-1/2 z-30 bg-black/50 hover:bg-black/70 p-1.5 min-[375px]:p-2 md:p-3 rounded-full transition backdrop-blur-sm"
+        className="absolute left-2 min-[375px]:left-4 md:left-6 lg:left-8 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/60 p-2 md:p-3 rounded-full transition backdrop-blur-sm"
         aria-label="Previous slide"
       >
-        <ChevronLeft className="w-4 h-4 min-[375px]:w-5 min-[375px]:h-5 md:w-8 md:h-8" />
+        <ChevronLeft className="w-5 h-5 md:w-8 md:h-8" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-2 min-[375px]:right-6 md:right-8 lg:right-12 top-1/2 -translate-y-1/2 z-30 bg-black/50 hover:bg-black/70 p-1.5 min-[375px]:p-2 md:p-3 rounded-full transition backdrop-blur-sm"
+        className="absolute right-2 min-[375px]:right-4 md:right-6 lg:right-8 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/60 p-2 md:p-3 rounded-full transition backdrop-blur-sm"
         aria-label="Next slide"
       >
-        <ChevronRight className="w-4 h-4 min-[375px]:w-5 min-[375px]:h-5 md:w-8 md:h-8" />
+        <ChevronRight className="w-5 h-5 md:w-8 md:h-8" />
       </button>
 
       {/* Slide Indicators - optimizados para iPhone SE */}
