@@ -82,7 +82,7 @@ export default function UserProfile() {
           ></div>
           
           {/* Menu Modal */}
-          <div className="absolute bottom-20 left-0 z-50 w-[340px] bg-[#111214] rounded-2xl shadow-2xl overflow-hidden border border-[#1e1f22]">
+          <div className="absolute bottom-16 md:bottom-20 left-0 z-50 w-[280px] md:w-[340px] bg-[#111214] rounded-2xl shadow-2xl overflow-hidden border border-[#1e1f22]">
             {/* Header con gradiente azul Discord */}
             <div className="relative h-[120px] bg-gradient-to-br from-[#5865f2] to-[#7289da] overflow-hidden">
               {/* Patrón de fondo opcional */}

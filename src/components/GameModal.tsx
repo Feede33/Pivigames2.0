@@ -283,7 +283,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`w-[1100px] min-h-[850px] bg-[#181818] rounded-lg overflow-hidden transition-all duration-200 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        className={`w-full md:w-[90vw] lg:w-[1100px] max-w-[1100px] min-h-[60vh] md:min-h-[850px] mx-4 md:mx-0 bg-[#181818] rounded-lg overflow-hidden transition-all duration-200 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
       >
         <OverlayScrollbarsComponent
@@ -307,7 +307,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
         <div className="max-h-[85vh] overflow-y-auto">
           {/* Hero Image / Trailer */}
-          <div className="h-[350px] relative overflow-hidden">
+          <div className="h-[250px] md:h-[300px] lg:h-[350px] relative overflow-hidden">
             {/* Skeleton para el trailer/wallpaper cuando está cargando */}
             {loadingSteam && !showTrailer && (
               <div className="absolute inset-0 bg-gray-800 animate-pulse">
@@ -358,31 +358,33 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
             {/* Título y botones sobre el wallpaper */}
             {!loadingSteam && (
-              <div className={`absolute bottom-5 left-6 right-6 z-10 transition-all duration-500 ${showTrailer ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
+              <div className={`absolute bottom-3 md:bottom-5 left-4 md:left-6 right-4 md:right-6 z-10 transition-all duration-500 ${showTrailer ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
                 }`}>
-                <h2 className="text-4xl font-bold text-white mb-3">{game.title}</h2>
-                <div className="flex gap-3">
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 md:mb-3 line-clamp-2">{game.title}</h2>
+                <div className="flex gap-2 md:gap-3 flex-wrap">
                   {game.links ? (
                     <a
                       href={game.links}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-7 py-2.5 rounded-full bg-white text-black border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-200 transition-colors"
+                      className="px-4 md:px-7 py-2 md:py-2.5 rounded-full bg-white text-black border-none font-bold text-sm md:text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-200 transition-colors"
                     >
-                      <Download className="w-[18px] h-[18px]" />
-                      {t.modal.downloadFree}
+                      <Download className="w-4 h-4 md:w-[18px] md:h-[18px]" />
+                      <span className="hidden sm:inline">{t.modal.downloadFree}</span>
+                      <span className="sm:hidden">Download</span>
                     </a>
                   ) : (
                     <a
                       href={`https://store.steampowered.com/app/${game.steam_appid}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-7 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg"
+                      className="px-4 md:px-7 py-2 md:py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none font-bold text-sm md:text-[15px] cursor-pointer flex items-center gap-2 hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg"
                     >
-                      <svg className="w-[18px] h-[18px]" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 md:w-[18px] md:h-[18px]" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2m0-2a12 12 0 0 0-12 12 12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.5 14.5-5-2.5V9l5 2.5v3z"/>
                       </svg>
-                      {t.modal.viewOnSteam}
+                      <span className="hidden sm:inline">{t.modal.viewOnSteam}</span>
+                      <span className="sm:hidden">Steam</span>
                     </a>
                   )}
                   {(hasValidVideo || game.trailer) && (
@@ -391,10 +393,11 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                         setCurrentVideoIndex(0);
                         setShowTrailer(true);
                       }}
-                      className="px-7 py-2.5 rounded-full bg-gray-500/70 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors"
+                      className="px-4 md:px-7 py-2 md:py-2.5 rounded-full bg-gray-500/70 text-white border-none font-bold text-sm md:text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors"
                     >
-                      <Play className="w-[18px] h-[18px]" />
-                      {t.modal.trailer}
+                      <Play className="w-4 h-4 md:w-[18px] md:h-[18px]" />
+                      <span className="hidden sm:inline">{t.modal.trailer}</span>
+                      <span className="sm:hidden">Play</span>
                     </button>
                   )}
                 </div>
@@ -449,9 +452,9 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
 
           {/* Detalles */}
-          <div className="p-6">
+          <div className="p-4 md:p-6">
             {/* Info badges */}
-            <div className="flex gap-3 items-center mb-4">
+            <div className="flex gap-2 md:gap-3 items-center mb-3 md:mb-4 flex-wrap">
               {loadingSteam ? (
                 <>
                   <div className="h-5 w-20 bg-gray-700 animate-pulse rounded" />
@@ -489,7 +492,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
             </div>
 
             {/* Main content grid */}
-            <div className="grid grid-cols-[2fr_1fr] gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 md:gap-8">
               {/* Left column */}
               <div>
                 {loadingSteam ? (
@@ -505,8 +508,8 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                 )}
 
                 {/* Features section */}
-                <div className="mb-6">
-                  <h3 className="text-white font-semibold mb-3">{t.modal.gameFeatures}</h3>
+                <div className="mb-4 md:mb-6">
+                  <h3 className="text-white font-semibold mb-2 md:mb-3 text-sm md:text-base">{t.modal.gameFeatures}</h3>
                   {loadingSteam ? (
                     <div className="grid grid-cols-2 gap-3">
                       {[...Array(6)].map((_, i) => (
@@ -514,7 +517,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                       ))}
                     </div>
                   ) : (
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
                       {steamData?.categories?.length ? (
                         steamData.categories.slice(0, 6).map((category, index) => (
                           <div key={index} className="flex items-center gap-2 text-gray-300 text-sm">
@@ -548,8 +551,8 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                 </div>
 
                 {/* Screenshots section with slider */}
-                <div className="mb-6">
-                  <h3 className="text-white font-semibold mb-3">
+                <div className="mb-4 md:mb-6">
+                  <h3 className="text-white font-semibold mb-2 md:mb-3 text-sm md:text-base">
                     {t.modal.screenshotsVideos}
                     {loadingSteam && <span className="text-gray-500 text-sm ml-2">({t.common.loading})</span>}
                     {steamData && <span className="text-green-500 text-sm ml-2">✓ Steam</span>}
@@ -646,7 +649,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* System Requirements */}
                 <div>
-                  <h3 className="text-white font-semibold mb-4 text-lg">{t.modal.systemRequirements}</h3>
+                  <h3 className="text-white font-semibold mb-3 md:mb-4 text-base md:text-lg">{t.modal.systemRequirements}</h3>
                   {loadingSteam ? (
                     <div className="grid grid-cols-2 gap-8">
                       {/* MÍNIMO Skeleton */}
@@ -669,7 +672,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                       </div>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                       {/* MÍNIMO */}
                       <div>
                         <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.minimum}</h4>
@@ -707,7 +710,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
               </div>
 
               {/* Right column - Sidebar */}
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6">
                 {/* Price Card - Destacado */}
                 {loadingSteam ? (
                   <div className="relative overflow-hidden bg-gradient-to-br from-gray-700/20 via-gray-600/10 to-gray-700/20 border border-gray-600/30 rounded-3xl p-8">
@@ -949,13 +952,14 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
             {/* Buy on Steam Widget - Full Width */}
             {loadingSteam ? (
-              <div className="flex justify-center mt-8 px-6">
-                <div className="w-[646px] h-[190px] bg-gray-700 animate-pulse rounded-lg" />
+              <div className="flex justify-center mt-6 md:mt-8 px-4 md:px-6">
+                <div className="w-full max-w-[646px] h-[190px] bg-gray-700 animate-pulse rounded-lg" />
               </div>
             ) : steamData ? (
-              <div className="flex justify-center mt-8 px-6">
+              <div className="flex justify-center mt-6 md:mt-8 px-4 md:px-6 overflow-hidden">
                 <iframe
                   src={`https://store.steampowered.com/widget/${steamData.steam_appid}/?l=${getSteamLanguage(locale)}`}
+                  className="w-full max-w-[646px]"
                   width="646"
                   height="190"
                   frameBorder="0"

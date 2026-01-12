@@ -452,9 +452,9 @@ export default function Home() {
 
         {/* Paginación */}
         {totalGamesCount > GAMES_PER_PAGE && (
-          <div className="py-8">
+          <div className="py-6 md:py-8">
             <Pagination>
-              <PaginationContent>
+              <PaginationContent className="flex-wrap gap-1 md:gap-2">
                 <PaginationItem>
                   <PaginationPrevious
                     href="#"
@@ -462,7 +462,7 @@ export default function Home() {
                       e.preventDefault();
                       goToPage(currentPage - 1);
                     }}
-                    className={currentPage === 0 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                    className={`${currentPage === 0 ? 'pointer-events-none opacity-50' : 'cursor-pointer'} text-xs md:text-sm px-2 md:px-3`}
                   />
                 </PaginationItem>
 
@@ -476,13 +476,13 @@ export default function Home() {
                           e.preventDefault();
                           goToPage(0);
                         }}
-                        className="cursor-pointer"
+                        className="cursor-pointer text-xs md:text-sm w-8 h-8 md:w-10 md:h-10"
                       >
                         1
                       </PaginationLink>
                     </PaginationItem>
                     {currentPage > 3 && (
-                      <PaginationItem>
+                      <PaginationItem className="hidden sm:block">
                         <PaginationEllipsis />
                       </PaginationItem>
                     )}
@@ -508,12 +508,12 @@ export default function Home() {
                           goToPage(pageNumber);
                         }}
                         isActive={currentPage === pageNumber}
-                        className={`cursor-pointer relative ${isCached && pageNumber !== currentPage ? 'ring-1 ring-green-500/50' : ''}`}
+                        className={`cursor-pointer relative text-xs md:text-sm w-8 h-8 md:w-10 md:h-10 ${isCached && pageNumber !== currentPage ? 'ring-1 ring-green-500/50' : ''}`}
                         title={isCached ? 'Página cacheada (carga instantánea)' : isPrefetching ? 'Precargando...' : ''}
                       >
                         {pageNumber + 1}
                         {isPrefetching && (
-                          <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                          <span className="absolute -top-1 -right-1 w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-500 rounded-full animate-pulse" />
                         )}
                       </PaginationLink>
                     </PaginationItem>
@@ -524,7 +524,7 @@ export default function Home() {
                 {currentPage < Math.ceil(totalGamesCount / GAMES_PER_PAGE) - 3 && (
                   <>
                     {currentPage < Math.ceil(totalGamesCount / GAMES_PER_PAGE) - 4 && (
-                      <PaginationItem>
+                      <PaginationItem className="hidden sm:block">
                         <PaginationEllipsis />
                       </PaginationItem>
                     )}
@@ -535,7 +535,7 @@ export default function Home() {
                           e.preventDefault();
                           goToPage(Math.ceil(totalGamesCount / GAMES_PER_PAGE) - 1);
                         }}
-                        className="cursor-pointer"
+                        className="cursor-pointer text-xs md:text-sm w-8 h-8 md:w-10 md:h-10"
                       >
                         {Math.ceil(totalGamesCount / GAMES_PER_PAGE)}
                       </PaginationLink>
@@ -550,7 +550,7 @@ export default function Home() {
                       e.preventDefault();
                       goToPage(currentPage + 1);
                     }}
-                    className={currentPage >= Math.ceil(totalGamesCount / GAMES_PER_PAGE) - 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                    className={`${currentPage >= Math.ceil(totalGamesCount / GAMES_PER_PAGE) - 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'} text-xs md:text-sm px-2 md:px-3`}
                   />
                 </PaginationItem>
               </PaginationContent>

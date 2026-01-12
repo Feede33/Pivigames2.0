@@ -472,6 +472,53 @@
   display: none;
 }
 
+/* Responsive utilities */
+@media (max-width: 640px) {
+  /* Mobile optimizations */
+  html {
+    font-size: 14px;
+  }
+  
+  /* Reduce motion for better mobile performance */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  /* Tablet optimizations */
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1025px) {
+  /* Desktop optimizations */
+  html {
+    font-size: 16px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Increase tap targets for touch devices */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Remove hover effects on touch devices */
+  .hover\:scale-105:hover,
+  .hover\:scale-110:hover,
+  .group-hover\/card\:scale-110 {
+    transform: none !important;
+  }
+}
+
 /* Shimmer animation for skeleton loaders */
 @keyframes shimmer {
   0% {
