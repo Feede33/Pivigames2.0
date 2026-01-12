@@ -66,26 +66,23 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-2 sm:right-3 md:right-4 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/60 p-1.5 sm:p-2 md:p-3 rounded-full transition backdrop-blur-sm"
+        className="absolute right-1/2 translate-x-1/2 md:right-4 md:translate-x-0 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/60 p-2 md:p-3 rounded-full transition backdrop-blur-sm"
         aria-label="Next slide"
       >
-        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-8 md:h-8" />
+        <ChevronRight className="w-5 h-5 md:w-8 md:h-8" />
       </button>
 
       {/* Slide Indicators - líneas horizontales */}
-      <div className="absolute bottom-3 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-1 sm:gap-1.5">
+      <div className="absolute bottom-3 md:bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-1 md:gap-1.5">
         {games.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
             aria-label={`Go to slide ${index + 1}`}
-            style={{
-              width: index === currentSlide ? '32px' : '32px',
-              height: '3px',
-              backgroundColor: index === currentSlide ? 'rgb(239 68 68)' : 'rgba(156, 163, 175, 0.4)',
-              borderRadius: '2px',
-              transition: 'all 0.3s ease'
-            }}
+            className={`h-[3px] rounded-sm transition-all duration-300 ${index === currentSlide
+                ? 'w-6 md:w-8 bg-red-500'
+                : 'w-6 md:w-8 bg-gray-400/40'
+              }`}
           />
         ))}
       </div>
