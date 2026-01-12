@@ -175,7 +175,7 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, locale =
 
       {/* Search Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] sm:w-[400px] bg-background border border-border rounded-lg shadow-2xl z-50 overflow-hidden">
+        <div className="fixed sm:absolute left-4 right-4 sm:left-auto sm:right-0 top-[60px] sm:top-full mt-0 sm:mt-2 w-auto sm:w-[400px] max-w-[calc(100vw-2rem)] bg-background border border-border rounded-lg shadow-2xl z-50 overflow-hidden">
           {/* Search Input */}
           <div className="flex items-center gap-2 p-3 md:p-4 border-b border-border">
             <Search className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground flex-shrink-0" />
