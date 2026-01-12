@@ -300,9 +300,9 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
         {/* Botón cerrar */}
         <button
           onClick={handleClose}
-          className="absolute top-3 right-3 bg-black/60 border-none rounded-full w-9 h-9 flex items-center justify-center cursor-pointer z-10 hover:bg-black/80 transition-colors"
+          className="absolute top-2 right-2 md:top-3 md:right-3 bg-black/60 border-none rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center cursor-pointer z-10 hover:bg-black/80 transition-colors"
         >
-          <X className="text-white w-5 h-5" />
+          <X className="text-white w-4 h-4 md:w-5 md:h-5" />
         </button>
 
         <div className="max-h-[85vh] overflow-y-auto">
@@ -406,11 +406,11 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
           </div>
 
           {/* Título y botones cuando el trailer está activo */}
-          <div className={`overflow-hidden transition-all duration-500 ease-out ${showTrailer ? 'max-h-[120px] opacity-100' : 'max-h-0 opacity-0'
+          <div className={`overflow-hidden transition-all duration-500 ease-out ${showTrailer ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
             }`}>
-            <div className="px-6 py-4 bg-[#181818]">
-              <h2 className="text-4xl font-bold text-white mb-3">{game.title}</h2>
-              <div className="flex gap-3">
+            <div className="px-4 md:px-6 py-3 md:py-4 bg-[#181818]">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 md:mb-3 line-clamp-2">{game.title}</h2>
+              <div className="flex gap-2 md:gap-3 flex-wrap">
                 {game.links ? (
                   <a
                     href={game.links}
@@ -440,10 +440,11 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                       setShowTrailer(false);
                       setCurrentVideoIndex(0);
                     }}
-                    className="px-7 py-2.5 rounded-full bg-red-600 text-white border-none font-bold text-[15px] cursor-pointer flex items-center gap-2 hover:bg-red-700 transition-colors"
+                    className="px-4 md:px-7 py-2 md:py-2.5 rounded-full bg-red-600 text-white border-none font-bold text-sm md:text-[15px] cursor-pointer flex items-center gap-2 hover:bg-red-700 transition-colors"
                   >
-                    <X className="w-[18px] h-[18px]" />
-                    {t.modal.closeTrailer}
+                    <X className="w-4 h-4 md:w-[18px] md:h-[18px]" />
+                    <span className="hidden sm:inline">{t.modal.closeTrailer}</span>
+                    <span className="sm:hidden">Close</span>
                   </button>
                 )}
               </div>
@@ -463,32 +464,30 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                   <div className="h-6 w-8 bg-gray-700 animate-pulse rounded" />
                   <div className="h-6 w-8 bg-gray-700 animate-pulse rounded" />
                 </>
-              ) : (
-                <>
-                  <span className="text-green-500 font-bold text-[15px]">
+                ) : (
+                  <span className="text-green-500 font-bold text-sm md:text-[15px]">
                     {steamData?.metacritic
                       ? `${steamData.metacritic}% Rating`
                       : `${Math.round(game.rating * 10)}% Rating`}
                   </span>
-                  <span className="text-gray-400 text-sm">
-                    {steamData?.release_year || 'Error'}
+                )}
+                <span className="text-gray-400 text-xs md:text-sm">
+                  {steamData?.release_year || 'Error'}
+                </span>
+                <span className="border border-gray-500 px-1 md:px-1.5 py-0.5 text-[10px] md:text-xs text-gray-300">
+                  {steamData?.required_age ? `${steamData.required_age}+` : 'Error'}
+                </span>
+                <span className="border border-gray-500 px-1 md:px-1.5 py-0.5 text-[10px] md:text-xs text-gray-300">
+                  HD
+                </span>
+                <span className="border border-gray-500 px-1 md:px-1.5 py-0.5 text-[10px] md:text-xs text-gray-300">
+                  5.1
+                </span>
+                {steamError && (
+                  <span className="text-yellow-500 text-[10px] md:text-xs ml-2" title={steamError}>
+                    ⚠ {t.modal.limitedInfo || 'Info limitada'}
                   </span>
-                  <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
-                    {steamData?.required_age ? `${steamData.required_age}+` : 'Error'}
-                  </span>
-                  <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
-                    HD
-                  </span>
-                  <span className="border border-gray-500 px-1.5 py-0.5 text-xs text-gray-300">
-                    5.1
-                  </span>
-                  {steamError && (
-                    <span className="text-yellow-500 text-xs ml-2" title={steamError}>
-                      ⚠ {t.modal.limitedInfo || 'Info limitada'}
-                    </span>
-                  )}
-                </>
-              )}
+                )}
             </div>
 
             {/* Main content grid */}
@@ -496,13 +495,13 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
               {/* Left column */}
               <div>
                 {loadingSteam ? (
-                  <div className="space-y-2 mb-6">
-                    <div className="h-4 bg-gray-700 animate-pulse rounded w-full" />
-                    <div className="h-4 bg-gray-700 animate-pulse rounded w-full" />
-                    <div className="h-4 bg-gray-700 animate-pulse rounded w-3/4" />
+                  <div className="space-y-2 mb-4 md:mb-6">
+                    <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-full" />
+                    <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-full" />
+                    <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-3/4" />
                   </div>
                 ) : (
-                  <p className="text-gray-200 leading-relaxed text-base mb-6">
+                  <p className="text-sm md:text-base text-gray-200 leading-relaxed mb-4 md:mb-6">
                     {steamData?.short_description || game.description}
                   </p>
                 )}
@@ -511,37 +510,37 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                 <div className="mb-4 md:mb-6">
                   <h3 className="text-white font-semibold mb-2 md:mb-3 text-sm md:text-base">{t.modal.gameFeatures}</h3>
                   {loadingSteam ? (
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
                       {[...Array(6)].map((_, i) => (
-                        <div key={i} className="h-5 bg-gray-700 animate-pulse rounded" />
+                        <div key={i} className="h-4 md:h-5 bg-gray-700 animate-pulse rounded" />
                       ))}
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
                       {steamData?.categories?.length ? (
                         steamData.categories.slice(0, 6).map((category, index) => (
-                          <div key={index} className="flex items-center gap-2 text-gray-300 text-sm">
+                          <div key={index} className="flex items-center gap-1.5 md:gap-2 text-gray-300 text-xs md:text-sm">
                             <span className="text-green-500">✓</span> {category}
                           </div>
                         ))
                       ) : (
                         <>
-                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                          <div className="flex items-center gap-1.5 md:gap-2 text-gray-300 text-xs md:text-sm">
                             <span className="text-green-500">✓</span> Single Player Campaign
                           </div>
-                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                          <div className="flex items-center gap-1.5 md:gap-2 text-gray-300 text-xs md:text-sm">
                             <span className="text-green-500">✓</span> Online Multiplayer
                           </div>
-                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                          <div className="flex items-center gap-1.5 md:gap-2 text-gray-300 text-xs md:text-sm">
                             <span className="text-green-500">✓</span> Cross-Platform Play
                           </div>
-                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                          <div className="flex items-center gap-1.5 md:gap-2 text-gray-300 text-xs md:text-sm">
                             <span className="text-green-500">✓</span> Cloud Saves
                           </div>
-                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                          <div className="flex items-center gap-1.5 md:gap-2 text-gray-300 text-xs md:text-sm">
                             <span className="text-green-500">✓</span> Controller Support
                           </div>
-                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                          <div className="flex items-center gap-1.5 md:gap-2 text-gray-300 text-xs md:text-sm">
                             <span className="text-green-500">✓</span> Achievements
                           </div>
                         </>
@@ -560,18 +559,18 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                   {loadingSteam ? (
                     <div className="relative">
                       <div className="overflow-hidden rounded-lg">
-                        <div className="flex gap-2">
+                        <div className="flex gap-1.5 md:gap-2">
                           {[...Array(3)].map((_, i) => (
                             <div
                               key={i}
-                              className="flex-shrink-0 w-[calc(33.33%-5px)] aspect-video bg-gray-700 animate-pulse rounded"
+                              className="flex-shrink-0 w-[calc(33.33%-4px)] md:w-[calc(33.33%-5px)] aspect-video bg-gray-700 animate-pulse rounded"
                             />
                           ))}
                         </div>
                       </div>
-                      <div className="flex justify-center gap-1.5 mt-3">
+                      <div className="flex justify-center gap-1 md:gap-1.5 mt-2 md:mt-3">
                         {[...Array(3)].map((_, i) => (
-                          <div key={i} className="w-2 h-2 rounded-full bg-gray-700 animate-pulse" />
+                          <div key={i} className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-gray-700 animate-pulse" />
                         ))}
                       </div>
                     </div>
@@ -580,13 +579,13 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                       {/* Slider container */}
                       <div className="overflow-hidden rounded-lg">
                         <div
-                          className="flex gap-2 transition-transform duration-300"
+                          className="flex gap-1.5 md:gap-2 transition-transform duration-300"
                           style={{ transform: `translateX(-${screenshotIndex * 33.33}%)` }}
                         >
                           {mediaItems.map((item, index) => (
                             <div
                               key={index}
-                              className="flex-shrink-0 w-[calc(33.33%-5px)] aspect-video bg-gray-700 rounded overflow-hidden cursor-pointer relative group"
+                              className="flex-shrink-0 w-[calc(33.33%-4px)] md:w-[calc(33.33%-5px)] aspect-video bg-gray-700 rounded overflow-hidden cursor-pointer relative group"
                               onClick={() => {
                                 if (item.type === 'video' && item.videoUrl) {
                                   // Reproducir el video específico clickeado
@@ -604,8 +603,8 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                               {/* Indicador de video */}
                               {item.type === 'video' && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-colors">
-                                  <div className="bg-white/90 rounded-full p-3 group-hover:scale-110 transition-transform">
-                                    <Play className="w-6 h-6 text-black" />
+                                  <div className="bg-white/90 rounded-full p-2 md:p-3 group-hover:scale-110 transition-transform">
+                                    <Play className="w-4 h-4 md:w-6 md:h-6 text-black" />
                                   </div>
                                 </div>
                               )}
@@ -619,26 +618,26 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                         <>
                           <button
                             onClick={prevScreenshot}
-                            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+                            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-6 h-6 md:w-8 md:h-8 flex items-center justify-center transition-colors"
                           >
-                            <ChevronLeft className="w-5 h-5" />
+                            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                           </button>
                           <button
                             onClick={nextScreenshot}
-                            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+                            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-6 h-6 md:w-8 md:h-8 flex items-center justify-center transition-colors"
                           >
-                            <ChevronRight className="w-5 h-5" />
+                            <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                           </button>
                         </>
                       )}
 
                       {/* Dots indicator */}
-                      <div className="flex justify-center gap-1.5 mt-3">
+                      <div className="flex justify-center gap-1 md:gap-1.5 mt-2 md:mt-3">
                         {Array.from({ length: Math.max(1, mediaItems.length - 2) }).map((_, index) => (
                           <button
                             key={index}
                             onClick={() => setScreenshotIndex(index)}
-                            className={`w-2 h-2 rounded-full transition-colors ${index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
+                            className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-colors ${index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
                               }`}
                           />
                         ))}
@@ -713,19 +712,19 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
               <div className="space-y-4 md:space-y-6">
                 {/* Price Card - Destacado */}
                 {loadingSteam ? (
-                  <div className="relative overflow-hidden bg-gradient-to-br from-gray-700/20 via-gray-600/10 to-gray-700/20 border border-gray-600/30 rounded-3xl p-8">
-                    <div className="flex items-center justify-between gap-6 mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-1 h-8 bg-gray-600 animate-pulse rounded-full"></div>
-                        <div className="h-4 w-16 bg-gray-600 animate-pulse rounded"></div>
+                  <div className="relative overflow-hidden bg-gradient-to-br from-gray-700/20 via-gray-600/10 to-gray-700/20 border border-gray-600/30 rounded-2xl md:rounded-3xl p-4 md:p-8">
+                    <div className="flex items-center justify-between gap-3 md:gap-6 mb-3 md:mb-4">
+                      <div className="flex items-center gap-2 md:gap-3">
+                        <div className="w-0.5 md:w-1 h-6 md:h-8 bg-gray-600 animate-pulse rounded-full"></div>
+                        <div className="h-3 md:h-4 w-12 md:w-16 bg-gray-600 animate-pulse rounded"></div>
                       </div>
-                      <div className="h-8 w-24 bg-gray-600 animate-pulse rounded-full"></div>
+                      <div className="h-6 md:h-8 w-20 md:w-24 bg-gray-600 animate-pulse rounded-full"></div>
                     </div>
-                    <div className="h-10 w-32 bg-gray-600 animate-pulse rounded mb-2"></div>
-                    <div className="h-3 w-20 bg-gray-600 animate-pulse rounded"></div>
+                    <div className="h-8 md:h-10 w-24 md:w-32 bg-gray-600 animate-pulse rounded mb-1.5 md:mb-2"></div>
+                    <div className="h-2.5 md:h-3 w-16 md:w-20 bg-gray-600 animate-pulse rounded"></div>
                   </div>
                 ) : steamData?.price ? (
-                  <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500/10 via-green-500/5 to-teal-500/10 border border-green-400/30 rounded-3xl p-8 backdrop-blur-sm">
+                  <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500/10 via-green-500/5 to-teal-500/10 border border-green-400/30 rounded-2xl md:rounded-3xl p-4 md:p-8 backdrop-blur-sm">
                     <Snowfall
                       style={{
                         position: 'absolute',
@@ -734,53 +733,53 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                       }} />
 
                     <div className="absolute inset-0 bg-gradient-to-tr from-green-500/5 to-transparent"></div>
-                    <div className="relative flex items-center justify-between gap-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-1 h-8 bg-gradient-to-b from-green-400 to-emerald-500 rounded-full"></div>
-                        <h4 className="text-gray-300 text-xs font-bold tracking-wider uppercase">{t.modal.price}</h4>
+                    <div className="relative flex items-center justify-between gap-3 md:gap-6">
+                      <div className="flex items-center gap-2 md:gap-3">
+                        <div className="w-0.5 md:w-1 h-6 md:h-8 bg-gradient-to-b from-green-400 to-emerald-500 rounded-full"></div>
+                        <h4 className="text-gray-300 text-[10px] md:text-xs font-bold tracking-wider uppercase">{t.modal.price}</h4>
                       </div>
                       {userLocation && (
-                        <span className="flex items-center gap-2 text-xs text-emerald-400 bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-4 py-2 rounded-full border border-green-400/20 backdrop-blur-sm shadow-lg shadow-green-500/10">
-                          <MapPinCheck className="w-3.5 h-3.5" />
-                          <span className="font-medium">{userLocation.country}</span>
+                        <span className="flex items-center gap-1 md:gap-2 text-[10px] md:text-xs text-emerald-400 bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-2 md:px-4 py-1 md:py-2 rounded-full border border-green-400/20 backdrop-blur-sm shadow-lg shadow-green-500/10">
+                          <MapPinCheck className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
+                          <span className="font-medium hidden sm:inline">{userLocation.country}</span>
                         </span>
                       )}
                     </div>
 
                     {steamData.is_free ? (
-                      <div className="text-3xl font-bold text-green-400">
+                      <div className="text-2xl md:text-3xl font-bold text-green-400 mt-2">
                         {t.modal.free}
                       </div>
                     ) : steamData.price_info ? (
                       <div>
                         {steamData.price_info.discount_percent > 0 ? (
-                          <div className="mt-2 space-y-2">
-                            <div className="flex items-center gap-3">
-                              <span className="bg-green-600 text-white px-2 py-1 rounded font-bold text-sm">
+                          <div className="mt-1.5 md:mt-2 space-y-1.5 md:space-y-2">
+                            <div className="flex items-center gap-2 md:gap-3">
+                              <span className="bg-green-600 text-white px-1.5 md:px-2 py-0.5 md:py-1 rounded font-bold text-xs md:text-sm">
                                 -{steamData.price_info.discount_percent}%
                               </span>
-                              <span className="text-gray-400 line-through text-lg">
+                              <span className="text-gray-400 line-through text-sm md:text-lg">
                                 {steamData.price_info.initial_formatted}
                               </span>
                             </div>
-                            <div className="text-3xl font-bold text-green-400">
+                            <div className="text-2xl md:text-3xl font-bold text-green-400">
                               {steamData.price_info.final_formatted}
                             </div>
                           </div>
                         ) : (
-                          <div className="text-3xl font-bold text-white">
+                          <div className="text-2xl md:text-3xl font-bold text-white mt-2">
                             {steamData.price_info.final_formatted || steamData.price}
                           </div>
                         )}
                       </div>
                     ) : (
-                      <div className="text-2xl font-bold text-white">
+                      <div className="text-xl md:text-2xl font-bold text-white mt-2">
                         {steamData.price}
                       </div>
                     )}
 
                     {steamData.price_info && (
-                      <p className="text-xs text-gray-400 mt-2">
+                      <p className="text-[10px] md:text-xs text-gray-400 mt-1.5 md:mt-2">
                         {t.modal.priceIn} {steamData.price_info.currency}
                       </p>
                     )}
@@ -789,14 +788,14 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* Game info */}
                 {loadingSteam ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2 md:space-y-3">
                     {[...Array(6)].map((_, i) => (
-                      <div key={i} className="h-5 bg-gray-700 animate-pulse rounded" />
+                      <div key={i} className="h-4 md:h-5 bg-gray-700 animate-pulse rounded" />
                     ))}
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    <p className="text-gray-500 text-sm">
+                  <div className="space-y-2 md:space-y-3">
+                    <p className="text-gray-500 text-xs md:text-sm">
                       <span>{t.modal.genre} </span>
                       <span className="text-white">
                         {steamData?.genres?.length
@@ -804,16 +803,16 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                           : game.genre}
                       </span>
                     </p>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-500 text-xs md:text-sm">
                       <span>{t.modal.rating} </span>
                       <span className="text-white flex items-center gap-1">
-                        <Star fill="yellow" stroke="yellow" strokeWidth={0.5} size={16} />
+                        <Star fill="yellow" stroke="yellow" strokeWidth={0.5} size={14} className="md:w-4 md:h-4" />
                         {steamData?.metacritic
                           ? `${steamData.metacritic}/100 (Metacritic)`
                           : `${game.rating}/10`}
                       </span>
                     </p>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-500 text-xs md:text-sm">
                       <span>{t.modal.developer} </span>
                       <span className="text-white">
                         {steamData?.developers?.length
@@ -821,7 +820,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                           : 'Pivigames Studio'}
                       </span>
                     </p>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-500 text-xs md:text-sm">
                       <span>{t.modal.publisher} </span>
                       <span className="text-white">
                         {steamData?.publishers?.length
@@ -829,16 +828,16 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                           : 'Pivigames Inc.'}
                       </span>
                     </p>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-500 text-xs md:text-sm">
                       <span>{t.modal.release} </span>
                       <span className="text-white">
                         {steamData?.release_date || 'Dec 15, 2024'}
                       </span>
                     </p>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-500 text-xs md:text-sm">
                       <span>{t.modal.priceHistory} </span>
                       {steamData?.current_price && steamData?.lowest_recorded_price ? (
-                        <span className="text-white">
+                        <span className="text-white text-xs md:text-sm">
                           <a 
                             href={`https://steamdb.info/app/${steamData.steam_appid}/`}
                             target="_blank"
@@ -866,11 +865,11 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* Platforms */}
                 <div>
-                  <h4 className="text-gray-400 text-sm mb-2">{t.modal.availableOn}</h4>
+                  <h4 className="text-gray-400 text-xs md:text-sm mb-1.5 md:mb-2">{t.modal.availableOn}</h4>
                   {loadingSteam ? (
-                    <div className="h-5 w-24 bg-gray-700 animate-pulse rounded" />
+                    <div className="h-4 md:h-5 w-20 md:w-24 bg-gray-700 animate-pulse rounded" />
                   ) : (
-                    <div className="flex gap-3 text-sm text-gray-300">
+                    <div className="flex gap-2 md:gap-3 text-xs md:text-sm text-gray-300">
                       {steamData?.platforms ? (
                         <>
                           {steamData.platforms.windows && <span title="Windows">Windows</span>}
@@ -886,29 +885,29 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* Tags */}
                 <div>
-                  <h4 className="text-gray-400 text-sm mb-2">{t.modal.tags}</h4>
+                  <h4 className="text-gray-400 text-xs md:text-sm mb-1.5 md:mb-2">{t.modal.tags}</h4>
                   {loadingSteam ? (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5 md:gap-2">
                       {[...Array(6)].map((_, i) => (
-                        <div key={i} className="h-6 w-16 bg-gray-700 animate-pulse rounded" />
+                        <div key={i} className="h-5 md:h-6 w-12 md:w-16 bg-gray-700 animate-pulse rounded" />
                       ))}
                     </div>
                   ) : (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5 md:gap-2">
                       {steamData?.categories?.length ? (
                         steamData.categories.slice(0, 8).map((category, index) => (
-                          <span key={index} className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">
+                          <span key={index} className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">
                             {category}
                           </span>
                         ))
                       ) : (
                         <>
-                          <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Action</span>
-                          <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Adventure</span>
-                          <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Open World</span>
-                          <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">RPG</span>
-                          <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Story Rich</span>
-                          <span className="bg-[#333] text-gray-300 px-2 py-1 rounded text-xs">Multiplayer</span>
+                          <span className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">Action</span>
+                          <span className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">Adventure</span>
+                          <span className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">Open World</span>
+                          <span className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">RPG</span>
+                          <span className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">Story Rich</span>
+                          <span className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">Multiplayer</span>
                         </>
                       )}
                     </div>
@@ -917,14 +916,14 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* Languages */}
                 <div>
-                  <h4 className="text-gray-400 text-sm mb-2">{t.modal.languages}</h4>
+                  <h4 className="text-gray-400 text-xs md:text-sm mb-1.5 md:mb-2">{t.modal.languages}</h4>
                   {loadingSteam ? (
-                    <div className="space-y-2">
-                      <div className="h-4 bg-gray-700 animate-pulse rounded w-full" />
-                      <div className="h-4 bg-gray-700 animate-pulse rounded w-2/3" />
+                    <div className="space-y-1.5 md:space-y-2">
+                      <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-full" />
+                      <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-2/3" />
                     </div>
                   ) : (
-                    <p className="text-gray-300 text-sm">
+                    <p className="text-gray-300 text-xs md:text-sm">
                       {steamData?.languages?.length
                         ? steamData.languages.slice(0, 10).join(', ')
                         : 'English, Spanish, French, German, Japanese, Korean, Chinese'}
@@ -934,15 +933,15 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* Social */}
                 <div>
-                  <h4 className="text-gray-400 text-sm mb-2">{t.modal.share}</h4>
-                  <div className="flex gap-3">
-                    <button className="bg-[#333] hover:bg-[#444] text-white px-3 py-1.5 rounded text-sm transition-colors">
+                  <h4 className="text-gray-400 text-xs md:text-sm mb-1.5 md:mb-2">{t.modal.share}</h4>
+                  <div className="flex gap-2 md:gap-3 flex-wrap">
+                    <button className="bg-[#333] hover:bg-[#444] text-white px-2 md:px-3 py-1 md:py-1.5 rounded text-xs md:text-sm transition-colors">
                       {t.modal.discord}
                     </button>
-                    <button className="bg-[#333] hover:bg-[#444] text-white px-3 py-1.5 rounded text-sm transition-colors">
+                    <button className="bg-[#333] hover:bg-[#444] text-white px-2 md:px-3 py-1 md:py-1.5 rounded text-xs md:text-sm transition-colors">
                       {t.modal.facebook}
                     </button>
-                    <button className="bg-[#333] hover:bg-[#444] text-white px-3 py-1.5 rounded text-sm transition-colors">
+                    <button className="bg-[#333] hover:bg-[#444] text-white px-2 md:px-3 py-1 md:py-1.5 rounded text-xs md:text-sm transition-colors">
                       {t.modal.copyLink}
                     </button>
                   </div>
