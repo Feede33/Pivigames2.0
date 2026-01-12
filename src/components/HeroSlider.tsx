@@ -77,7 +77,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`h-1 rounded-full transition-all ${index === currentSlide ? 'w-6 md:w-8 bg-primary' : 'w-3 md:w-4 bg-muted-foreground/50'
+            className={`h-1 transition-all ${index === currentSlide ? 'w-8 md:w-10 bg-primary rounded-sm' : 'w-8 md:w-10 bg-muted-foreground/50 rounded-sm'
               }`}
           />
         ))}
