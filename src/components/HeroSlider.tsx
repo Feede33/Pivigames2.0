@@ -72,12 +72,12 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
       </button>
 
       {/* Slide Indicators */}
-      <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-2">
+      <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 z-30 flex gap-1.5 md:gap-2">
         {games.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`h-1 transition-all ${index === currentSlide ? 'w-8 md:w-10 bg-primary rounded-sm' : 'w-8 md:w-10 bg-muted-foreground/50 rounded-sm'
+            className={`h-0.5 md:h-1 transition-all rounded-full ${index === currentSlide ? 'w-12 md:w-16 bg-primary' : 'w-12 md:w-16 bg-muted-foreground/40'
               }`}
           />
         ))}
