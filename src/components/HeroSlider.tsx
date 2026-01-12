@@ -5,7 +5,6 @@ import { ChevronLeft, ChevronRight, Play, Info } from 'lucide-react';
 import WallpaperImage from './WallpaperImage';
 import type { GameWithSteamData } from '@/lib/supabase';
 
-
 type Props = {
   games: GameWithSteamData[];
   loading: boolean;
@@ -56,33 +55,34 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
       <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 sm:via-black/70 md:via-black/50 to-transparent z-10 pointer-events-none" />
       <div className="absolute bottom-0 left-0 right-0 h-40 sm:h-32 md:h-40 bg-gradient-to-t from-black via-black/90 to-transparent z-10 pointer-events-none" />
 
-      {/* Navigation Arrows - más pequeños en mobile */}
+      {/* Navigation Arrows - ajustados para móviles */}
       <button
         onClick={prevSlide}
-        className="absolute left-1/2 -translate-x-1/2 md:left-4 md:translate-x-0 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/60 p-2 md:p-3 rounded-full transition backdrop-blur-sm"
+        className="absolute left-4 md:left-4 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/60 p-2 md:p-3 rounded-full transition backdrop-blur-sm"
         aria-label="Previous slide"
       >
         <ChevronLeft className="w-5 h-5 md:w-8 md:h-8" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-1/2 translate-x-1/2 md:right-4 md:translate-x-0 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/60 p-2 md:p-3 rounded-full transition backdrop-blur-sm"
+        className="absolute right-4 md:right-4 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/60 p-2 md:p-3 rounded-full transition backdrop-blur-sm"
         aria-label="Next slide"
       >
         <ChevronRight className="w-5 h-5 md:w-8 md:h-8" />
       </button>
 
-      {/* Slide Indicators - líneas horizontales */}
-      <div className="absolute bottom-3 md:bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-1 md:gap-1.5">
+      {/* Slide Indicators - optimizados para iPhone SE */}
+      <div className="absolute bottom-3 md:bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-1 md:gap-1.5 px-2">
         {games.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
             aria-label={`Go to slide ${index + 1}`}
-            className={`h-[3px] rounded-sm transition-all duration-300 ${index === currentSlide
+            className={`h-[3px] rounded-sm transition-all duration-300 ${
+              index === currentSlide
                 ? 'w-6 md:w-8 bg-red-500'
                 : 'w-6 md:w-8 bg-gray-400/40'
-              }`}
+            }`}
           />
         ))}
       </div>
