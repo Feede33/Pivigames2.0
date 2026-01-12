@@ -426,6 +426,7 @@ export default function Home() {
               locale={locale}
             />
             <LanguageSelector />
+            <UserProfile navOnly />
             
             {/* Mobile Menu Button */}
             <button
@@ -442,10 +443,6 @@ export default function Home() {
                 </svg>
               )}
             </button>
-            
-            <div className="hidden md:block">
-              <UserProfile />
-            </div>
           </div>
         </div>
         
@@ -483,11 +480,6 @@ export default function Home() {
               >
                 Historial de Precios
               </a>
-              
-              {/* User Profile in Mobile Menu */}
-              <div className="pt-2 border-t border-border md:hidden">
-                <UserProfile />
-              </div>
             </div>
           </div>
         )}
