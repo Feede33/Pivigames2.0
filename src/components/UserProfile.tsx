@@ -43,8 +43,9 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
   if (navOnly) {
     return (
       <div className="relative group z-50">
-        <button className="relative">
-          <div className="h-8 w-8 md:h-9 md:w-9 rounded-full overflow-hidden border-2 border-border hover:border-primary transition-colors">
+        {/* Mobile: Solo avatar */}
+        <button className="relative md:hidden">
+          <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-border hover:border-primary transition-colors">
             <img
               src={avatarUrl}
               alt={username}
@@ -52,7 +53,27 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
             />
           </div>
           {/* Indicador de estado online */}
-          <div className="absolute bottom-0 right-0 w-2 h-2 md:w-2.5 md:h-2.5 bg-green-500 rounded-full border-2 border-background" />
+          <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-background" />
+        </button>
+
+        {/* Desktop: Versión completa horizontal */}
+        <button className="hidden md:flex items-center gap-2 bg-background/95 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 hover:bg-accent transition-all duration-300 shadow-lg">
+          <div className="relative">
+            <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-border">
+              <img
+                src={avatarUrl}
+                alt={username}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            {/* Indicador de estado online */}
+            <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-background" />
+          </div>
+          
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-semibold truncate">{username}</p>
+            <p className="text-[10px] text-muted-foreground truncate">Online</p>
+          </div>
         </button>
 
         {/* Dropdown Menu */}
