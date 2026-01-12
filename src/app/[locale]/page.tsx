@@ -412,9 +412,7 @@ export default function Home() {
               <a href="#" className="hover:text-muted-foreground transition">
                 {t.nav.offers}
               </a>
-              <a href="https://steamdb.info/" target="_blank" rel="noopener noreferrer" className="hover:text-muted-foreground transition">
-                Historial de Precios
-              </a>
+          
             </div>
           </div>
           
@@ -471,15 +469,6 @@ export default function Home() {
                 className="block px-4 py-3 rounded-lg hover:bg-muted/50 transition text-sm font-medium"
               >
                 {t.nav.offers}
-              </a>
-              <a 
-                href="https://steamdb.info/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-4 py-3 rounded-lg hover:bg-muted/50 transition text-sm font-medium"
-              >
-                Historial de Precios
               </a>
             </div>
           </div>
