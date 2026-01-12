@@ -485,7 +485,7 @@ export default function Home() {
           specials={steamSpecials}
           loading={loadingSpecials}
           t={t as any}
-          onSpecialClick={handleSpecialClick}
+          onSpecialClickAction={handleSpecialClick}
         />
 
         {/* Games Grid */}

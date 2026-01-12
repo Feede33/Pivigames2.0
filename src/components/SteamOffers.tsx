@@ -27,10 +27,10 @@ type Props = {
   specials: SteamSpecialEnriched[];
   loading: boolean;
   t: any; // Acepta cualquier objeto de traducción
-  onSpecialClick: (special: SteamSpecialEnriched, event: React.MouseEvent<HTMLDivElement>) => void;
+  onSpecialClickAction: (special: SteamSpecialEnriched, event: React.MouseEvent<HTMLDivElement>) => void;
 };
 
-export default function SteamOffers({ specials, loading, t, onSpecialClick }: Props) {
+export default function SteamOffers({ specials, loading, t, onSpecialClickAction }: Props) {
   const [offersScroll, setOffersScroll] = useState(0);
 
   const scrollOffers = (direction: 'left' | 'right') => {
@@ -110,7 +110,7 @@ export default function SteamOffers({ specials, loading, t, onSpecialClick }: Pr
           <div
             key={special.id}
             className="flex-shrink-0 w-[280px] sm:w-[340px] md:w-[380px] lg:w-[460px] group/card cursor-pointer"
-            onClick={(e) => onSpecialClick(special, e)}
+            onClick={(e) => onSpecialClickAction(special, e)}
           >
             <div className="relative rounded-lg md:rounded-xl overflow-hidden mb-3 md:mb-4 shadow-2xl hover:shadow-green-500/20 transition-all duration-500 hover:scale-[1.02] border border-white/5">
               {/* Imagen principal */}
