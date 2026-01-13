@@ -53,8 +53,8 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         description: { fontSize: '12px', marginBottom: '12px', lineClamp: 2 },
         button: { padding: '6px 12px', fontSize: '11px', gap: '4px' },
         buttonIcon: { width: '14px', height: '14px' },
-        indicators: { bottom: '8px', gap: '4px' },
-        indicatorBar: { width: '28px', height: '2px' }, // ← Más ancho
+        indicators: { bottom: '8px', gap: '3px' },
+        indicatorBar: { width: '50px', height: '2px' },
         gradientBottom: '120px'
       },
       sm: { // Móviles grandes (400-640px)
@@ -67,8 +67,8 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         description: { fontSize: '13px', marginBottom: '16px', lineClamp: 2 },
         button: { padding: '8px 16px', fontSize: '12px', gap: '6px' },
         buttonIcon: { width: '16px', height: '16px' },
-        indicators: { bottom: '12px', gap: '5px' },
-        indicatorBar: { width: '32px', height: '2.5px' },
+        indicators: { bottom: '12px', gap: '4px' },
+        indicatorBar: { width: '55px', height: '2px' },
         gradientBottom: '140px'
       },
       md: { // Tablets (640-768px)
@@ -81,8 +81,8 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         description: { fontSize: '14px', marginBottom: '20px', lineClamp: 3 },
         button: { padding: '10px 24px', fontSize: '14px', gap: '8px' },
         buttonIcon: { width: '18px', height: '18px' },
-        indicators: { bottom: '20px', gap: '6px' },
-        indicatorBar: { width: '40px', height: '3px' },
+        indicators: { bottom: '20px', gap: '5px' },
+        indicatorBar: { width: '60px', height: '2.5px' },
         gradientBottom: '160px'
       },
       lg: { // Desktop (>768px)
@@ -95,8 +95,8 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         description: { fontSize: '18px', marginBottom: '24px', lineClamp: 3 },
         button: { padding: '12px 32px', fontSize: '16px', gap: '8px' },
         buttonIcon: { width: '20px', height: '20px' },
-        indicators: { bottom: '32px', gap: '8px' },
-        indicatorBar: { width: '48px', height: '3px' },
+        indicators: { bottom: '32px', gap: '6px' },
+        indicatorBar: { width: '70px', height: '3px' },
         gradientBottom: '160px'
       }
     };
@@ -105,6 +105,12 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
   };
 
   const styles = getResponsiveStyles();
+
+  // Debug: verificar que los estilos se están aplicando
+  useEffect(() => {
+    console.log('Current screenSize:', screenSize);
+    console.log('Indicator styles:', styles.indicatorBar);
+  }, [screenSize, styles.indicatorBar]);
 
   if (loading) {
     return (
