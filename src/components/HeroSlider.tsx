@@ -73,9 +73,9 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         title: { fontSize: '22px', marginBottom: '10px', lineHeight: '1.3' },
         metadata: { fontSize: '12px', gap: '8px' },
         description: { fontSize: '13px', marginBottom: '16px', lineClamp: 2 },
-        button: { 
-          padding: '8px 16px', 
-          fontSize: '12px', 
+        button: {
+          padding: '8px 16px',
+          fontSize: '12px',
           gap: '6px',
           minWidth: '90px',
           minHeight: '36px'
@@ -94,9 +94,9 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         title: { fontSize: '28px', marginBottom: '12px', lineHeight: '1.3' },
         metadata: { fontSize: '13px', gap: '10px' },
         description: { fontSize: '14px', marginBottom: '20px', lineClamp: 3 },
-        button: { 
-          padding: '10px 24px', 
-          fontSize: '14px', 
+        button: {
+          padding: '10px 24px',
+          fontSize: '14px',
           gap: '8px',
           minWidth: '100px',
           minHeight: '40px'
@@ -115,9 +115,9 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         title: { fontSize: '48px', marginBottom: '16px', lineHeight: '1.2' },
         metadata: { fontSize: '16px', gap: '16px' },
         description: { fontSize: '18px', marginBottom: '24px', lineClamp: 3 },
-        button: { 
-          padding: '12px 32px', 
-          fontSize: '16px', 
+        button: {
+          padding: '12px 32px',
+          fontSize: '16px',
           gap: '8px',
           minWidth: '120px',
           minHeight: '48px'
@@ -283,7 +283,6 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
           padding: '0 8px',
           maxWidth: styles.indicators.maxWidth
         }}
-        className='animate-fade-in animate-duration-500 animate-delay-300'
       >
         {games.map((_, index) => (
           <div
@@ -336,7 +335,10 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden'
+
           }}
+          className='animate-fade-in animate-duration-500 animate-delay-300'
+
         >
           {games[currentSlide].title}
         </h2>
