@@ -15,14 +15,59 @@ type SearchSystemProps = {
   locale?: string;
 };
 
+type ScreenSize = 'xs' | 'sm' | 'md' | 'lg';
+
 export function SearchSystem({ games, allGamesCache, onGameClickAction, locale = 'es' }: SearchSystemProps) {
   const t = useTranslations(locale as Locale);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<GameWithSteamData[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [screenSize, setScreenSize] = useState<ScreenSize>('md');
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const updateScreenSize = () => {
+      const width = window.innerWidth;
+      if (width < 400) setScreenSize('xs' as ScreenSize);
+      else if (width < 640) setScreenSize('sm' as ScreenSize);
+      else if (width < 768) setScreenSize('md' as ScreenSize);
+      else setScreenSize('lg' as ScreenSize);
+    };
+
+    updateScreenSize();
+    window.addEventListener('resize', updateScreenSize);
+    return () => window.removeEventListener('resize', updateScreenSize);
+  }, []);
+
+  const getResponsiveStyles = () => {
+    const styles = {
+      xs: {
+        button: { padding: '4px 8px', gap: '4px' },
+        icon: { width: '14px', height: '14px' },
+        text: { fontSize: '10px' }
+      },
+      sm: {
+        button: { padding: '6px 10px', gap: '6px' },
+        icon: { width: '16px', height: '16px' },
+        text: { fontSize: '11px' }
+      },
+      md: {
+        button: { padding: '6px 12px', gap: '6px' },
+        icon: { width: '16px', height: '16px' },
+        text: { fontSize: '12px' }
+      },
+      lg: {
+        button: { padding: '8px 16px', gap: '8px' },
+        icon: { width: '18px', height: '18px' },
+        text: { fontSize: '14px' }
+      }
+    };
+    return styles[screenSize];
+  };
+
+  const styles = getResponsiveStyles();
 
   // Cerrar al hacer clic fuera
   useEffect(() => {
@@ -167,10 +212,16 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, locale =
           setIsOpen(!isOpen);
           setTimeout(() => inputRef.current?.focus(), 100);
         }}
-        className="flex items-center gap-1.5 md:gap-2 px-2 md:px-4 py-1.5 md:py-2 rounded-full bg-secondary/50 hover:bg-secondary transition-colors"
+        style={{
+          padding: styles.button.padding,
+          gap: styles.button.gap
+        }}
+        className="flex items-center rounded-full bg-secondary/50 hover:bg-secondary transition-colors"
       >
-        <Search className="w-3.5 h-3.5 md:w-4 md:h-4" />
-        <span className="hidden lg:inline text-xs md:text-sm">{t.search.button}</span>
+        <Search style={{ width: styles.icon.width, height: styles.icon.height }} />
+        {screenSize === 'lg' && (
+          <span style={{ fontSize: styles.text.fontSize }}>{t.search.button}</span>
+        )}
       </button>
 
       {/* Search Dropdown */}
