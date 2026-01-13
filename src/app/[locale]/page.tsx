@@ -402,7 +402,8 @@ export default function Home() {
             <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-brand">Pivigames2.0</h1>
             
             {/* Desktop Menu */}
-            <div className="hidden lg:flex gap-6 text-sm">
+            <div className="hidden lg:flex gap-6 text-sm animate-fade-in animate-duration-500 animate-delay-300'
+">
               <a href="#" className="hover:text-muted-foreground transition">
                 {t.nav.discover}
               </a>

@@ -337,7 +337,6 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
             overflow: 'hidden'
 
           }}
-          className='animate-fade-in animate-duration-500 animate-delay-300'
 
         >
           {games[currentSlide].title}
