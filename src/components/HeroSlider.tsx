@@ -47,7 +47,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         container: { height: '65vh' },
         arrow: { left: '8px', right: '8px', padding: '6px' },
         iconSize: { width: '18px', height: '18px' },
-        content: { paddingLeft: '12px', paddingRight: '12px', paddingBottom: '60px' },
+        content: { paddingLeft: '12px', paddingRight: '12px', paddingBottom: '60px', maxWidth: '100%' },
         title: { fontSize: '18px', marginBottom: '8px', lineHeight: '1.2' },
         metadata: { fontSize: '11px', gap: '6px' },
         description: { fontSize: '12px', marginBottom: '12px', lineClamp: 2 },
@@ -55,56 +55,77 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
           padding: '6px 12px',
           fontSize: '11px',
           gap: '4px',
-          minWidth: '80px',   // ← NUEVO: ancho mínimo
-          minHeight: '32px'  // ← NUEVO: altura mínima
+          minWidth: '80px',
+          minHeight: '32px'
         },
-
         buttonIcon: { width: '14px', height: '14px' },
-        indicators: { bottom: '8px', gap: '3px' },
-        indicatorBar: { width: '50px', height: '2px' },
-        gradientBottom: '120px'
+        indicators: { bottom: '8px', gap: '3px', maxWidth: '340px' },
+        indicatorBar: { width: '24px', height: '2px' },
+        gradientBottom: '120px',
+        gradient: 'linear-gradient(to right, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.85) 50%, transparent 100%)'
       },
       sm: { // Móviles grandes (400-640px)
         container: { height: '70vh' },
         arrow: { left: '12px', right: '12px', padding: '8px' },
         iconSize: { width: '20px', height: '20px' },
-        content: { paddingLeft: '16px', paddingRight: '16px', paddingBottom: '70px' },
+        content: { paddingLeft: '16px', paddingRight: '16px', paddingBottom: '70px', maxWidth: '100%' },
         title: { fontSize: '22px', marginBottom: '10px', lineHeight: '1.3' },
         metadata: { fontSize: '12px', gap: '8px' },
         description: { fontSize: '13px', marginBottom: '16px', lineClamp: 2 },
-        button: { padding: '8px 16px', fontSize: '12px', gap: '6px' },
+        button: { 
+          padding: '8px 16px', 
+          fontSize: '12px', 
+          gap: '6px',
+          minWidth: '90px',
+          minHeight: '36px'
+        },
         buttonIcon: { width: '16px', height: '16px' },
-        indicators: { bottom: '12px', gap: '4px' },
-        indicatorBar: { width: '55px', height: '2px' },
-        gradientBottom: '140px'
+        indicators: { bottom: '12px', gap: '4px', maxWidth: '380px' },
+        indicatorBar: { width: '28px', height: '2px' },
+        gradientBottom: '140px',
+        gradient: 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 50%, transparent 100%)'
       },
       md: { // Tablets (640-768px)
         container: { height: '75vh' },
         arrow: { left: '16px', right: '16px', padding: '10px' },
         iconSize: { width: '28px', height: '28px' },
-        content: { paddingLeft: '24px', paddingRight: '24px', paddingBottom: '80px' },
+        content: { paddingLeft: '24px', paddingRight: '24px', paddingBottom: '80px', maxWidth: '100%' },
         title: { fontSize: '28px', marginBottom: '12px', lineHeight: '1.3' },
         metadata: { fontSize: '13px', gap: '10px' },
         description: { fontSize: '14px', marginBottom: '20px', lineClamp: 3 },
-        button: { padding: '10px 24px', fontSize: '14px', gap: '8px' },
+        button: { 
+          padding: '10px 24px', 
+          fontSize: '14px', 
+          gap: '8px',
+          minWidth: '100px',
+          minHeight: '40px'
+        },
         buttonIcon: { width: '18px', height: '18px' },
-        indicators: { bottom: '20px', gap: '5px' },
-        indicatorBar: { width: '60px', height: '2.5px' },
-        gradientBottom: '160px'
+        indicators: { bottom: '20px', gap: '5px', maxWidth: '100%' },
+        indicatorBar: { width: '40px', height: '2.5px' },
+        gradientBottom: '160px',
+        gradient: 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 40%, transparent 100%)'
       },
       lg: { // Desktop (>768px)
         container: { height: '90vh' },
         arrow: { left: '20px', right: '20px', padding: '12px' },
         iconSize: { width: '32px', height: '32px' },
-        content: { paddingLeft: '80px', paddingRight: '32px', paddingBottom: '100px' },
+        content: { paddingLeft: '80px', paddingRight: '32px', paddingBottom: '100px', maxWidth: '800px' },
         title: { fontSize: '48px', marginBottom: '16px', lineHeight: '1.2' },
         metadata: { fontSize: '16px', gap: '16px' },
         description: { fontSize: '18px', marginBottom: '24px', lineClamp: 3 },
-        button: { padding: '12px 32px', fontSize: '16px', gap: '8px' },
+        button: { 
+          padding: '12px 32px', 
+          fontSize: '16px', 
+          gap: '8px',
+          minWidth: '120px',
+          minHeight: '48px'
+        },
         buttonIcon: { width: '20px', height: '20px' },
-        indicators: { bottom: '32px', gap: '6px' },
-        indicatorBar: { width: '50px', height: '3px' },
-        gradientBottom: '160px'
+        indicators: { bottom: '32px', gap: '6px', maxWidth: '100%' },
+        indicatorBar: { width: '60px', height: '3px' },
+        gradientBottom: '160px',
+        gradient: 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.5) 60%, transparent 100%)'
       }
     };
 
@@ -175,13 +196,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         style={{
           position: 'absolute',
           inset: 0,
-          background: screenSize === 'xs'
-            ? 'linear-gradient(to right, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.85) 50%, transparent 100%)'
-            : screenSize === 'sm'
-              ? 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 50%, transparent 100%)'
-              : screenSize === 'md'
-                ? 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 40%, transparent 100%)'
-                : 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.5) 60%, transparent 100%)',
+          background: styles.gradient,
           zIndex: 10,
           pointerEvents: 'none'
         }}
@@ -265,7 +280,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
           justifyContent: 'center',
           gap: styles.indicators.gap,
           padding: '0 8px',
-          maxWidth: screenSize === 'xs' ? '340px' : screenSize === 'sm' ? '380px' : '100%'
+          maxWidth: styles.indicators.maxWidth
         }}
       >
         {games.map((_, index) => (
@@ -305,7 +320,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
           paddingLeft: styles.content.paddingLeft,
           paddingRight: styles.content.paddingRight,
           paddingBottom: styles.content.paddingBottom,
-          maxWidth: screenSize === 'lg' ? '800px' : '100%'
+          maxWidth: styles.content.maxWidth
         }}
       >
         <h2
@@ -395,6 +410,8 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
               display: 'flex',
               alignItems: 'center',
               gap: styles.button.gap,
+              minWidth: styles.button.minWidth,
+              minHeight: styles.button.minHeight,
               border: 'none',
               cursor: 'pointer',
               transition: 'all 0.3s'
@@ -417,6 +434,8 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
               display: 'flex',
               alignItems: 'center',
               gap: styles.button.gap,
+              minWidth: styles.button.minWidth,
+              minHeight: styles.button.minHeight,
               border: 'none',
               cursor: 'pointer',
               backdropFilter: 'blur(4px)',
