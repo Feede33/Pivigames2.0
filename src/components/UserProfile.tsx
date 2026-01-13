@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Settings } from 'lucide-react';
 
+
 type UserProfileProps = {
   navOnly?: boolean;
 };

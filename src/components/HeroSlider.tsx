@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Play, Info } from 'lucide-react';
 import WallpaperImage from './WallpaperImage';
 import type { GameWithSteamData } from '@/lib/supabase';
 
+
 type Props = {
   games: GameWithSteamData[];
   loading: boolean;
@@ -282,6 +283,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
           padding: '0 8px',
           maxWidth: styles.indicators.maxWidth
         }}
+        className='animate-fade-in'
       >
         {games.map((_, index) => (
           <div
