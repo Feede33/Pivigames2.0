@@ -51,7 +51,14 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         title: { fontSize: '18px', marginBottom: '8px', lineHeight: '1.2' },
         metadata: { fontSize: '11px', gap: '6px' },
         description: { fontSize: '12px', marginBottom: '12px', lineClamp: 2 },
-        button: { padding: '6px 12px', fontSize: '11px', gap: '4px' },
+        button: {
+          padding: '6px 12px',
+          fontSize: '11px',
+          gap: '4px',
+          minWidth: '80px',   // ← NUEVO: ancho mínimo
+          minHeight: '32px'  // ← NUEVO: altura mínima
+        },
+
         buttonIcon: { width: '14px', height: '14px' },
         indicators: { bottom: '8px', gap: '3px' },
         indicatorBar: { width: '50px', height: '2px' },
