@@ -54,7 +54,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         button: { padding: '6px 12px', fontSize: '11px', gap: '4px' },
         buttonIcon: { width: '14px', height: '14px' },
         indicators: { bottom: '8px', gap: '3px' },
-        indicatorBar: { width: '20px', height: '2.5px' },
+        indicatorBar: { width: '16px', height: '2px' }, // ← CAMBIADO: más ancho, menos alto
         gradientBottom: '120px'
       },
       sm: { // Móviles grandes (400-640px)
@@ -68,7 +68,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         button: { padding: '8px 16px', fontSize: '12px', gap: '6px' },
         buttonIcon: { width: '16px', height: '16px' },
         indicators: { bottom: '12px', gap: '4px' },
-        indicatorBar: { width: '24px', height: '3px' },
+        indicatorBar: { width: '20px', height: '2.5px' },
         gradientBottom: '140px'
       },
       md: { // Tablets (640-768px)
@@ -96,7 +96,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         button: { padding: '12px 32px', fontSize: '16px', gap: '8px' },
         buttonIcon: { width: '20px', height: '20px' },
         indicators: { bottom: '32px', gap: '6px' },
-        indicatorBar: { width: '32px', height: '3px' },
+        indicatorBar: { width: '28px', height: '3px' },
         gradientBottom: '160px'
       }
     };
@@ -108,12 +108,12 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
 
   if (loading) {
     return (
-      <div style={{ 
-        position: 'relative', 
-        height: '70vh', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center' 
+      <div style={{
+        position: 'relative',
+        height: '70vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       }}>
         <div style={{ fontSize: '1.5rem', color: '#9ca3af' }}>{t.loading.games}</div>
       </div>
@@ -122,12 +122,12 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
 
   if (games.length === 0) {
     return (
-      <div style={{ 
-        position: 'relative', 
-        height: '70vh', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center' 
+      <div style={{
+        position: 'relative',
+        height: '70vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       }}>
         <div style={{ textAlign: 'center', padding: '0 1rem' }}>
           <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', marginBottom: '1rem' }}>
@@ -140,7 +140,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
   }
 
   return (
-    <div 
+    <div
       style={{
         position: 'relative',
         ...styles.container,
@@ -158,22 +158,22 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
       />
 
       {/* Gradientes */}
-      <div 
+      <div
         style={{
           position: 'absolute',
           inset: 0,
-          background: screenSize === 'xs' 
+          background: screenSize === 'xs'
             ? 'linear-gradient(to right, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.85) 50%, transparent 100%)'
             : screenSize === 'sm'
-            ? 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 50%, transparent 100%)'
-            : screenSize === 'md'
-            ? 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 40%, transparent 100%)'
-            : 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.5) 60%, transparent 100%)',
+              ? 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 50%, transparent 100%)'
+              : screenSize === 'md'
+                ? 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 40%, transparent 100%)'
+                : 'linear-gradient(to right, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.5) 60%, transparent 100%)',
           zIndex: 10,
           pointerEvents: 'none'
         }}
       />
-      <div 
+      <div
         style={{
           position: 'absolute',
           bottom: 0,
@@ -212,7 +212,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
       >
         <ChevronLeft style={{ ...styles.iconSize, color: 'white' }} />
       </button>
-      
+
       <button
         onClick={nextSlide}
         style={{
@@ -240,7 +240,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
       </button>
 
       {/* Slide Indicators */}
-      <div 
+      <div
         style={{
           position: 'absolute',
           bottom: styles.indicators.bottom,
@@ -272,7 +272,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
       </div>
 
       {/* Content */}
-      <div 
+      <div
         style={{
           position: 'relative',
           zIndex: 20,
@@ -282,7 +282,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
           maxWidth: screenSize === 'lg' ? '800px' : '100%'
         }}
       >
-        <h2 
+        <h2
           style={{
             fontSize: styles.title.fontSize,
             fontWeight: 'bold',
@@ -298,7 +298,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
           {games[currentSlide].title}
         </h2>
 
-        <div 
+        <div
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -314,15 +314,15 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
           <span style={{ color: '#9ca3af' }}>
             {games[currentSlide].release_year || 'N/A'}
           </span>
-          <span style={{ 
-            border: '1px solid #6b7280', 
+          <span style={{
+            border: '1px solid #6b7280',
             padding: '2px 6px',
             color: '#d1d5db'
           }}>
             {games[currentSlide].required_age ? `${games[currentSlide].required_age}+` : '18+'}
           </span>
-          <span style={{ 
-            border: '1px solid #6b7280', 
+          <span style={{
+            border: '1px solid #6b7280',
             padding: '2px 6px',
             color: '#d1d5db'
           }}>
@@ -330,7 +330,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
           </span>
         </div>
 
-        <p 
+        <p
           style={{
             fontSize: styles.description.fontSize,
             marginBottom: styles.description.marginBottom,
@@ -379,7 +379,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
             <Play style={{ ...styles.buttonIcon }} fill="currentColor" />
             {t.hero.play}
           </button>
-          
+
           <button
             style={{
               backgroundColor: 'rgba(55, 65, 81, 0.8)',
