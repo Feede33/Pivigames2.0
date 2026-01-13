@@ -92,7 +92,7 @@ export default function SteamOffers({ specials, loading, t, onSpecialClickAction
   }
 
   return (
-    <section className="relative group">
+    <section className="relative group animate-pulse-fade-in animate-delay--1000 animate-duration-1000">
       <div className="flex items-center justify-between mb-4 md:mb-6 lg:mb-8">
         <div>
           <h3 className="text-xl md:text-2xl lg:text-3xl font-bold mb-1 md:mb-2 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">

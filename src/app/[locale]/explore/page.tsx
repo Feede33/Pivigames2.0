@@ -13,7 +13,7 @@ export default function ExplorePage() {
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
           {/* Card 1 - Acción */}
-          <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-500/20 to-orange-500/20 border border-red-500/30 p-6 hover:scale-105 transition-transform animate-slide-in-up animate-delay-100">
+          <div className="group relative overflow-hidden rounded-2xl animate-slide-in-top animate-delay-200">
             <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10">
               <div className="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center mb-4">
@@ -26,7 +26,7 @@ export default function ExplorePage() {
           </div>
 
           {/* Card 2 - Aventura */}
-          <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 p-6 hover:scale-105 transition-transform animate-slide-in-up animate-delay-200">
+          <div className="group relative overflow-hidden animate-contract-horizontally animate-delay-200">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10">
               <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4">
