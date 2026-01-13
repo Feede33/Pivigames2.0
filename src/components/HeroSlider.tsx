@@ -274,10 +274,10 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
               }
             }}
             style={{
-              minWidth: screenSize === 'xs' ? '24px' : screenSize === 'sm' ? '28px' : screenSize === 'md' ? '40px' : '60px',
-              maxWidth: screenSize === 'xs' ? '24px' : screenSize === 'sm' ? '28px' : screenSize === 'md' ? '40px' : '60px',
-              minHeight: screenSize === 'xs' || screenSize === 'sm' ? '2px' : screenSize === 'md' ? '2.5px' : '3px',
-              maxHeight: screenSize === 'xs' || screenSize === 'sm' ? '2px' : screenSize === 'md' ? '2.5px' : '3px',
+              minWidth: styles.indicatorBar.width,
+              maxWidth: styles.indicatorBar.width,
+              minHeight: styles.indicatorBar.height,
+              maxHeight: styles.indicatorBar.height,
               borderRadius: '1px',
               transition: 'all 0.3s ease',
               backgroundColor: index === currentSlide ? '#ef4444' : 'rgba(156, 163, 175, 0.4)',
