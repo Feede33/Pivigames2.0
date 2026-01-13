@@ -96,7 +96,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         button: { padding: '12px 32px', fontSize: '16px', gap: '8px' },
         buttonIcon: { width: '20px', height: '20px' },
         indicators: { bottom: '32px', gap: '6px' },
-        indicatorBar: { width: '1px', height: '1px' },
+        indicatorBar: { width: '50px', height: '3px' },
         gradientBottom: '160px'
       }
     };
