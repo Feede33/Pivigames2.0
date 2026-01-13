@@ -448,7 +448,7 @@ export default function Home() {
         
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 mt-2 mx-4 bg-background/95 backdrop-blur-lg border border-border rounded-lg shadow-2xl overflow-hidden animate-in slide-in-from-top duration-200">
+          <div className="lg:hidden absolute top-full left-0 right-0 mt-2 mx-4 bg-background/95 backdrop-blur-lg border border-border rounded-lg shadow-2xl overflow-hidden animate-fade-in animate-duration-200">
             <div className="p-4 space-y-2">
               <a 
                 href="#" 
