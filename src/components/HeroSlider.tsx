@@ -254,8 +254,11 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
           transform: 'translateX(-50%)',
           zIndex: 30,
           display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
           gap: styles.indicators.gap,
-          padding: '0 8px'
+          padding: '0 8px',
+          maxWidth: screenSize === 'xs' ? '340px' : screenSize === 'sm' ? '380px' : '100%'
         }}
       >
         {games.map((_, index) => (
@@ -271,8 +274,8 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
               }
             }}
             style={{
-              minWidth: screenSize === 'xs' ? '50px' : screenSize === 'sm' ? '55px' : screenSize === 'md' ? '60px' : '70px',
-              maxWidth: screenSize === 'xs' ? '50px' : screenSize === 'sm' ? '55px' : screenSize === 'md' ? '60px' : '70px',
+              minWidth: screenSize === 'xs' ? '24px' : screenSize === 'sm' ? '28px' : screenSize === 'md' ? '40px' : '60px',
+              maxWidth: screenSize === 'xs' ? '24px' : screenSize === 'sm' ? '28px' : screenSize === 'md' ? '40px' : '60px',
               minHeight: screenSize === 'xs' || screenSize === 'sm' ? '2px' : screenSize === 'md' ? '2.5px' : '3px',
               maxHeight: screenSize === 'xs' || screenSize === 'sm' ? '2px' : screenSize === 'md' ? '2.5px' : '3px',
               borderRadius: '1px',
