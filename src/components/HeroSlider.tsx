@@ -259,19 +259,29 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
         }}
       >
         {games.map((_, index) => (
-          <button
+          <div
             key={index}
             onClick={() => setCurrentSlide(index)}
+            role="button"
+            tabIndex={0}
             aria-label={`Go to slide ${index + 1}`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                setCurrentSlide(index);
+              }
+            }}
             style={{
-              height: styles.indicatorBar.height,
-              width: styles.indicatorBar.width,
-              borderRadius: '2px',
-              transition: 'all 0.3s',
+              minWidth: screenSize === 'xs' ? '50px' : screenSize === 'sm' ? '55px' : screenSize === 'md' ? '60px' : '70px',
+              maxWidth: screenSize === 'xs' ? '50px' : screenSize === 'sm' ? '55px' : screenSize === 'md' ? '60px' : '70px',
+              minHeight: screenSize === 'xs' || screenSize === 'sm' ? '2px' : screenSize === 'md' ? '2.5px' : '3px',
+              maxHeight: screenSize === 'xs' || screenSize === 'sm' ? '2px' : screenSize === 'md' ? '2.5px' : '3px',
+              borderRadius: '1px',
+              transition: 'all 0.3s ease',
               backgroundColor: index === currentSlide ? '#ef4444' : 'rgba(156, 163, 175, 0.4)',
               border: 'none',
               cursor: 'pointer',
-              padding: 0
+              padding: 0,
+              flexShrink: 0
             }}
           />
         ))}
