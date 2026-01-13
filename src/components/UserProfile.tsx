@@ -43,7 +43,18 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
           minWidth: '140px'
         },
         icon: { width: '16px', height: '16px' },
-        text: { fontSize: '10px' }
+        text: { fontSize: '10px' },
+        avatar: {
+          size: '32px',
+          statusDot: '8px',
+          statusDotBorder: '2px'
+        },
+        dropdown: {
+          width: '280px',
+          headerHeight: '90px',
+          avatarSize: '64px',
+          avatarBottom: '-32px'
+        }
       },
       sm: { // iPhone estándar, Plus (376-430px)
         button: {
@@ -53,7 +64,18 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
           minWidth: '150px'
         },
         icon: { width: '18px', height: '18px' },
-        text: { fontSize: '11px' }
+        text: { fontSize: '11px' },
+        avatar: {
+          size: '36px',
+          statusDot: '10px',
+          statusDotBorder: '2px'
+        },
+        dropdown: {
+          width: '300px',
+          headerHeight: '100px',
+          avatarSize: '72px',
+          avatarBottom: '-36px'
+        }
       },
       md: { // Tablets (431-767px)
         button: {
@@ -63,7 +85,18 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
           minWidth: '160px'
         },
         icon: { width: '18px', height: '18px' },
-        text: { fontSize: '13px' }
+        text: { fontSize: '13px' },
+        avatar: {
+          size: '38px',
+          statusDot: '10px',
+          statusDotBorder: '2px'
+        },
+        dropdown: {
+          width: '320px',
+          headerHeight: '110px',
+          avatarSize: '80px',
+          avatarBottom: '-40px'
+        }
       },
       lg: { // Desktop (≥768px)
         button: {
@@ -73,7 +106,18 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
           minWidth: '170px'
         },
         icon: { width: '20px', height: '20px' },
-        text: { fontSize: '14px' }
+        text: { fontSize: '14px' },
+        avatar: {
+          size: '40px',
+          statusDot: '12px',
+          statusDotBorder: '2px'
+        },
+        dropdown: {
+          width: '340px',
+          headerHeight: '120px',
+          avatarSize: '96px',
+          avatarBottom: '-48px'
+        }
       }
     };
     return styles[screenSize];
@@ -132,8 +176,20 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
     return (
       <div className="relative group z-50">
         {/* Mobile: Solo avatar */}
-        <button className="relative md:hidden">
-          <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-border hover:border-primary transition-colors">
+        <button 
+          className="relative md:hidden"
+          style={{
+            width: styles.avatar.size,
+            height: styles.avatar.size
+          }}
+        >
+          <div 
+            style={{
+              width: styles.avatar.size,
+              height: styles.avatar.size
+            }}
+            className="rounded-full overflow-hidden border-2 border-border hover:border-primary transition-colors"
+          >
             <img
               src={avatarUrl}
               alt={username}
@@ -141,13 +197,32 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
             />
           </div>
           {/* Indicador de estado online */}
-          <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-background" />
+          <div 
+            style={{
+              width: styles.avatar.statusDot,
+              height: styles.avatar.statusDot,
+              borderWidth: styles.avatar.statusDotBorder
+            }}
+            className="absolute bottom-0 right-0 bg-green-500 rounded-full border-background"
+          />
         </button>
 
         {/* Desktop: Versión completa horizontal */}
-        <button className="hidden md:flex items-center gap-2 bg-background/95 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 hover:bg-accent transition-all duration-300 shadow-lg">
+        <button 
+          style={{
+            padding: '6px 12px',
+            gap: '8px'
+          }}
+          className="hidden md:flex items-center bg-background/95 backdrop-blur-sm border border-border rounded-full hover:bg-accent transition-all duration-300 shadow-lg"
+        >
           <div className="relative">
-            <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-border">
+            <div 
+              style={{
+                width: styles.avatar.size,
+                height: styles.avatar.size
+              }}
+              className="rounded-full overflow-hidden border-2 border-border"
+            >
               <img
                 src={avatarUrl}
                 alt={username}
@@ -155,19 +230,46 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
               />
             </div>
             {/* Indicador de estado online */}
-            <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-background" />
+            <div 
+              style={{
+                width: styles.avatar.statusDot,
+                height: styles.avatar.statusDot,
+                borderWidth: styles.avatar.statusDotBorder
+              }}
+              className="absolute bottom-0 right-0 bg-green-500 rounded-full border-background"
+            />
           </div>
 
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold truncate">{username}</p>
-            <p className="text-[10px] text-muted-foreground truncate">Online</p>
+            <p 
+              style={{ fontSize: styles.text.fontSize }}
+              className="font-semibold truncate"
+            >
+              {username}
+            </p>
+            <p 
+              style={{ fontSize: `${parseFloat(styles.text.fontSize) * 0.85}px` }}
+              className="text-muted-foreground truncate"
+            >
+              Online
+            </p>
           </div>
         </button>
 
         {/* Dropdown Menu */}
-        <div className="absolute right-0 mt-2 w-[280px] md:w-[340px] bg-[#111214] rounded-2xl shadow-2xl overflow-hidden border border-[#1e1f22] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+        <div 
+          style={{
+            width: styles.dropdown.width
+          }}
+          className="absolute right-0 mt-2 bg-[#111214] rounded-2xl shadow-2xl overflow-hidden border border-[#1e1f22] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200"
+        >
           {/* Header con gradiente azul Discord */}
-          <div className="relative h-[100px] md:h-[120px] bg-gradient-to-br from-[#5865f2] to-[#7289da] overflow-hidden">
+          <div 
+            style={{
+              height: styles.dropdown.headerHeight
+            }}
+            className="relative bg-gradient-to-br from-[#5865f2] to-[#7289da] overflow-hidden"
+          >
             {/* Patrón de fondo opcional */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full blur-3xl"></div>
@@ -175,9 +277,22 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
             </div>
 
             {/* Avatar grande */}
-            <div className="absolute -bottom-10 md:-bottom-12 left-4">
+            <div 
+              style={{
+                bottom: styles.dropdown.avatarBottom,
+                left: screenSize === 'xs' ? '12px' : '16px'
+              }}
+              className="absolute"
+            >
               <div className="relative">
-                <div className="h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden border-[6px] border-[#111214] bg-[#111214]">
+                <div 
+                  style={{
+                    width: styles.dropdown.avatarSize,
+                    height: styles.dropdown.avatarSize,
+                    borderWidth: screenSize === 'xs' ? '4px' : '6px'
+                  }}
+                  className="rounded-full overflow-hidden border-[#111214] bg-[#111214]"
+                >
                   <img
                     src={avatarUrl}
                     alt={username}
@@ -185,19 +300,51 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
                   />
                 </div>
                 {/* Status badge */}
-                <div className="absolute bottom-1 right-1 w-5 h-5 md:w-6 md:h-6 bg-[#3ba55d] rounded-full border-[4px] border-[#111214] flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></div>
+                <div 
+                  style={{
+                    width: screenSize === 'xs' ? '18px' : screenSize === 'sm' ? '20px' : '24px',
+                    height: screenSize === 'xs' ? '18px' : screenSize === 'sm' ? '20px' : '24px',
+                    borderWidth: screenSize === 'xs' ? '3px' : '4px'
+                  }}
+                  className="absolute bottom-1 right-1 bg-[#3ba55d] rounded-full border-[#111214] flex items-center justify-center"
+                >
+                  <div 
+                    style={{
+                      width: screenSize === 'xs' ? '6px' : '8px',
+                      height: screenSize === 'xs' ? '6px' : '8px'
+                    }}
+                    className="bg-white rounded-full"
+                  />
                 </div>
               </div>
             </div>
           </div>
 
           {/* Contenido del perfil */}
-          <div className="pt-14 md:pt-16 px-4 pb-4">
+          <div 
+            style={{
+              paddingTop: screenSize === 'xs' ? '40px' : screenSize === 'sm' ? '44px' : screenSize === 'md' ? '48px' : '64px'
+            }}
+            className="px-3 md:px-4 pb-3 md:pb-4"
+          >
             {/* Nombre de usuario */}
-            <div className="mb-4">
-              <h2 className="text-lg md:text-xl font-bold text-white mb-0.5">{username}</h2>
-              <p className="text-xs md:text-sm text-[#b5bac1]">{user.user_metadata?.username || 'user1111'}</p>
+            <div className="mb-3 md:mb-4">
+              <h2 
+                style={{
+                  fontSize: screenSize === 'xs' ? '16px' : screenSize === 'sm' ? '18px' : '20px'
+                }}
+                className="font-bold text-white mb-0.5"
+              >
+                {username}
+              </h2>
+              <p 
+                style={{
+                  fontSize: screenSize === 'xs' ? '11px' : '13px'
+                }}
+                className="text-[#b5bac1]"
+              >
+                {user.user_metadata?.username || 'user1111'}
+              </p>
             </div>
 
             {/* Divider */}
