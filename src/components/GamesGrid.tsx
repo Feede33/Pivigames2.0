@@ -33,7 +33,7 @@ export default function GamesGrid({ games, loading, t, onGameClickAction, loaded
             className="group cursor-pointer"
             onClick={(e) => onGameClickAction(game, e)}
           >
-            <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg animate-fade-in animate-delay-100 animate-duration-300 hover:animate-scale hover:animate-duration-700 transition-transform">
+            <div className="relative rounded-lg overflow-hidden mb-3 shadow-lg animate-fade-in animate-delay-100 animate-duration-300 transition-transform duration-400 ease-in-out hover:scale-110">
               <div className="aspect-[2/3] bg-gradient-to-br from-purple-900 to-blue-900">
                 <img
                   src={proxySteamImage(game.image)}
