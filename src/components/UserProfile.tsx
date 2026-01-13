@@ -33,8 +33,8 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
     const styles = {
       xs: {
         button: {
-          padding: '4px 8px', gap: '4px', minHeight: '32px',
-          minWidth: '60px'
+          padding: '4px 8px', gap: '4px', minHeight: '28px',
+          minWidth: '40px'
         },
         icon: { width: '14px', height: '14px' },
         text: { fontSize: '9px' },
@@ -55,8 +55,8 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
         text: { fontSize: '13px' }
       },
       lg: {
-        button: { padding: '8px 16px', gap: '8px', minHeight: '48px',
-          minWidth: '120px' },
+        button: { padding: '8px 16px', gap: '8px', minHeight: '32px',
+          minWidth: '110px' },
         icon: { width: '20px', height: '20px' },
         text: { fontSize: '16px' }
       }
