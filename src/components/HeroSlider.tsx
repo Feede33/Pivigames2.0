@@ -283,7 +283,7 @@ export default function HeroSlider({ games, loading, t, onGameClickAction }: Pro
           padding: '0 8px',
           maxWidth: styles.indicators.maxWidth
         }}
-        className='animate-fade-in'
+        className='animate-fade-in animate-duration-500 animate-delay-300'
       >
         {games.map((_, index) => (
           <div
