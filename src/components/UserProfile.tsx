@@ -36,8 +36,8 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
           padding: '4px 8px', gap: '4px', minHeight: '28px',
           minWidth: '40px'
         },
-        icon: { width: '14px', height: '14px' },
-        text: { fontSize: '9px' },
+        icon: { width: '10px', height: '10px' },
+        text: { fontSize: '6px' },
 
       },
       sm: {
