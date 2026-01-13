@@ -18,10 +18,14 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
   useEffect(() => {
     const updateScreenSize = () => {
       const width = window.innerWidth;
-      if (width < 400) setScreenSize('xs' as ScreenSize);
-      else if (width < 640) setScreenSize('sm' as ScreenSize);
-      else if (width < 768) setScreenSize('md' as ScreenSize);
-      else setScreenSize('lg' as ScreenSize);
+      // iPhone SE (1st gen): 320px
+      // iPhone SE (2nd/3rd gen), iPhone 12/13 mini: 375px
+      // iPhone 12/13/14/15 Pro: 390px
+      // iPhone 12/13/14/15 Plus/Pro Max: 428px
+      if (width <= 375) setScreenSize('xs' as ScreenSize); // iPhone SE y mini
+      else if (width <= 430) setScreenSize('sm' as ScreenSize); // iPhone estándar y Plus
+      else if (width < 768) setScreenSize('md' as ScreenSize); // Tablets pequeñas
+      else setScreenSize('lg' as ScreenSize); // Desktop
     };
 
     updateScreenSize();
@@ -31,34 +35,45 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
 
   const getResponsiveStyles = () => {
     const styles = {
-      xs: {
+      xs: { // iPhone SE, mini (≤375px)
         button: {
-          padding: '4px 8px', gap: '4px', minHeight: '28px',
-          minWidth: '40px'
-        },
-        icon: { width: '10px', height: '10px' },
-        text: { fontSize: '6px' },
-
-      },
-      sm: {
-        button: {
-          padding: '6px 10px', gap: '6px', minHeight: '36px',
-          minWidth: '90px'
+          padding: '6px 10px',
+          gap: '6px',
+          minHeight: '32px',
+          minWidth: '140px'
         },
         icon: { width: '16px', height: '16px' },
+        text: { fontSize: '10px' }
+      },
+      sm: { // iPhone estándar, Plus (376-430px)
+        button: {
+          padding: '7px 12px',
+          gap: '7px',
+          minHeight: '36px',
+          minWidth: '150px'
+        },
+        icon: { width: '18px', height: '18px' },
         text: { fontSize: '11px' }
       },
-      md: {
-        button: { padding: '6px 12px', gap: '8px', minHeight: '40px',
-          minWidth: '100px' },
+      md: { // Tablets (431-767px)
+        button: {
+          padding: '8px 14px',
+          gap: '8px',
+          minHeight: '38px',
+          minWidth: '160px'
+        },
         icon: { width: '18px', height: '18px' },
         text: { fontSize: '13px' }
       },
-      lg: {
-        button: { padding: '8px 16px', gap: '8px', minHeight: '32px',
-          minWidth: '110px' },
+      lg: { // Desktop (≥768px)
+        button: {
+          padding: '8px 16px',
+          gap: '8px',
+          minHeight: '40px',
+          minWidth: '170px'
+        },
         icon: { width: '20px', height: '20px' },
-        text: { fontSize: '16px' }
+        text: { fontSize: '14px' }
       }
     };
     return styles[screenSize];
@@ -79,9 +94,12 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
             padding: styles.button.padding,
             gap: styles.button.gap,
             minHeight: styles.button.minHeight,
-            minWidth: styles.button.minWidth
+            minWidth: styles.button.minWidth,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}
-          className="group flex items-center bg-background/95 backdrop-blur-sm border border-border rounded-full hover:bg-accent transition-all duration-300 shadow-lg w-full justify-center"
+          className="group bg-background/95 backdrop-blur-sm border border-border rounded-full hover:bg-accent transition-all duration-300 shadow-lg"
         >
           <svg
             style={{
