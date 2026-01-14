@@ -130,8 +130,8 @@ export default function MainContent({
             </div>
           </div>
         ) : (
-          <div className="relative">
-            {/* Slider container with relative positioning for arrows */}
+          <div className="relative" style={{ padding: '0 2rem' }}>
+            {/* Slider container with overflow hidden */}
             <div className="relative overflow-hidden rounded-lg" style={{ width: '100%' }}>
               <div
                 className="flex gap-1.5 md:gap-2 transition-transform duration-300"
@@ -162,25 +162,25 @@ export default function MainContent({
                   </div>
                 ))}
               </div>
-
-              {/* Navigation arrows */}
-              {mediaItems.length > 3 && (
-                <>
-                  <button
-                    onClick={onPrevScreenshot}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-6 h-6 md:w-8 md:h-8 flex items-center justify-center transition-colors"
-                  >
-                    <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
-                  </button>
-                  <button
-                    onClick={onNextScreenshot}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-6 h-6 md:w-8 md:h-8 flex items-center justify-center transition-colors"
-                  >
-                    <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
-                  </button>
-                </>
-              )}
             </div>
+
+            {/* Navigation arrows - Outside overflow container */}
+            {mediaItems.length > 3 && (
+              <>
+                <button
+                  onClick={onPrevScreenshot}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center transition-colors z-20"
+                >
+                  <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+                </button>
+                <button
+                  onClick={onNextScreenshot}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center transition-colors z-20"
+                >
+                  <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+                </button>
+              </>
+            )}
 
             {/* Dots indicator */}
             <div style={{ ...styles.slider.dotGap, ...styles.slider.dotMargin }} className="flex justify-center">
