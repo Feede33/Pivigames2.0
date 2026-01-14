@@ -265,7 +265,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
       >
         <ModalHeader onClose={handleClose} styles={styles} />
 
-        <div className="max-h-[85vh] overflow-y-auto overflow-x-hidden">
+        <div className="max-h-[85vh] overflow-y-auto scrollbar-thin">
           <HeroSection
             game={game}
             loadingSteam={loadingSteam}
@@ -297,7 +297,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
               t={t}
             />
 
-            <div className="main-content-grid">
+            <div className="main-content-grid" style={{ display: 'grid' }}>
               <MainContent
                 loadingSteam={loadingSteam}
                 steamData={steamData}
