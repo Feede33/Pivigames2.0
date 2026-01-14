@@ -225,7 +225,7 @@ export default function Sidebar({
         <h4 style={styles.sidebar.info} className="text-gray-400 mb-1.5 md:mb-2">
           {t.modal.share}
         </h4>
-        <div style={styles.sidebar.shareContainer || styles.content.gap} className="flex flex-wrap">
+        <div style={styles.sidebar.shareContainer} className="flex flex-wrap">
           <button style={styles.sidebar.button} className="bg-[#333] hover:bg-[#444] text-white rounded transition-colors">
             {t.modal.discord}
           </button>
@@ -240,14 +240,14 @@ export default function Sidebar({
 
       {/* Buy on Steam Widget */}
       {loadingSteam ? (
-        <div style={styles.widget?.container || { marginTop: '1rem' }}>
-          <div style={styles.widget?.skeleton} className="bg-gray-700 animate-pulse rounded-lg" />
+        <div style={styles.widget.container}>
+          <div style={styles.widget.skeleton} className="bg-gray-700 animate-pulse rounded-lg" />
         </div>
       ) : steamData ? (
-        <div style={styles.widget?.container || { marginTop: '1rem' }}>
+        <div style={styles.widget.container}>
           <iframe
             src={`https://store.steampowered.com/widget/${steamData.steam_appid}/?l=${getSteamLanguage(locale)}`}
-            style={styles.widget?.iframe}
+            style={styles.widget.iframe}
             width="646"
             height="190"
             frameBorder="0"

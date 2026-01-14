@@ -76,7 +76,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
           flexDirection: 'column' as const,
           gap: '0.75rem'
         } as React.CSSProperties,
-        priceCard: { borderRadius: '0.75rem', padding: '0.75rem' },
+        priceCard: { borderRadius: '0.75rem', padding: '0.75rem', minWidth: "100px" },
         priceTitle: { fontSize: '0.5625rem' },
         priceAmount: { fontSize: '1.25rem', lineHeight: '1.75rem' },
         priceDiscount: { fontSize: '0.625rem' },
