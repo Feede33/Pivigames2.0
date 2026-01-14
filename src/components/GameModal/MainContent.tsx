@@ -169,15 +169,15 @@ export default function MainContent({
               <>
                 <button
                   onClick={onPrevScreenshot}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center transition-colors z-20"
+                  className="absolute left-1 sm:left-2 md:left-3 lg:left-4 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center transition-colors z-20"
                 >
-                  <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                 </button>
                 <button
                   onClick={onNextScreenshot}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center transition-colors z-20"
+                  className="absolute right-1 sm:right-2 md:right-3 lg:right-4 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center transition-colors z-20"
                 >
-                  <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                 </button>
               </>
             )}

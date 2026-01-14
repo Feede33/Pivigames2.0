@@ -102,24 +102,26 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
       widget: {
         container: {
           marginTop: '0.75rem',
-          paddingLeft: '0.25rem',
-          paddingRight: '0.25rem',
+          paddingLeft: '0',
+          paddingRight: '0',
           display: 'flex',
           justifyContent: 'center',
-          overflow: 'visible',
+          overflow: 'hidden',
           width: '100%'
         },
         iframe: {
-          width: '340px',
-          height: '161px',
-          transform: 'scale(0.85)',
+          width: '646px',
+          height: '190px',
+          transform: 'scale(0.52)',
           transformOrigin: 'center center',
           border: 'none'
         },
         skeleton: {
-          height: '140px',
-          maxWidth: '340px',
-          margin: '0 auto'
+          height: '100px',
+          width: '100%',
+          maxWidth: '336px',
+          margin: '0 auto',
+          borderRadius: '0.5rem'
         },
       },
       viewer: {
@@ -240,24 +242,26 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
       widget: {
         container: {
           marginTop: '1rem',
-          paddingLeft: '0.75rem',
-          paddingRight: '0.75rem',
+          paddingLeft: '0',
+          paddingRight: '0',
           display: 'flex',
           justifyContent: 'center',
-          overflow: 'visible',
+          overflow: 'hidden',
           width: '100%'
         },
         iframe: {
-          width: '500px',
+          width: '646px',
           height: '190px',
-          transform: 'scale(0.9)',
+          transform: 'scale(0.72)',
           transformOrigin: 'center center',
           border: 'none'
         },
         skeleton: {
-          height: '160px',
-          maxWidth: '500px',
-          margin: '0 auto'
+          height: '137px',
+          width: '100%',
+          maxWidth: '465px',
+          margin: '0 auto',
+          borderRadius: '0.75rem'
         },
       },
     },
@@ -273,17 +277,20 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         titleMargin: { marginBottom: '0.75rem' },
         buttonContainer: { bottom: '1.25rem', left: '1.5rem', right: '1.5rem' },
         button: {
-          padding: '0.2rem 1.75rem',
-          fontSize: '0.9375rem'
+          padding: '0.625rem 1.5rem',
+          minHeight: '38px',
+          minWidth: '110px',
+          fontSize: '0.9375rem',
+          justifyContent: 'center'
         },
         buttonIcon: { width: '1.125rem', height: '1.125rem' },
-        buttonGap: { gap: '1.75rem' },
+        buttonGap: { gap: '0.75rem' },
         steamButton: {
-          padding: '0.625rem 1.75rem',
-          minHeight: '90px',
-          minWidth: '120px',
-          fontSize: '1.875rem',
-          justifyContent: 'flex-end'
+          padding: '0.625rem 1.5rem',
+          minHeight: '38px',
+          minWidth: '140px',
+          fontSize: '0.9375rem',
+          justifyContent: 'center'
         },
       },
       content: {
@@ -348,23 +355,27 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
       },
       widget: {
         container: {
-          marginTop: '1.75rem',
-          paddingLeft: '1.5rem',
-          paddingRight: '1.5rem',
+          marginTop: '1.5rem',
+          paddingLeft: '0',
+          paddingRight: '0',
           display: 'flex',
           justifyContent: 'center',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          width: '100%'
         },
         iframe: {
-          width: '100%',
-          maxWidth: '646px',
-          transform: 'scale(1)',
-          transformOrigin: 'center center'
+          width: '646px',
+          height: '190px',
+          transform: 'scale(0.88)',
+          transformOrigin: 'center center',
+          border: 'none'
         },
         skeleton: {
-          height: '190px',
-          maxWidth: '646px',
-          margin: '0 auto'
+          height: '167px',
+          width: '100%',
+          maxWidth: '568px',
+          margin: '0 auto',
+          borderRadius: '1rem'
         },
       },
       viewer: {
@@ -468,23 +479,27 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
       },
       widget: {
         container: {
-          marginTop: '2rem',
-          paddingLeft: '1.5rem',
-          paddingRight: '1.5rem',
+          marginTop: '1.5rem',
+          paddingLeft: '0',
+          paddingRight: '0',
           display: 'flex',
           justifyContent: 'center',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          width: '100%'
         },
         iframe: {
-          width: '100%',
-          maxWidth: '646px',
+          width: '646px',
+          height: '190px',
           transform: 'scale(1)',
-          transformOrigin: 'center center'
+          transformOrigin: 'center center',
+          border: 'none'
         },
         skeleton: {
           height: '190px',
+          width: '100%',
           maxWidth: '646px',
-          margin: '0 auto'
+          margin: '0 auto',
+          borderRadius: '1rem'
         },
       },
       viewer: {
