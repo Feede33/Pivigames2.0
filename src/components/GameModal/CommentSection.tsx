@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ThumbsUp, ThumbsDown, MessageSquare, MoreVertical, Ban } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, MessageSquare, MoreVertical, Ban, Flag } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +11,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { supabase } from '@/lib/supabase';
 import { getComments, createComment, toggleLike, deleteComment, type Comment } from '@/lib/comments';
+import { createCommentReport, type ReportReason } from '@/lib/comment-reports';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
+import ReportCommentDialog from './ReportCommentDialog';
 
 type Props = {
   gameId: number;
@@ -26,6 +28,9 @@ export default function CommentSection({ gameId }: Props) {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [newCommentIds, setNewCommentIds] = useState<Set<string>>(new Set());
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [reportingCommentId, setReportingCommentId] = useState<string | null>(null);
+  const [reportingCommentAuthor, setReportingCommentAuthor] = useState<string>('');
 
   // Cargar usuario y comentarios
   useEffect(() => {
@@ -295,6 +300,25 @@ export default function CommentSection({ gameId }: Props) {
     }
   };
 
+  const handleReport = (commentId: string, commentAuthor: string) => {
+    setReportingCommentId(commentId);
+    setReportingCommentAuthor(commentAuthor);
+    setReportDialogOpen(true);
+  };
+
+  const handleSubmitReport = async (reason: ReportReason, details: string) => {
+    if (!reportingCommentId) return;
+
+    try {
+      await createCommentReport(reportingCommentId, reason, details);
+      alert('Reporte enviado correctamente. Nuestro equipo lo revisará pronto.');
+    } catch (error) {
+      console.error('Error submitting report:', error);
+      alert(`Error al enviar el reporte: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+      throw error; // Re-throw para que el diálogo maneje el estado de loading
+    }
+  };
+
   const getInitials = (name?: string, email?: string) => {
     if (name) {
       return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
@@ -392,6 +416,7 @@ export default function CommentSection({ gameId }: Props) {
               onAddReply={handleAddReply}
               onLike={handleLike}
               onDelete={handleDelete}
+              onReport={handleReport}
               getInitials={getInitials}
               getDisplayName={getDisplayName}
               getTimeAgo={getTimeAgo}
@@ -399,6 +424,17 @@ export default function CommentSection({ gameId }: Props) {
           ))}
         </div>
       )}
+
+      <ReportCommentDialog
+        isOpen={reportDialogOpen}
+        onClose={() => {
+          setReportDialogOpen(false);
+          setReportingCommentId(null);
+          setReportingCommentAuthor('');
+        }}
+        onSubmit={handleSubmitReport}
+        commentAuthor={reportingCommentAuthor}
+      />
     </div>
   );
 }
@@ -415,6 +451,7 @@ const CommentItem = React.memo(({
   onAddReply,
   onLike,
   onDelete,
+  onReport,
   getInitials,
   getDisplayName,
   getTimeAgo,
@@ -431,6 +468,7 @@ const CommentItem = React.memo(({
   onAddReply: (commentId: string) => void;
   onLike: (commentId: string, isReply?: boolean, parentId?: string) => void;
   onDelete: (commentId: string, isReply?: boolean, parentId?: string) => void;
+  onReport: (commentId: string, commentAuthor: string) => void;
   getInitials: (name?: string, email?: string) => string;
   getDisplayName: (comment: Comment) => string;
   getTimeAgo: (date: string) => string;
@@ -487,7 +525,7 @@ const CommentItem = React.memo(({
             </Button>
           )}
           
-          {isOwner && (
+          {(isOwner || user) && (
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button 
@@ -504,12 +542,23 @@ const CommentItem = React.memo(({
                 className="bg-gray-800 border-gray-700"
                 style={{ zIndex: 99999 }}
               >
-                <DropdownMenuItem 
-                  className="text-red-600 hover:text-red-500 hover:bg-gray-700 cursor-pointer"
-                  onClick={() => onDelete(comment.id, isReply, parentId || undefined)}
-                >
-                  Eliminar
-                </DropdownMenuItem>
+                {isOwner ? (
+                  <DropdownMenuItem 
+                    className="text-red-600 hover:text-red-500 hover:bg-gray-700 cursor-pointer"
+                    onClick={() => onDelete(comment.id, isReply, parentId || undefined)}
+                  >
+                    <Ban className="w-4 h-4 mr-2" />
+                    Eliminar
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem 
+                    className="text-yellow-600 hover:text-yellow-500 hover:bg-gray-700 cursor-pointer"
+                    onClick={() => onReport(comment.id, displayName)}
+                  >
+                    <Flag className="w-4 h-4 mr-2" />
+                    Reportar
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           )}
@@ -571,6 +620,7 @@ const CommentItem = React.memo(({
                 onAddReply={onAddReply}
                 onLike={onLike}
                 onDelete={onDelete}
+                onReport={onReport}
                 getInitials={getInitials}
                 getDisplayName={getDisplayName}
                 getTimeAgo={getTimeAgo}
