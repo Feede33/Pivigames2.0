@@ -46,7 +46,7 @@ export default function MainContent({
   onMediaClick,
 }: Props) {
   return (
-    <div>
+    <div style={{ width: '100%', minWidth: 0 }}>
       {loadingSteam ? (
         <div style={styles.content.spacingLarge} className="space-y-2">
           <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-full" />
@@ -65,13 +65,13 @@ export default function MainContent({
           {t.modal.gameFeatures}
         </h3>
         {loadingSteam ? (
-          <div style={styles.grid.features} className="grid">
+          <div style={styles.grid.features}>
             {[...Array(6)].map((_, i) => (
               <div key={i} className="h-4 md:h-5 bg-gray-700 animate-pulse rounded" />
             ))}
           </div>
         ) : (
-          <div style={styles.grid.features} className="grid">
+          <div style={styles.grid.features}>
             {steamData?.categories?.length ? (
               steamData.categories.slice(0, 6).map((category, index) => (
                 <div key={index} className="flex items-center gap-1.5 md:gap-2 text-gray-300 text-xs md:text-sm">
@@ -132,10 +132,13 @@ export default function MainContent({
         ) : (
           <div className="relative">
             {/* Slider container with relative positioning for arrows */}
-            <div className="relative overflow-hidden rounded-lg">
+            <div className="relative overflow-hidden rounded-lg" style={{ width: '100%' }}>
               <div
                 className="flex gap-1.5 md:gap-2 transition-transform duration-300"
-                style={{ transform: `translateX(-${screenshotIndex * 33.33}%)` }}
+                style={{ 
+                  transform: `translateX(-${screenshotIndex * 33.33}%)`,
+                  width: 'max-content'
+                }}
               >
                 {mediaItems.map((item, index) => (
                   <div

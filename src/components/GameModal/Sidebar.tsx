@@ -59,7 +59,7 @@ export default function Sidebar({
   t,
 }: Props) {
   return (
-    <div style={styles.sidebar.spacing}>
+    <div style={{ ...styles.sidebar.spacing, width: '100%', minWidth: 0 }}>
       {/* Price Card */}
       <PriceCard loadingSteam={loadingSteam} steamData={steamData} userLocation={userLocation} styles={styles} t={t} />
 
