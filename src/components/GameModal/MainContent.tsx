@@ -223,7 +223,7 @@ export default function MainContent({
             </div>
           </div>
         ) : (
-          <div style={styles.grid.requirements} className="grid">
+          <div style={styles.grid.requirements}>
             {/* MÍNIMO */}
             <div>
               <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.minimum}</h4>
