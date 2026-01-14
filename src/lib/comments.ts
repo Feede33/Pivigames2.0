@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase';
 
 export type Comment = {
   id: string;
@@ -23,8 +23,6 @@ export type Comment = {
 };
 
 export async function getComments(gameId: number) {
-  const supabase = createClient();
-  
   // Obtener usuario actual para verificar likes
   const { data: { user } } = await supabase.auth.getUser();
   
@@ -108,8 +106,6 @@ export async function getComments(gameId: number) {
 }
 
 export async function createComment(gameId: number, content: string, parentId?: string) {
-  const supabase = createClient();
-  
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) {
@@ -143,8 +139,6 @@ export async function createComment(gameId: number, content: string, parentId?: 
 }
 
 export async function toggleLike(commentId: string) {
-  const supabase = createClient();
-  
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) {
@@ -221,8 +215,6 @@ export async function toggleLike(commentId: string) {
 }
 
 export async function deleteComment(commentId: string) {
-  const supabase = createClient();
-  
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) {
