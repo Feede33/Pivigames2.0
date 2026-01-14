@@ -351,7 +351,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
             {/* Comment Section - Full width row with optional sidebar on lg */}
             <div className="comment-section-grid" style={{ display: 'grid' }}>
-              <CommentSection />
+              <CommentSection gameId={game.id} />
               
               {/* Sidebar placeholder for lg screens only */}
               {screenSize === 'lg' && (
