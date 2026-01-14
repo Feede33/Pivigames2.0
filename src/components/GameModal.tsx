@@ -28,7 +28,7 @@ const useScreenSize = (): ScreenSize => {
       const width = window.innerWidth;
       if (width < 475) setScreenSize('xs');
       else if (width < 640) setScreenSize('sm');
-      else if (width < 1024) setScreenSize('md');
+      else if (width < 1280) setScreenSize('md'); // Aumentado de 1024 a 1280
       else setScreenSize('lg');
     };
 
@@ -167,68 +167,68 @@ const getResponsiveStyles = (screenSize: ScreenSize) => {
     },
     md: {
       modal: {
-        container: 'w-[90vw] mx-0 min-h-[75vh]',
+        container: 'w-[90vw] mx-0 min-h-[80vh]',
         closeButton: 'w-10 h-10',
-        closeIcon: 'w-5 h-5',
+        closeIcon: 'w-6 h-6',
       },
       hero: {
-        height: 'h-[320px]',
+        height: 'h-[350px]',
         title: 'text-3xl',
         titleMargin: 'mb-3',
         buttonContainer: 'bottom-5 left-6 right-6',
-        button: 'px-6 py-2.5 text-sm',
+        button: 'px-7 py-2.5 text-[15px]',
         buttonIcon: 'w-[18px] h-[18px]',
         buttonGap: 'gap-2',
       },
       content: {
-        padding: 'p-5',
-        gap: 'gap-2.5',
+        padding: 'p-6',
+        gap: 'gap-3',
         spacing: 'mb-4',
-        spacingLarge: 'mb-5',
+        spacingLarge: 'mb-6',
       },
       text: {
-        xs: 'text-xs',
-        sm: 'text-sm',
-        base: 'text-base',
+        xs: 'text-sm',
+        sm: 'text-base',
+        base: 'text-lg',
         heading: 'text-base',
       },
       grid: {
-        features: 'grid-cols-2 gap-2.5',
-        requirements: 'grid-cols-2 gap-6',
-        main: 'grid-cols-1 gap-6',
+        features: 'grid-cols-2 gap-3',
+        requirements: 'grid-cols-2 gap-8',
+        main: 'grid-cols-[2fr_1fr] gap-7',
       },
       sidebar: {
-        spacing: 'space-y-5',
-        priceCard: 'rounded-2xl p-6',
+        spacing: 'space-y-6',
+        priceCard: 'rounded-3xl p-7',
         priceTitle: 'text-xs',
-        priceAmount: 'text-2xl',
+        priceAmount: 'text-3xl',
         priceDiscount: 'text-sm',
         info: 'text-sm',
-        tag: 'px-1.5 py-0.5 text-xs',
-        button: 'px-2.5 py-1 text-sm',
+        tag: 'px-2 py-1 text-xs',
+        button: 'px-3 py-1.5 text-sm',
       },
       viewer: {
-        padding: 'p-3',
+        padding: 'p-4',
         closeButton: 'top-4 right-4 w-10 h-10',
         closeIcon: 'w-6 h-6',
         counter: 'top-4 left-4 text-sm',
         image: 'max-w-[90vw] max-h-[85vh]',
-        arrow: 'w-11 h-11',
-        arrowIcon: 'w-7 h-7',
-        arrowLeft: 'left-3',
-        arrowRight: 'right-3',
+        arrow: 'w-12 h-12',
+        arrowIcon: 'w-8 h-8',
+        arrowLeft: 'left-4',
+        arrowRight: 'right-4',
         thumbnails: 'bottom-4 gap-2',
-        thumbnail: 'w-14 h-9',
+        thumbnail: 'w-16 h-10',
       },
       widget: {
-        container: 'mt-6 px-5',
-        skeleton: 'h-[180px]',
-        scale: 'scale-95',
+        container: 'mt-7 px-6',
+        skeleton: 'h-[190px]',
+        scale: 'scale-100',
       },
     },
     lg: {
       modal: {
-        container: 'w-[1100px] max-w-[1100px] mx-0 min-h-[850px]',
+        container: 'w-[1100px] max-w-[1100px] mx-0 min-h-[600px]',
         closeButton: 'w-10 h-10',
         closeIcon: 'w-6 h-6',
       },
