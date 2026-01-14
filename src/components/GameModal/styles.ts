@@ -380,7 +380,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
     lg: {
       modal: {
         container: { width: '1100px', maxWidth: '1100px', margin: '0', minHeight: '600px' },
-        closeButton: { width: '2.5rem', height: '2.5rem' },
+        closeButton: { width: '3rem', height: '3rem', marginRight: "20px", marginTop: "10px"  },
         closeIcon: { width: '1.5rem', height: '1.5rem' },
       },
       hero: {

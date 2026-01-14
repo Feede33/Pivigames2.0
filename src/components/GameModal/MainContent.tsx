@@ -228,16 +228,10 @@ export default function MainContent({
             <div>
               <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.minimum}</h4>
               {steamData?.pc_requirements?.minimum ? (
-                <div className="space-y-2 text-sm text-gray-300">
-                  {steamData.pc_requirements.minimum
-                    .split('\n')
-                    .filter(Boolean)
-                    .map((line, index) => (
-                      <p key={index} className="leading-relaxed">
-                        {line}
-                      </p>
-                    ))}
-                </div>
+                <div 
+                  className="text-sm text-gray-300 [&_ul]:list-none [&_ul]:space-y-1 [&_strong]:text-white [&_strong]:font-semibold [&_br]:block"
+                  dangerouslySetInnerHTML={{ __html: steamData.pc_requirements.minimum }}
+                />
               ) : (
                 <div className="space-y-2 text-sm text-gray-300">
                   <p className="text-gray-500">{t.modal.noMinimum}</p>
@@ -249,16 +243,10 @@ export default function MainContent({
             <div>
               <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.recommended}</h4>
               {steamData?.pc_requirements?.recommended ? (
-                <div className="space-y-2 text-sm text-gray-300">
-                  {steamData.pc_requirements.recommended
-                    .split('\n')
-                    .filter(Boolean)
-                    .map((line, index) => (
-                      <p key={index} className="leading-relaxed">
-                        {line}
-                      </p>
-                    ))}
-                </div>
+                <div 
+                  className="text-sm text-gray-300 [&_ul]:list-none [&_ul]:space-y-1 [&_strong]:text-white [&_strong]:font-semibold [&_br]:block"
+                  dangerouslySetInnerHTML={{ __html: steamData.pc_requirements.recommended }}
+                />
               ) : (
                 <div className="space-y-2 text-sm text-gray-300">
                   <p className="text-gray-500">{t.modal.noRecommended}</p>
