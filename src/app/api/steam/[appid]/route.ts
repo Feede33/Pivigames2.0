@@ -254,8 +254,8 @@ export async function GET(
       metacritic,
       required_age: requiredAge,
       pc_requirements: {
-        minimum: pcRequirements.minimum?.replace(/<[^>]*>/g, '\n').trim() || null,
-        recommended: pcRequirements.recommended?.replace(/<[^>]*>/g, '\n').trim() || null,
+        minimum: pcRequirements.minimum || null,
+        recommended: pcRequirements.recommended || null,
       },
       price: gameData.is_free ? 'Free' : gameData.price_overview?.final_formatted || null,
       price_info: priceInfo,

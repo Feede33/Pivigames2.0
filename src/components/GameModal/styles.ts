@@ -269,7 +269,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         titleMargin: { marginBottom: '0.75rem' },
         buttonContainer: { bottom: '1.25rem', left: '1.5rem', right: '1.5rem' },
         button: {
-          padding: '0.625rem 1.75rem',
+          padding: '0.2rem 1.75rem',
           fontSize: '0.9375rem'
         },
         buttonIcon: { width: '1.125rem', height: '1.125rem' },
