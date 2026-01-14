@@ -10,6 +10,7 @@ import SteamOffers from '@/components/SteamOffers';
 import GamesGrid from '@/components/GamesGrid';
 import LanguageSelector from '@/components/LanguageSelector';
 import { SearchSystem } from '@/components/ui/search-system';
+import { FuturisticLoginButtonCompact, FuturisticLoginButtonMobile } from '@/components/FuturisticLoginButton';
 import {
   Pagination,
   PaginationContent,
@@ -427,21 +428,8 @@ export default function Home() {
               locale={locale}
             />
             <LanguageSelector />
+            <FuturisticLoginButtonCompact />
             <UserProfile navOnly />
-            
-            {/* Botón de Login Futurista (solo si no hay usuario) */}
-            {!user && (
-              <a
-                href="/login"
-                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#00ff88] to-[#00d4ff] text-[#0a0e27] font-bold text-sm rounded-full hover:shadow-[0_0_20px_rgba(0,255,136,0.6)] transition-all duration-300 animate-pulse-slow"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                </svg>
-                Login
-              </a>
-            )}
-            
             
             {/* Mobile Menu Button */}
             <button
@@ -486,6 +474,11 @@ export default function Home() {
               >
                 {t.nav.offers}
               </a>
+              
+              {/* Botón de Login en móvil */}
+              <div className="pt-2 border-t border-border/50">
+                <FuturisticLoginButtonMobile onClickAction={() => setMobileMenuOpen(false)} />
+              </div>
             </div>
           </div>
         )}

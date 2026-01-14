@@ -51,8 +51,8 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, locale =
         button: { 
           padding: '6px 10px', 
           gap: '6px',
-          minWidth: '40px',
-          minHeight: '32px'
+          minWidth: '36px',
+          minHeight: '36px'
         },
         icon: { width: '16px', height: '16px' },
         text: { fontSize: '11px' }
@@ -61,7 +61,7 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, locale =
         button: { 
           padding: '7px 12px', 
           gap: '7px',
-          minWidth: '44px',
+          minWidth: '36px',
           minHeight: '36px'
         },
         icon: { width: '18px', height: '18px' },
@@ -69,22 +69,22 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, locale =
       },
       md: { // Tablets (431-767px)
         button: { 
-          padding: '8px 14px', 
-          gap: '8px',
-          minWidth: '48px',
-          minHeight: '38px'
+          padding: '6px', 
+          gap: '0px',
+          minWidth: '36px',
+          minHeight: '36px'
         },
         icon: { width: '18px', height: '18px' },
         text: { fontSize: '13px' }
       },
       lg: { // Desktop (≥768px)
         button: { 
-          padding: '8px 16px', 
-          gap: '8px',
-          minWidth: '110px',
-          minHeight: '40px'
+          padding: '6px', 
+          gap: '0px',
+          minWidth: '36px',
+          minHeight: '36px'
         },
-        icon: { width: '20px', height: '20px' },
+        icon: { width: '18px', height: '18px' },
         text: { fontSize: '14px' }
       }
     };
@@ -236,21 +236,10 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, locale =
           setIsOpen(!isOpen);
           setTimeout(() => inputRef.current?.focus(), 100);
         }}
-        style={{
-          padding: styles.button.padding,
-          gap: styles.button.gap,
-          minWidth: styles.button.minWidth,
-          minHeight: styles.button.minHeight,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-        className="rounded-full bg-secondary/50 hover:bg-secondary transition-colors"
+        className="h-9 px-3 rounded-lg flex items-center justify-center gap-2 bg-muted/50 hover:bg-muted transition-colors"
       >
-        <Search style={{ width: styles.icon.width, height: styles.icon.height }} />
-        {screenSize === 'lg' && (
-          <span style={{ fontSize: styles.text.fontSize }}>{t.search.button}</span>
-        )}
+        <Search className="w-5 h-5" />
+        <span className="hidden md:inline text-sm">Buscar...</span>
       </button>
 
       {/* Search Dropdown */}
