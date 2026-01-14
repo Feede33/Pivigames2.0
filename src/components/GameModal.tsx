@@ -300,7 +300,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
             />
 
             <div className="main-content-grid" style={{ display: 'grid' }}>
-              <div style={{ maxHeight: '900px', overflowY: 'auto' }} className="scrollbar-thin">
+              <div style={{ maxHeight: '1200px', overflowY: 'auto' }} className="scrollbar-thin">
                 <MainContent
                   loadingSteam={loadingSteam}
                   steamData={steamData}

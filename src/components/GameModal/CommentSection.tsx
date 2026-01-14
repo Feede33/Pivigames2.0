@@ -67,15 +67,21 @@ export default function CommentSection({ gameId }: Props) {
   };
 
   const handleAddComment = async () => {
-    if (!newComment.trim() || !user) return;
+    if (!newComment.trim() || !user) {
+      console.log('Cannot add comment:', { hasContent: !!newComment.trim(), hasUser: !!user });
+      return;
+    }
 
+    console.log('Adding comment:', { gameId, content: newComment, userId: user.id });
     setSubmitting(true);
     try {
-      await createComment(gameId, newComment);
+      const result = await createComment(gameId, newComment);
+      console.log('Comment created successfully:', result);
       setNewComment('');
       await loadComments();
     } catch (error) {
       console.error('Error adding comment:', error);
+      alert(`Error al publicar comentario: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     } finally {
       setSubmitting(false);
     }

@@ -106,20 +106,28 @@ export async function getComments(gameId: number) {
 }
 
 export async function createComment(gameId: number, content: string, parentId?: string) {
+  console.log('createComment called with:', { gameId, content, parentId });
+  
   const { data: { user } } = await supabase.auth.getUser();
+  
+  console.log('Current user:', user?.id);
   
   if (!user) {
     throw new Error('User must be authenticated');
   }
 
+  const insertData = {
+    user_id: user.id,
+    game_id: gameId,
+    content,
+    parent_id: parentId || null,
+  };
+  
+  console.log('Inserting comment:', insertData);
+
   const { data, error } = await supabase
     .from('comments')
-    .insert({
-      user_id: user.id,
-      game_id: gameId,
-      content,
-      parent_id: parentId || null,
-    })
+    .insert(insertData)
     .select(`
       *,
       user:user_id (
@@ -135,6 +143,7 @@ export async function createComment(gameId: number, content: string, parentId?: 
     throw error;
   }
 
+  console.log('Comment created:', data);
   return data;
 }
 
