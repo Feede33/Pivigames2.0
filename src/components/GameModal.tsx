@@ -300,19 +300,21 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
             />
 
             <div className="main-content-grid" style={{ display: 'grid' }}>
-              <MainContent
-                loadingSteam={loadingSteam}
-                steamData={steamData}
-                gameDescription={game.description}
-                mediaItems={mediaItems}
-                screenshotIndex={screenshotIndex}
-                styles={styles}
-                t={t}
-                onPrevScreenshot={prevScreenshot}
-                onNextScreenshot={nextScreenshot}
-                onSetScreenshotIndex={setScreenshotIndex}
-                onMediaClick={handleMediaClick}
-              />
+              <div style={{ maxHeight: '800px', overflowY: 'auto' }} className="scrollbar-thin">
+                <MainContent
+                  loadingSteam={loadingSteam}
+                  steamData={steamData}
+                  gameDescription={game.description}
+                  mediaItems={mediaItems}
+                  screenshotIndex={screenshotIndex}
+                  styles={styles}
+                  t={t}
+                  onPrevScreenshot={prevScreenshot}
+                  onNextScreenshot={nextScreenshot}
+                  onSetScreenshotIndex={setScreenshotIndex}
+                  onMediaClick={handleMediaClick}
+                />
+              </div>
 
               <div style={{ maxHeight: '800px', overflowY: 'auto' }} className="scrollbar-thin">
                 <Sidebar
@@ -347,8 +349,25 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
               ) : null}
             </div>
 
-            {/* Comment Section - Full width row */}
-            <CommentSection />
+            {/* Comment Section - Full width row with optional sidebar on lg */}
+            <div className="comment-section-grid" style={{ display: 'grid' }}>
+              <CommentSection />
+              
+              {/* Sidebar placeholder for lg screens only */}
+              {screenSize === 'lg' && (
+                <div className="hidden lg:block">
+                  <div className="bg-gray-800 rounded-lg p-4 h-[600px] animate-pulse">
+                    {/* Skeleton para futuras promociones/thumbnails */}
+                    <div className="space-y-4">
+                      <div className="h-32 bg-gray-700 rounded"></div>
+                      <div className="h-32 bg-gray-700 rounded"></div>
+                      <div className="h-32 bg-gray-700 rounded"></div>
+                      <div className="h-32 bg-gray-700 rounded"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
