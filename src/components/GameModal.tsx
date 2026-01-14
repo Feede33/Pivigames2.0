@@ -869,7 +869,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                       <span className="text-white">
                         {steamData?.developers?.length
                           ? steamData.developers.join(', ')
-                          : 'Pivigames Studio'}
+                          : 'Error'}
                       </span>
                     </p>
                     <p className="text-gray-500 text-[10px] xs:text-xs sm:text-xs md:text-sm">
@@ -877,7 +877,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                       <span className="text-white">
                         {steamData?.publishers?.length
                           ? steamData.publishers.join(', ')
-                          : 'Pivigames Inc.'}
+                          : 'Error'}
                       </span>
                     </p>
                     <p className="text-gray-500 text-[10px] xs:text-xs sm:text-xs md:text-sm">
