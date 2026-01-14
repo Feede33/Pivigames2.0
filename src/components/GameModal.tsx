@@ -15,6 +15,7 @@ import {
   Sidebar,
   ImageViewer,
 } from './GameModal/index';
+import CommentSection from './GameModal/CommentSection';
 
 type SteamData = {
   screenshots: Array<{ id: number; thumbnail: string; full: string }>;
@@ -313,17 +314,19 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                 onMediaClick={handleMediaClick}
               />
 
-              <Sidebar
-                loadingSteam={loadingSteam}
-                steamData={steamData}
-                userLocation={userLocation}
-                gameGenre={game.genre}
-                gameRating={game.rating}
-                gameYear={game.release_year || undefined}
-                locale={locale}
-                styles={styles}
-                t={t}
-              />
+              <div style={{ maxHeight: '800px', overflowY: 'auto' }} className="scrollbar-thin">
+                <Sidebar
+                  loadingSteam={loadingSteam}
+                  steamData={steamData}
+                  userLocation={userLocation}
+                  gameGenre={game.genre}
+                  gameRating={game.rating}
+                  gameYear={game.release_year || undefined}
+                  locale={locale}
+                  styles={styles}
+                  t={t}
+                />
+              </div>
             </div>
 
             {/* Steam Widget - Full width row for md and lg */}
@@ -343,6 +346,9 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                 </div>
               ) : null}
             </div>
+
+            {/* Comment Section - Full width row */}
+            <CommentSection />
           </div>
         </div>
       </div>
