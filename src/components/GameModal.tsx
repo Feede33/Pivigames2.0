@@ -6,6 +6,7 @@ import type { GameWithSteamData } from '@/lib/supabase';
 import { useTranslations, type Locale } from '@/lib/i18n';
 import { useScreenSize } from '@/hooks/useScreenSize';
 import { getResponsiveStyles } from './GameModal/styles';
+import { getSteamLanguage } from '@/lib/steam-languages';
 import {
   ModalHeader,
   HeroSection,
@@ -323,6 +324,24 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                 styles={styles}
                 t={t}
               />
+            </div>
+
+            {/* Steam Widget - Full width row for md and lg */}
+            <div className="steam-widget-container">
+              {loadingSteam ? (
+                <div style={styles.widget.container}>
+                  <div style={styles.widget.skeleton} className="bg-gray-700 animate-pulse rounded-lg" />
+                </div>
+              ) : steamData ? (
+                <div style={styles.widget.container}>
+                  <iframe
+                    src={`https://store.steampowered.com/widget/${steamData.steam_appid}/?l=${locale}`}
+                    style={styles.widget.iframe}
+                    frameBorder="0"
+                    title="Steam Widget"
+                  />
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

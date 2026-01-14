@@ -637,3 +637,36 @@
     gap: 2rem !important;
   }
 }
+
+/* Steam Widget Container - Full width row for md and lg */
+.steam-widget-container {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .steam-widget-container {
+    display: block;
+    width: 100%;
+    margin-top: 2rem;
+  }
+  
+  .steam-widget-container > div {
+    display: flex;
+    justify-content: center;
+    padding: 0 1.5rem;
+  }
+  
+  .steam-widget-container iframe {
+    width: 100%;
+    max-width: 800px !important;
+    height: 190px;
+    transform: scale(1) !important;
+  }
+  
+  .steam-widget-container .bg-gray-700 {
+    width: 100%;
+    max-width: 800px;
+    height: 190px;
+    margin: 0 auto;
+  }
+}

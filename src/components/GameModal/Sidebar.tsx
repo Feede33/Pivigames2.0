@@ -220,8 +220,8 @@ export default function Sidebar({
         )}
       </div>
 
-      {/* Social */}
-      <div>
+      {/* Social - Only show in xs and sm */}
+      <div className="block md:hidden">
         <h4 style={styles.sidebar.info} className="text-gray-400 mb-1.5 md:mb-2">
           {t.modal.share}
         </h4>
@@ -238,21 +238,23 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* Buy on Steam Widget */}
-      {loadingSteam ? (
-        <div style={styles.widget.container}>
-          <div style={styles.widget.skeleton} className="bg-gray-700 animate-pulse rounded-lg" />
-        </div>
-      ) : steamData ? (
-        <div style={styles.widget.container}>
-          <iframe
-            src={`https://store.steampowered.com/widget/${steamData.steam_appid}/?l=${getSteamLanguage(locale)}`}
-            style={styles.widget.iframe}
-            frameBorder="0"
-            title="Steam Widget"
-          />
-        </div>
-      ) : null}
+      {/* Steam Widget - Only show in xs and sm, hidden in md and lg */}
+      <div className="block md:hidden">
+        {loadingSteam ? (
+          <div style={styles.widget.container}>
+            <div style={styles.widget.skeleton} className="bg-gray-700 animate-pulse rounded-lg" />
+          </div>
+        ) : steamData ? (
+          <div style={styles.widget.container}>
+            <iframe
+              src={`https://store.steampowered.com/widget/${steamData.steam_appid}/?l=${getSteamLanguage(locale)}`}
+              style={styles.widget.iframe}
+              frameBorder="0"
+              title="Steam Widget"
+            />
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
