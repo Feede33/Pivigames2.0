@@ -170,7 +170,7 @@ export default function LoginPage() {
             disabled={isLoading}
             className="w-full relative overflow-hidden text-white border-[#5865F2] hover:opacity-90 transition-opacity"
             style={{
-              backgroundImage: 'url(/bannerdiscord.jpg)',
+              backgroundImage: 'url(/discordwallpaper/bannerdiscord.jpg)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
