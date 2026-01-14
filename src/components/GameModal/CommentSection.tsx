@@ -25,7 +25,6 @@ export default function CommentSection({ gameId }: Props) {
   const [replyText, setReplyText] = useState('');
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
 
   // Cargar usuario y comentarios
   useEffect(() => {
@@ -72,56 +71,184 @@ export default function CommentSection({ gameId }: Props) {
       return;
     }
 
-    console.log('Adding comment:', { gameId, content: newComment, userId: user.id });
-    setSubmitting(true);
+    const tempComment: Comment = {
+      id: `temp-${Date.now()}`,
+      user_id: user.id,
+      game_id: gameId,
+      content: newComment,
+      parent_id: null,
+      likes: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      user_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Usuario',
+      user_avatar: user.user_metadata?.avatar_url || undefined,
+      user_email: user.email || undefined,
+      replies: [],
+      user_has_liked: false,
+    };
+
+    // Actualización optimista
+    setComments([tempComment, ...comments]);
+    setNewComment('');
+
     try {
       const result = await createComment(gameId, newComment);
-      console.log('Comment created successfully:', result);
-      setNewComment('');
-      await loadComments();
+      // Reemplazar el comentario temporal con el real
+      setComments(prev => prev.map(c => c.id === tempComment.id ? result : c));
     } catch (error) {
       console.error('Error adding comment:', error);
+      // Revertir en caso de error
+      setComments(prev => prev.filter(c => c.id !== tempComment.id));
+      setNewComment(tempComment.content);
       alert(`Error al publicar comentario: ${error instanceof Error ? error.message : 'Error desconocido'}`);
-    } finally {
-      setSubmitting(false);
     }
   };
 
   const handleAddReply = async (commentId: string) => {
     if (!replyText.trim() || !user) return;
 
-    setSubmitting(true);
+    const tempReply: Comment = {
+      id: `temp-${Date.now()}`,
+      user_id: user.id,
+      game_id: gameId,
+      content: replyText,
+      parent_id: commentId,
+      likes: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      user_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Usuario',
+      user_avatar: user.user_metadata?.avatar_url || undefined,
+      user_email: user.email || undefined,
+      user_has_liked: false,
+    };
+
+    // Actualización optimista
+    setComments(prev => prev.map(comment => 
+      comment.id === commentId 
+        ? { ...comment, replies: [...(comment.replies || []), tempReply] }
+        : comment
+    ));
+    setReplyText('');
+    setReplyingTo(null);
+
     try {
-      await createComment(gameId, replyText, commentId);
-      setReplyText('');
-      setReplyingTo(null);
-      await loadComments();
+      const result = await createComment(gameId, replyText, commentId);
+      // Reemplazar la respuesta temporal con la real
+      setComments(prev => prev.map(comment => 
+        comment.id === commentId 
+          ? { 
+              ...comment, 
+              replies: (comment.replies || []).map(r => r.id === tempReply.id ? result : r)
+            }
+          : comment
+      ));
     } catch (error) {
       console.error('Error adding reply:', error);
-    } finally {
-      setSubmitting(false);
+      // Revertir en caso de error
+      setComments(prev => prev.map(comment => 
+        comment.id === commentId 
+          ? { ...comment, replies: (comment.replies || []).filter(r => r.id !== tempReply.id) }
+          : comment
+      ));
+      setReplyText(tempReply.content);
+      setReplyingTo(commentId);
+      alert(`Error al publicar respuesta: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
   };
 
-  const handleLike = async (commentId: string) => {
+  const handleLike = async (commentId: string, isReply = false, parentId?: string) => {
     if (!user) return;
+
+    // Actualización optimista
+    if (isReply && parentId) {
+      setComments(prev => prev.map(comment => 
+        comment.id === parentId
+          ? {
+              ...comment,
+              replies: (comment.replies || []).map(reply =>
+                reply.id === commentId
+                  ? { 
+                      ...reply, 
+                      likes: reply.user_has_liked ? reply.likes - 1 : reply.likes + 1,
+                      user_has_liked: !reply.user_has_liked 
+                    }
+                  : reply
+              )
+            }
+          : comment
+      ));
+    } else {
+      setComments(prev => prev.map(comment =>
+        comment.id === commentId
+          ? { 
+              ...comment, 
+              likes: comment.user_has_liked ? comment.likes - 1 : comment.likes + 1,
+              user_has_liked: !comment.user_has_liked 
+            }
+          : comment
+      ));
+    }
 
     try {
       await toggleLike(commentId);
-      await loadComments();
     } catch (error) {
       console.error('Error toggling like:', error);
+      // Revertir en caso de error
+      if (isReply && parentId) {
+        setComments(prev => prev.map(comment => 
+          comment.id === parentId
+            ? {
+                ...comment,
+                replies: (comment.replies || []).map(reply =>
+                  reply.id === commentId
+                    ? { 
+                        ...reply, 
+                        likes: reply.user_has_liked ? reply.likes + 1 : reply.likes - 1,
+                        user_has_liked: !reply.user_has_liked 
+                      }
+                    : reply
+                )
+              }
+            : comment
+        ));
+      } else {
+        setComments(prev => prev.map(comment =>
+          comment.id === commentId
+            ? { 
+                ...comment, 
+                likes: comment.user_has_liked ? comment.likes + 1 : comment.likes - 1,
+                user_has_liked: !comment.user_has_liked 
+              }
+            : comment
+        ));
+      }
     }
   };
 
-  const handleDelete = async (commentId: string) => {
+  const handleDelete = async (commentId: string, isReply = false, parentId?: string) => {
     if (!user) return;
+
+    // Guardar estado anterior para revertir si falla
+    const previousComments = [...comments];
+
+    // Actualización optimista
+    if (isReply && parentId) {
+      setComments(prev => prev.map(comment => 
+        comment.id === parentId
+          ? { ...comment, replies: (comment.replies || []).filter(r => r.id !== commentId) }
+          : comment
+      ));
+    } else {
+      setComments(prev => prev.filter(c => c.id !== commentId));
+    }
 
     try {
       await deleteComment(commentId);
-      await loadComments();
     } catch (error) {
       console.error('Error deleting comment:', error);
+      // Revertir en caso de error
+      setComments(previousComments);
+      alert(`Error al eliminar comentario: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
   };
 
@@ -180,7 +307,7 @@ export default function CommentSection({ gameId }: Props) {
               variant="ghost"
               size="sm"
               className={`h-8 px-2 ${comment.user_has_liked ? 'text-blue-500' : 'text-gray-400'} hover:text-white`}
-              onClick={() => handleLike(comment.id)}
+              onClick={() => handleLike(comment.id, isReply, parentId || undefined)}
               disabled={!user}
             >
               <ThumbsUp className="w-4 h-4 mr-1" />
@@ -209,7 +336,7 @@ export default function CommentSection({ gameId }: Props) {
                 <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
                   <DropdownMenuItem 
                     className="text-red-600 hover:text-red-500"
-                    onClick={() => handleDelete(comment.id)}
+                    onClick={() => handleDelete(comment.id, isReply, parentId || undefined)}
                   >
                     Eliminar
                   </DropdownMenuItem>
@@ -234,7 +361,6 @@ export default function CommentSection({ gameId }: Props) {
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   className="min-h-[80px] text-sm bg-gray-800 border-gray-700 text-gray-200"
-                  disabled={submitting}
                 />
                 <div className="flex gap-2 mt-2 justify-end">
                   <Button
@@ -245,16 +371,15 @@ export default function CommentSection({ gameId }: Props) {
                       setReplyText('');
                     }}
                     className="text-gray-400 hover:text-white"
-                    disabled={submitting}
                   >
                     Cancelar
                   </Button>
                   <Button
                     size="sm"
                     onClick={() => handleAddReply(comment.id)}
-                    disabled={!replyText.trim() || submitting}
+                    disabled={!replyText.trim()}
                   >
-                    {submitting ? 'Enviando...' : 'Responder'}
+                    Responder
                   </Button>
                 </div>
               </div>
@@ -281,13 +406,24 @@ export default function CommentSection({ gameId }: Props) {
   if (loading) {
     return (
       <div className="mt-8 pt-8 border-t border-gray-700">
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => (
+        <div className="mb-6">
+          <div className="h-8 bg-gray-700 rounded w-48 mb-6 animate-pulse" />
+        </div>
+        <div className="space-y-6">
+          {[...Array(5)].map((_, i) => (
             <div key={i} className="flex gap-3">
-              <div className="w-10 h-10 bg-gray-700 rounded-full animate-pulse" />
-              <div className="flex-1 space-y-2">
-                <div className="h-4 bg-gray-700 rounded w-1/4 animate-pulse" />
-                <div className="h-3 bg-gray-700 rounded w-3/4 animate-pulse" />
+              <div className="w-10 h-10 bg-gray-700 rounded-full animate-pulse flex-shrink-0" />
+              <div className="flex-1 space-y-3">
+                <div className="flex gap-2">
+                  <div className="h-4 bg-gray-700 rounded w-32 animate-pulse" />
+                  <div className="h-4 bg-gray-700 rounded w-20 animate-pulse" />
+                </div>
+                <div className="h-3 bg-gray-700 rounded w-full animate-pulse" />
+                <div className="h-3 bg-gray-700 rounded w-5/6 animate-pulse" />
+                <div className="flex gap-4 mt-2">
+                  <div className="h-8 bg-gray-700 rounded w-16 animate-pulse" />
+                  <div className="h-8 bg-gray-700 rounded w-20 animate-pulse" />
+                </div>
               </div>
             </div>
           ))}
@@ -330,22 +466,21 @@ export default function CommentSection({ gameId }: Props) {
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 className="min-h-[80px] bg-gray-800 border-gray-700 text-gray-200"
-                disabled={submitting}
               />
               <div className="flex gap-2 mt-2 justify-end">
                 <Button
                   variant="ghost"
                   onClick={() => setNewComment('')}
-                  disabled={!newComment || submitting}
+                  disabled={!newComment}
                   className="text-gray-400 hover:text-white"
                 >
                   Cancelar
                 </Button>
                 <Button
                   onClick={handleAddComment}
-                  disabled={!newComment.trim() || submitting}
+                  disabled={!newComment.trim()}
                 >
-                  {submitting ? 'Enviando...' : 'Comentar'}
+                  Comentar
                 </Button>
               </div>
             </div>
