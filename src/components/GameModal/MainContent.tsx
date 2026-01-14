@@ -229,7 +229,7 @@ export default function MainContent({
               <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.minimum}</h4>
               {steamData?.pc_requirements?.minimum ? (
                 <div 
-                  className="text-sm text-gray-300 [&_ul]:list-none [&_ul]:space-y-1 [&_strong]:text-white [&_strong]:font-semibold [&_br]:block"
+                  className="steam-requirements text-sm text-gray-300"
                   dangerouslySetInnerHTML={{ __html: steamData.pc_requirements.minimum }}
                 />
               ) : (
@@ -244,7 +244,7 @@ export default function MainContent({
               <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.recommended}</h4>
               {steamData?.pc_requirements?.recommended ? (
                 <div 
-                  className="text-sm text-gray-300 [&_ul]:list-none [&_ul]:space-y-1 [&_strong]:text-white [&_strong]:font-semibold [&_br]:block"
+                  className="steam-requirements text-sm text-gray-300"
                   dangerouslySetInnerHTML={{ __html: steamData.pc_requirements.recommended }}
                 />
               ) : (

@@ -565,3 +565,28 @@
 .scrollbar-track-transparent {
   scrollbar-color: hsl(var(--border)) transparent;
 }
+
+/* Steam System Requirements Styles */
+.steam-requirements ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.steam-requirements ul li {
+  margin-bottom: 0.25rem;
+  line-height: 1.5;
+}
+
+.steam-requirements strong {
+  color: #ffffff;
+  font-weight: 600;
+  display: inline-block;
+  min-width: 120px;
+}
+
+.steam-requirements br {
+  display: block;
+  content: "";
+  margin-top: 0.25rem;
+}
