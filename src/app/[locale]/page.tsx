@@ -418,7 +418,6 @@ export default function Home() {
           </div>
           
           <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 flex-shrink-0">
-            <UserProfile navOnly />
             <SearchSystem
               games={games}
               allGamesCache={gamesCache}
@@ -426,6 +425,7 @@ export default function Home() {
               locale={locale}
             />
             <LanguageSelector />
+            <UserProfile navOnly />
             
             
             {/* Mobile Menu Button */}

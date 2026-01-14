@@ -302,13 +302,14 @@ export default function CommentSection({ gameId }: Props) {
           
           <p className="text-sm mb-2 text-gray-300">{comment.content}</p>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 relative" style={{ zIndex: 1 }}>
             <Button
               variant="ghost"
               size="sm"
               className={`h-8 px-2 ${comment.user_has_liked ? 'text-blue-500' : 'text-gray-400'} hover:text-white`}
               onClick={() => handleLike(comment.id, isReply, parentId || undefined)}
               disabled={!user}
+              style={{ position: 'relative', zIndex: 1, pointerEvents: 'auto' }}
             >
               <ThumbsUp className="w-4 h-4 mr-1" />
               <span className="text-xs">{comment.likes}</span>
@@ -318,24 +319,34 @@ export default function CommentSection({ gameId }: Props) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 px-2 text-xs font-semibold text-gray-400 hover:text-white"
+                className="h-8 px-2 text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-700"
                 onClick={() => setReplyingTo(comment.id)}
                 disabled={!user}
+                style={{ position: 'relative', zIndex: 1, pointerEvents: 'auto' }}
               >
                 Responder
               </Button>
             )}
             
             {isOwner && (
-              <DropdownMenu>
+              <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-gray-400 hover:text-white">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-gray-700"
+                    style={{ position: 'relative', zIndex: 1, pointerEvents: 'auto' }}
+                  >
                     <MoreVertical className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
+                <DropdownMenuContent 
+                  align="end" 
+                  className="bg-gray-800 border-gray-700"
+                  style={{ zIndex: 99999 }}
+                >
                   <DropdownMenuItem 
-                    className="text-red-600 hover:text-red-500"
+                    className="text-red-600 hover:text-red-500 hover:bg-gray-700 cursor-pointer"
                     onClick={() => handleDelete(comment.id, isReply, parentId || undefined)}
                   >
                     Eliminar
