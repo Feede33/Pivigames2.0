@@ -626,14 +626,14 @@
 
 @media (min-width: 768px) {
   .main-content-grid {
-    grid-template-columns: 2fr 1fr !important;
+    grid-template-columns: 1.8fr 1fr !important;
     gap: 1.75rem !important;
   }
 }
 
 @media (min-width: 1280px) {
   .main-content-grid {
-    grid-template-columns: 2fr 1fr !important;
+    grid-template-columns: 1.8fr 1fr !important;
     gap: 2rem !important;
   }
 }
