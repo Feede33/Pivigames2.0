@@ -184,7 +184,7 @@ export default function LoginPage() {
 
           <div className="text-center text-sm text-muted-foreground mt-2">
             ¿No tienes cuenta?{' '}
-            <a href="/signup" className="font-semibold underline text-[#00ff88] hover:text-[#00ff88]/80">
+            <a href="/signup" className="font-semibold underline text-white hover:text-[#00ff88]/80">
               Regístrate
             </a>
           </div>
