@@ -307,20 +307,20 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
       },
       grid: {
         features: {
-          display: 'grid',
+          display: 'grid' as const,
           gridTemplateColumns: 'repeat(2, 1fr)',
           gap: '0.75rem'
-        },
+        } as React.CSSProperties,
         requirements: {
-          display: 'grid',
+          display: 'grid' as const,
           gridTemplateColumns: 'repeat(2, 1fr)',
           gap: '2rem'
-        },
+        } as React.CSSProperties,
         main: {
-          display: 'grid',
+          display: 'grid' as const,
           gridTemplateColumns: '2fr 1fr',
           gap: '1.75rem'
-        },
+        } as React.CSSProperties,
       },
       sidebar: {
         spacing: {
@@ -427,20 +427,20 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
       },
       grid: {
         features: {
-          display: 'grid',
+          display: 'grid' as const,
           gridTemplateColumns: 'repeat(2, 1fr)',
           gap: '0.75rem'
-        },
+        } as React.CSSProperties,
         requirements: {
-          display: 'grid',
+          display: 'grid' as const,
           gridTemplateColumns: 'repeat(2, 1fr)',
           gap: '2rem'
-        },
+        } as React.CSSProperties,
         main: {
-          display: 'grid',
+          display: 'grid' as const,
           gridTemplateColumns: '2fr 1fr',
           gap: '2rem'
-        },
+        } as React.CSSProperties,
       },
       sidebar: {
         spacing: {
