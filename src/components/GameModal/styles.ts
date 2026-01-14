@@ -36,6 +36,11 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         spacing: { marginBottom: '0.625rem' },
         spacingLarge: { marginBottom: '0.75rem' },
       },
+      slider: {
+        dot: { width: '0.5rem', height: '0.5rem' }, // 8px - más grande para xs
+        dotGap: { gap: '0.5rem' },
+        dotMargin: { marginTop: '0.5rem' },
+      },
       text: {
         xs: { fontSize: '0.625rem' },
         sm: { fontSize: '0.75rem' },
@@ -126,6 +131,11 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         spacing: { marginBottom: '0.75rem' },
         spacingLarge: { marginBottom: '1rem' },
       },
+      slider: {
+        dot: { width: '0.625rem', height: '0.625rem' }, // 10px - más grande para sm
+        dotGap: { gap: '0.625rem' },
+        dotMargin: { marginTop: '0.625rem' },
+      },
       text: {
         xs: { fontSize: '0.75rem' },
         sm: { fontSize: '0.875rem' },
@@ -213,6 +223,11 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         spacing: { marginBottom: '1rem' },
         spacingLarge: { marginBottom: '1.5rem' },
       },
+      slider: {
+        dot: { width: '0.5rem', height: '0.5rem' }, // 8px
+        dotGap: { gap: '0.5rem' },
+        dotMargin: { marginTop: '0.75rem' },
+      },
       text: {
         xs: { fontSize: '0.875rem' },
         sm: { fontSize: '1rem' },
@@ -299,6 +314,11 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         gap: { gap: '0.75rem' },
         spacing: { marginBottom: '1rem' },
         spacingLarge: { marginBottom: '1.5rem' },
+      },
+      slider: {
+        dot: { width: '0.5rem', height: '0.5rem' }, // 8px
+        dotGap: { gap: '0.5rem' },
+        dotMargin: { marginTop: '0.75rem' },
       },
       text: {
         xs: { fontSize: '0.875rem' },
