@@ -168,7 +168,7 @@ export default function LoginPage() {
             variant="outline"
             onClick={() => handleOAuthLogin('discord')}
             disabled={isLoading}
-            className="w-full relative overflow-hidden text-white border-[#5865F2]/50 group h-12"
+            className="w-full relative overflow-hidden text-white border-[#5865F2]/50 hover:border-[#5865F2] transition-all duration-300 group h-12"
             style={{
               backgroundImage: 'url(/discordwallpaper/bannerdiscord.jpg)',
               backgroundSize: 'cover',
