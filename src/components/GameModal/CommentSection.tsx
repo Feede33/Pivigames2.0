@@ -339,20 +339,20 @@ export default function CommentSection({ gameId }: Props) {
     return comment.user_name || 'Usuario';
   };
 
-  const getUserAvatarUrl = (comment: Comment) => {
-    if (comment.user_avatar) {
-      return comment.user_avatar;
-    }
-    // Generar avatar basado en el user_id
-    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.user_id}`;
-  };
-
   const getTimeAgo = (date: string) => {
     try {
       return formatDistanceToNow(new Date(date), { addSuffix: true, locale: es });
     } catch {
       return 'hace un momento';
     }
+  };
+
+  const getUserAvatarUrl = (comment: Comment) => {
+    if (comment.user_avatar) {
+      return comment.user_avatar;
+    }
+    // Generar avatar basado en el user_id
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.user_id}`;
   };
 
   return (
@@ -474,6 +474,7 @@ const CommentItem = React.memo(({
   onReport,
   getInitials,
   getDisplayName,
+  getUserAvatarUrl,
   getTimeAgo,
   isReply = false, 
   parentId = null 
