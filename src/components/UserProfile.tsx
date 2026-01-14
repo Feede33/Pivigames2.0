@@ -176,9 +176,9 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
   if (navOnly) {
     return (
       <div className="relative group z-50">
-        {/* Mobile: Solo avatar */}
+        {/* Avatar solo - mismo para mobile y desktop */}
         <button 
-          className="relative md:hidden"
+          className="relative"
           style={{
             width: styles.avatar.size,
             height: styles.avatar.size
@@ -206,55 +206,6 @@ export default function UserProfile({ navOnly = false }: UserProfileProps) {
             }}
             className="absolute bottom-0 right-0 bg-green-500 rounded-full border-background"
           />
-        </button>
-
-        {/* Desktop: Versión completa horizontal */}
-        <button 
-          style={{
-            padding: '6px 12px',
-            gap: '8px'
-          }}
-          className="hidden md:flex items-center bg-background/95 backdrop-blur-sm border border-border rounded-full hover:bg-accent transition-all duration-300 shadow-lg"
-        >
-          <div className="relative">
-            <div 
-              style={{
-                width: styles.avatar.size,
-                height: styles.avatar.size
-              }}
-              className="rounded-full overflow-hidden border-2 border-border"
-            >
-              <img
-                src={avatarUrl}
-                alt={username}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            {/* Indicador de estado online */}
-            <div 
-              style={{
-                width: styles.avatar.statusDot,
-                height: styles.avatar.statusDot,
-                borderWidth: styles.avatar.statusDotBorder
-              }}
-              className="absolute bottom-0 right-0 bg-green-500 rounded-full border-background"
-            />
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <p 
-              style={{ fontSize: styles.text.fontSize }}
-              className="font-semibold truncate"
-            >
-              {username}
-            </p>
-            <p 
-              style={{ fontSize: `${parseFloat(styles.text.fontSize) * 0.85}px` }}
-              className="text-muted-foreground truncate"
-            >
-              Online
-            </p>
-          </div>
         </button>
 
         {/* Dropdown Menu */}

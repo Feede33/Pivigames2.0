@@ -284,7 +284,7 @@ export default function CommentSection({ gameId }: Props) {
     const initials = getInitials(comment.user_name, comment.user_email);
 
     return (
-      <div className="flex gap-3 mb-4">
+      <div className="flex gap-3 mb-4 animate-fade-in animate-duration-1000 animate-delay-100">
         <Avatar className="w-10 h-10 flex-shrink-0">
           {comment.user_avatar ? (
             <AvatarImage src={comment.user_avatar} alt={displayName} />
