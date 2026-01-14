@@ -297,7 +297,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
               t={t}
             />
 
-            <div style={styles.grid.main}>
+            <div className="main-content-grid">
               <MainContent
                 loadingSteam={loadingSteam}
                 steamData={steamData}

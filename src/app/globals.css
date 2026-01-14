@@ -609,3 +609,31 @@
     gap: 2rem;
   }
 }
+
+/* Main Content Grid */
+.main-content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .main-content-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-content-grid {
+    grid-template-columns: 2fr 1fr;
+    gap: 1.75rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .main-content-grid {
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+  }
+}
