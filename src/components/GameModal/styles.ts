@@ -31,7 +31,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         },
       },
       content: {
-        padding: { padding: '0.75rem'},
+        padding: { padding: '0.75rem' },
         gap: { gap: '0.375rem' },
         spacing: { marginBottom: '0.625rem' },
         spacingLarge: { marginBottom: '0.75rem' },
@@ -40,8 +40,8 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         dot: { minWidth: '5px', minHeight: '5px', justifyContent: "center" },
         dotGap: { gap: '6px' },
         dotMargin: { marginTop: '0.5rem', marginBottom: "1rem" },
-        thumbnail: { 
-          width: '200px', 
+        thumbnail: {
+          width: '200px',
           height: '112px',
           flexShrink: 0,
           aspectRatio: '16/9'
@@ -82,23 +82,27 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         priceDiscount: { fontSize: '0.625rem' },
         info: { fontSize: '0.625rem' },
         tag: { padding: '0.125rem 0.25rem', fontSize: '0.5625rem' },
-        button: { 
-          padding: '0.5rem 0.75rem', 
-          fontSize: '0.75rem',
-          minWidth: '90px',
+        button: {
+          padding: '0.2rem 0.4rem',
+          fontSize: '0.4rem',
+          minWidth: '5px',
+          minHeight: "5px",
           textAlign: 'center' as const
         },
         shareContainer: {
           display: 'flex',
+          flexDirection: 'row' as const,
+          alignItems: "center",
+
           gap: '0.5rem',
           flexWrap: 'wrap' as const,
-          justifyContent: 'center' as const
+          justifyContent: 'start' as const
         },
       },
       widget: {
-        container: { 
-          marginTop: '0.75rem', 
-          paddingLeft: '0.25rem', 
+        container: {
+          marginTop: '0.75rem',
+          paddingLeft: '0.25rem',
           paddingRight: '0.25rem',
           display: 'flex',
           justifyContent: 'center',
@@ -110,7 +114,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
           transform: 'scale(0.85)',
           transformOrigin: 'center center'
         },
-        skeleton: { 
+        skeleton: {
           height: '140px',
           maxWidth: '340px',
           margin: '0 auto'
@@ -168,8 +172,8 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         dot: { width: '0.625rem', height: '0.625rem' },
         dotGap: { gap: '0.625rem' },
         dotMargin: { marginTop: '0.625rem' },
-        thumbnail: { 
-          width: '220px', 
+        thumbnail: {
+          width: '220px',
           height: '124px',
           flexShrink: 0,
           aspectRatio: '16/9'
@@ -232,9 +236,9 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         thumbnail: { width: '3rem', height: '2rem' },
       },
       widget: {
-        container: { 
-          marginTop: '1rem', 
-          paddingLeft: '0.75rem', 
+        container: {
+          marginTop: '1rem',
+          paddingLeft: '0.75rem',
           paddingRight: '0.75rem',
           display: 'flex',
           justifyContent: 'center',
@@ -246,7 +250,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
           transform: 'scale(0.9)',
           transformOrigin: 'center center'
         },
-        skeleton: { 
+        skeleton: {
           height: '160px',
           maxWidth: '500px',
           margin: '0 auto'
@@ -288,8 +292,8 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         dot: { width: '0.5rem', height: '0.5rem' },
         dotGap: { gap: '0.5rem' },
         dotMargin: { marginTop: '0.75rem' },
-        thumbnail: { 
-          width: '240px', 
+        thumbnail: {
+          width: '240px',
           height: '135px',
           flexShrink: 0,
           aspectRatio: '16/9'
@@ -339,9 +343,9 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         },
       },
       widget: {
-        container: { 
-          marginTop: '1.75rem', 
-          paddingLeft: '1.5rem', 
+        container: {
+          marginTop: '1.75rem',
+          paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
           display: 'flex',
           justifyContent: 'center',
@@ -353,7 +357,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
           transform: 'scale(1)',
           transformOrigin: 'center center'
         },
-        skeleton: { 
+        skeleton: {
           height: '190px',
           maxWidth: '646px',
           margin: '0 auto'
@@ -408,8 +412,8 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         dot: { width: '0.5rem', height: '0.5rem' },
         dotGap: { gap: '0.5rem' },
         dotMargin: { marginTop: '0.75rem' },
-        thumbnail: { 
-          width: '260px', 
+        thumbnail: {
+          width: '260px',
           height: '146px',
           flexShrink: 0,
           aspectRatio: '16/9'
@@ -459,9 +463,9 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         },
       },
       widget: {
-        container: { 
-          marginTop: '2rem', 
-          paddingLeft: '1.5rem', 
+        container: {
+          marginTop: '2rem',
+          paddingLeft: '1.5rem',
           paddingRight: '1.5rem',
           display: 'flex',
           justifyContent: 'center',
@@ -473,7 +477,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
           transform: 'scale(1)',
           transformOrigin: 'center center'
         },
-        skeleton: { 
+        skeleton: {
           height: '190px',
           maxWidth: '646px',
           margin: '0 auto'
