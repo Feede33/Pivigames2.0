@@ -140,6 +140,7 @@ export default function MainContent({
                 {mediaItems.map((item, index) => (
                   <div
                     key={index}
+                    style={styles.slider.thumbnail}
                     className="flex-shrink-0 w-[calc(33.33%-4px)] md:w-[calc(33.33%-5px)] aspect-video bg-gray-700 rounded overflow-hidden cursor-pointer relative group"
                     onClick={() => onMediaClick(item)}
                   >
@@ -179,12 +180,13 @@ export default function MainContent({
             )}
 
             {/* Dots indicator */}
-            <div className="flex justify-center gap-1 md:gap-1.5 mt-2 md:mt-3">
+            <div style={{ ...styles.slider.dotGap, ...styles.slider.dotMargin }} className="flex justify-center">
               {Array.from({ length: Math.max(1, mediaItems.length - 2) }).map((_, index) => (
                 <button
                   key={index}
                   onClick={() => onSetScreenshotIndex(index)}
-                  className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-colors ${
+                  style={styles.slider.dot}
+                  className={`rounded-full transition-colors ${
                     index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
                   }`}
                 />

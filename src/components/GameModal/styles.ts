@@ -37,9 +37,10 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         spacingLarge: { marginBottom: '0.75rem' },
       },
       slider: {
-        dot: { width: '0.5rem', height: '0.5rem' }, // 8px - más grande para xs
-        dotGap: { gap: '0.5rem' },
-        dotMargin: { marginTop: '0.5rem' },
+        dot: { minWidth: '5px', minHeight: '5px' }, // 8px - más grande para xs
+        dotGap: { gap: '6px' },
+        dotMargin: { marginTop: '0.5rem', marginBottom: "1rem" },
+        thumbnail: { minWidth: '60px', minHeight: '10px' }, // Tamaño mínimo para xs
       },
       text: {
         xs: { fontSize: '0.625rem' },
@@ -135,6 +136,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         dot: { width: '0.625rem', height: '0.625rem' }, // 10px - más grande para sm
         dotGap: { gap: '0.625rem' },
         dotMargin: { marginTop: '0.625rem' },
+        thumbnail: { minWidth: '220px', minHeight: '110px' }, // Tamaño mínimo para sm
       },
       text: {
         xs: { fontSize: '0.75rem' },
@@ -227,6 +229,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         dot: { width: '0.5rem', height: '0.5rem' }, // 8px
         dotGap: { gap: '0.5rem' },
         dotMargin: { marginTop: '0.75rem' },
+        thumbnail: { minWidth: '240px', minHeight: '120px' }, // Tamaño mínimo para md
       },
       text: {
         xs: { fontSize: '0.875rem' },
@@ -319,6 +322,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         dot: { width: '0.5rem', height: '0.5rem' }, // 8px
         dotGap: { gap: '0.5rem' },
         dotMargin: { marginTop: '0.75rem' },
+        thumbnail: { minWidth: '260px', minHeight: '130px' }, // Tamaño mínimo para lg
       },
       text: {
         xs: { fontSize: '0.875rem' },
