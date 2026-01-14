@@ -12,9 +12,11 @@ import {
 import { supabase } from '@/lib/supabase';
 import { getComments, createComment, toggleLike, deleteComment, type Comment } from '@/lib/comments';
 import { createCommentReport, type ReportReason } from '@/lib/comment-reports';
+import { getCurrentUserProfile, getUserAvatar, type UserProfile } from '@/lib/user-profiles';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import ReportCommentDialog from './ReportCommentDialog';
+import AuthProviderDialog from '../AuthProviderDialog';
 
 type Props = {
   gameId: number;
@@ -26,9 +28,11 @@ export default function CommentSection({ gameId }: Props) {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
   const [user, setUser] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [newCommentIds, setNewCommentIds] = useState<Set<string>>(new Set());
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [reportingCommentId, setReportingCommentId] = useState<string | null>(null);
   const [reportingCommentAuthor, setReportingCommentAuthor] = useState<string>('');
 
@@ -62,6 +66,11 @@ export default function CommentSection({ gameId }: Props) {
   const loadUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     setUser(user);
+    
+    if (user) {
+      const profile = await getCurrentUserProfile();
+      setUserProfile(profile);
+    }
   };
 
   const loadComments = async () => {
@@ -319,18 +328,23 @@ export default function CommentSection({ gameId }: Props) {
     }
   };
 
-  const getInitials = (name?: string, email?: string) => {
-    if (name) {
-      return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-    }
-    if (email) {
-      return email.slice(0, 2).toUpperCase();
+  const getInitials = (nickname?: string) => {
+    if (nickname) {
+      return nickname.slice(0, 2).toUpperCase();
     }
     return 'U';
   };
 
   const getDisplayName = (comment: Comment) => {
-    return comment.user_name || comment.user_email?.split('@')[0] || 'Usuario';
+    return comment.user_name || 'Usuario';
+  };
+
+  const getUserAvatarUrl = (comment: Comment) => {
+    if (comment.user_avatar) {
+      return comment.user_avatar;
+    }
+    // Generar avatar basado en el user_id
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${comment.user_id}`;
   };
 
   const getTimeAgo = (date: string) => {
@@ -350,22 +364,22 @@ export default function CommentSection({ gameId }: Props) {
         
         {!user ? (
           <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 text-center">
-            <p className="text-gray-400 mb-3">Inicia sesión con Discord para comentar</p>
+            <p className="text-gray-400 mb-3">Inicia sesión para comentar</p>
             <Button
-              onClick={() => supabase.auth.signInWithOAuth({ provider: 'discord' })}
-              className="bg-[#5865F2] hover:bg-[#4752C4]"
+              onClick={() => setAuthDialogOpen(true)}
+              className="bg-blue-600 hover:bg-blue-700"
             >
-              Iniciar sesión con Discord
+              Iniciar sesión
             </Button>
           </div>
         ) : (
           <div className="flex gap-3">
             <Avatar className="w-10 h-10 flex-shrink-0">
-              {user.user_metadata?.avatar_url ? (
-                <AvatarImage src={user.user_metadata.avatar_url} alt="Tu" />
-              ) : null}
+              {userProfile && (
+                <AvatarImage src={getUserAvatar(userProfile)} alt="Tu avatar" />
+              )}
               <AvatarFallback className="bg-gray-500 text-white">
-                {getInitials(user.user_metadata?.full_name || user.user_metadata?.name, user.email)}
+                {userProfile ? getInitials(userProfile.nickname) : 'U'}
               </AvatarFallback>
             </Avatar>
             
@@ -419,11 +433,17 @@ export default function CommentSection({ gameId }: Props) {
               onReport={handleReport}
               getInitials={getInitials}
               getDisplayName={getDisplayName}
+              getUserAvatarUrl={getUserAvatarUrl}
               getTimeAgo={getTimeAgo}
             />
           ))}
         </div>
       )}
+
+      <AuthProviderDialog
+        isOpen={authDialogOpen}
+        onClose={() => setAuthDialogOpen(false)}
+      />
 
       <ReportCommentDialog
         isOpen={reportDialogOpen}
@@ -469,23 +489,23 @@ const CommentItem = React.memo(({
   onLike: (commentId: string, isReply?: boolean, parentId?: string) => void;
   onDelete: (commentId: string, isReply?: boolean, parentId?: string) => void;
   onReport: (commentId: string, commentAuthor: string) => void;
-  getInitials: (name?: string, email?: string) => string;
+  getInitials: (nickname?: string) => string;
   getDisplayName: (comment: Comment) => string;
+  getUserAvatarUrl: (comment: Comment) => string;
   getTimeAgo: (date: string) => string;
   isReply?: boolean; 
   parentId?: string | null;
 }) => {
   const isOwner = user?.id === comment.user_id;
   const displayName = getDisplayName(comment);
-  const initials = getInitials(comment.user_name, comment.user_email);
+  const initials = getInitials(displayName);
+  const avatarUrl = getUserAvatarUrl(comment);
   const isNewComment = newCommentIds.has(comment.id);
 
   return (
     <div className={`flex gap-3 mb-4 ${isNewComment ? 'animate-fade-in animate-duration-1000 animate-delay-100' : ''}`}>
       <Avatar className="w-10 h-10 flex-shrink-0">
-        {comment.user_avatar ? (
-          <AvatarImage src={comment.user_avatar} alt={displayName} />
-        ) : null}
+        <AvatarImage src={avatarUrl} alt={displayName} />
         <AvatarFallback className="bg-blue-500 text-white text-sm">
           {initials}
         </AvatarFallback>
@@ -567,11 +587,9 @@ const CommentItem = React.memo(({
         {replyingTo === comment.id && user && (
           <div className="mt-3 flex gap-2">
             <Avatar className="w-8 h-8 flex-shrink-0">
-              {user.user_metadata?.avatar_url ? (
-                <AvatarImage src={user.user_metadata.avatar_url} alt="Tu" />
-              ) : null}
+              <AvatarImage src={getUserAvatarUrl(comment)} alt="Tu avatar" />
               <AvatarFallback className="bg-gray-500 text-white text-xs">
-                {getInitials(user.user_metadata?.full_name || user.user_metadata?.name, user.email)}
+                {getInitials(displayName)}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
@@ -623,6 +641,7 @@ const CommentItem = React.memo(({
                 onReport={onReport}
                 getInitials={getInitials}
                 getDisplayName={getDisplayName}
+                getUserAvatarUrl={getUserAvatarUrl}
                 getTimeAgo={getTimeAgo}
                 isReply={true}
                 parentId={comment.id}
