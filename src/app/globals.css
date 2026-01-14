@@ -596,3 +596,16 @@
   content: "";
   margin-top: 0.25rem;
 }
+
+/* System Requirements Grid */
+.requirements-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .requirements-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+}

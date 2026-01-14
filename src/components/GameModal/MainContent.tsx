@@ -131,8 +131,8 @@ export default function MainContent({
           </div>
         ) : (
           <div className="relative">
-            {/* Slider container */}
-            <div className="overflow-hidden rounded-lg">
+            {/* Slider container with relative positioning for arrows */}
+            <div className="relative overflow-hidden rounded-lg">
               <div
                 className="flex gap-1.5 md:gap-2 transition-transform duration-300"
                 style={{ transform: `translateX(-${screenshotIndex * 33.33}%)` }}
@@ -159,25 +159,25 @@ export default function MainContent({
                   </div>
                 ))}
               </div>
-            </div>
 
-            {/* Navigation arrows */}
-            {mediaItems.length > 3 && (
-              <>
-                <button
-                  onClick={onPrevScreenshot}
-                  className="absolute left-1 bottom-15 -translate-y-1/2 -translate-x-2 md:-translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-6 h-6 md:w-8 md:h-8 flex items-center justify-center transition-colors"
-                >
-                  <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
-                </button>
-                <button
-                  onClick={onNextScreenshot}
-                  className="absolute left-84 bottom-15 -translate-y-1/2 translate-x-2 md:translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-6 h-6 md:w-8 md:h-8 flex items-center justify-center transition-colors"
-                >
-                  <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
-                </button>
-              </>
-            )}
+              {/* Navigation arrows */}
+              {mediaItems.length > 3 && (
+                <>
+                  <button
+                    onClick={onPrevScreenshot}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-6 h-6 md:w-8 md:h-8 flex items-center justify-center transition-colors z-10"
+                  >
+                    <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+                  </button>
+                  <button
+                    onClick={onNextScreenshot}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-3 bg-black/80 hover:bg-black text-white rounded-full w-6 h-6 md:w-8 md:h-8 flex items-center justify-center transition-colors z-10"
+                  >
+                    <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+                  </button>
+                </>
+              )}
+            </div>
 
             {/* Dots indicator */}
             <div style={{ ...styles.slider.dotGap, ...styles.slider.dotMargin }} className="flex justify-center">
@@ -186,9 +186,8 @@ export default function MainContent({
                   key={index}
                   onClick={() => onSetScreenshotIndex(index)}
                   style={styles.slider.dot}
-                  className={`rounded-full transition-colors ${
-                    index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
-                  }`}
+                  className={`rounded-full transition-colors ${index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
+                    }`}
                 />
               ))}
             </div>
@@ -202,7 +201,7 @@ export default function MainContent({
           {t.modal.systemRequirements}
         </h3>
         {loadingSteam ? (
-          <div className="grid grid-cols-2 gap-8">
+          <div className="requirements-grid">
             {/* MÍNIMO Skeleton */}
             <div>
               <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.minimum}</h4>
@@ -223,12 +222,12 @@ export default function MainContent({
             </div>
           </div>
         ) : (
-          <div style={styles.grid.requirements}>
+          <div className="requirements-grid">
             {/* MÍNIMO */}
             <div>
               <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.minimum}</h4>
               {steamData?.pc_requirements?.minimum ? (
-                <div 
+                <div
                   className="steam-requirements text-sm text-gray-300"
                   dangerouslySetInnerHTML={{ __html: steamData.pc_requirements.minimum }}
                 />
@@ -243,7 +242,7 @@ export default function MainContent({
             <div>
               <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.recommended}</h4>
               {steamData?.pc_requirements?.recommended ? (
-                <div 
+                <div
                   className="steam-requirements text-sm text-gray-300"
                   dangerouslySetInnerHTML={{ __html: steamData.pc_requirements.recommended }}
                 />
