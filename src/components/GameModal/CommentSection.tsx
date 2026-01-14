@@ -25,6 +25,7 @@ export default function CommentSection({ gameId }: Props) {
   const [replyText, setReplyText] = useState('');
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [newCommentIds, setNewCommentIds] = useState<Set<string>>(new Set());
 
   // Cargar usuario y comentarios
   useEffect(() => {
@@ -90,15 +91,36 @@ export default function CommentSection({ gameId }: Props) {
     // Actualización optimista
     setComments([tempComment, ...comments]);
     setNewComment('');
+    setNewCommentIds(prev => new Set(prev).add(tempComment.id));
 
     try {
       const result = await createComment(gameId, newComment);
       // Reemplazar el comentario temporal con el real
       setComments(prev => prev.map(c => c.id === tempComment.id ? result : c));
+      setNewCommentIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(tempComment.id);
+        newSet.add(result.id);
+        return newSet;
+      });
+      
+      // Remover la animación después de que termine
+      setTimeout(() => {
+        setNewCommentIds(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(result.id);
+          return newSet;
+        });
+      }, 1200); // 1000ms duración + 100ms delay + 100ms buffer
     } catch (error) {
       console.error('Error adding comment:', error);
       // Revertir en caso de error
       setComments(prev => prev.filter(c => c.id !== tempComment.id));
+      setNewCommentIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(tempComment.id);
+        return newSet;
+      });
       setNewComment(tempComment.content);
       alert(`Error al publicar comentario: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
@@ -130,6 +152,7 @@ export default function CommentSection({ gameId }: Props) {
     ));
     setReplyText('');
     setReplyingTo(null);
+    setNewCommentIds(prev => new Set(prev).add(tempReply.id));
 
     try {
       const result = await createComment(gameId, replyText, commentId);
@@ -142,6 +165,21 @@ export default function CommentSection({ gameId }: Props) {
             }
           : comment
       ));
+      setNewCommentIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(tempReply.id);
+        newSet.add(result.id);
+        return newSet;
+      });
+      
+      // Remover la animación después de que termine
+      setTimeout(() => {
+        setNewCommentIds(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(result.id);
+          return newSet;
+        });
+      }, 1200);
     } catch (error) {
       console.error('Error adding reply:', error);
       // Revertir en caso de error
@@ -150,6 +188,11 @@ export default function CommentSection({ gameId }: Props) {
           ? { ...comment, replies: (comment.replies || []).filter(r => r.id !== tempReply.id) }
           : comment
       ));
+      setNewCommentIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(tempReply.id);
+        return newSet;
+      });
       setReplyText(tempReply.content);
       setReplyingTo(commentId);
       alert(`Error al publicar respuesta: ${error instanceof Error ? error.message : 'Error desconocido'}`);
@@ -282,9 +325,10 @@ export default function CommentSection({ gameId }: Props) {
     const isOwner = user?.id === comment.user_id;
     const displayName = getDisplayName(comment);
     const initials = getInitials(comment.user_name, comment.user_email);
+    const isNewComment = newCommentIds.has(comment.id);
 
     return (
-      <div className="flex gap-3 mb-4 animate-fade-in animate-duration-1000 animate-delay-100">
+      <div className={`flex gap-3 mb-4 ${isNewComment ? 'animate-fade-in animate-duration-1000 animate-delay-100' : ''}`}>
         <Avatar className="w-10 h-10 flex-shrink-0">
           {comment.user_avatar ? (
             <AvatarImage src={comment.user_avatar} alt={displayName} />
