@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GameFlix - Stream Your Favorite Games",
-  description: "Unlimited games, movies, and more",
+  title: "Pegasusgames - Stream Your Favorite Games",
+  description: "Unlimited games, netflix style",
 };
 
 type Locale = 'es' | 'en';

@@ -17,6 +17,69 @@ import { getSteamLanguage } from '@/lib/steam-languages';
 
 const VideoPlayer = dynamic(() => import('./VideoPlayer'), { ssr: false });
 
+// Responsive styles configuration
+const RESPONSIVE_STYLES = {
+  modal: {
+    container: 'w-full md:w-[90vw] lg:w-[1100px] max-w-[1100px] min-h-[60vh] md:min-h-[850px] mx-4 md:mx-0',
+    closeButton: 'top-3 right-3 md:top-4 md:right-4 w-9 h-9 md:w-10 md:h-10',
+    closeIcon: 'w-5 h-5 md:w-6 md:h-6',
+  },
+  hero: {
+    container: 'h-[250px] md:h-[320px] lg:h-[380px]',
+    title: 'text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-2 md:mb-3',
+    buttonContainer: 'bottom-3 md:bottom-5 left-4 md:left-6 right-4 md:right-6',
+    button: 'px-4 sm:px-5 md:px-7 py-2 md:py-2.5 text-sm md:text-[15px]',
+    buttonIcon: 'w-4 h-4 md:w-[18px] md:h-[18px]',
+    buttonText: 'hidden sm:inline',
+    buttonTextMobile: 'sm:hidden',
+  },
+  content: {
+    padding: 'p-4 md:p-6',
+    gap: 'gap-2 md:gap-3',
+    spacing: 'mb-3 md:mb-4',
+    spacingLarge: 'mb-4 md:mb-6',
+  },
+  text: {
+    xs: 'text-xs md:text-sm',
+    sm: 'text-sm md:text-base',
+    base: 'text-base md:text-lg',
+    heading: 'text-sm md:text-base',
+  },
+  grid: {
+    features: 'grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3',
+    requirements: 'grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8',
+    main: 'grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 md:gap-8',
+  },
+  sidebar: {
+    spacing: 'space-y-4 md:space-y-6',
+    priceCard: 'rounded-2xl md:rounded-3xl p-4 md:p-8',
+    priceTitle: 'text-[10px] md:text-xs',
+    priceAmount: 'text-2xl md:text-3xl',
+    priceDiscount: 'text-xs md:text-sm',
+    info: 'text-xs md:text-sm',
+    tag: 'px-1.5 md:px-2 py-0.5 md:py-1 text-[10px] md:text-xs',
+    button: 'px-2 md:px-3 py-1 md:py-1.5 text-xs md:text-sm',
+  },
+  viewer: {
+    container: 'p-2 sm:p-4',
+    closeButton: 'top-2 sm:top-3 md:top-4 right-2 sm:right-3 md:right-4 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10',
+    closeIcon: 'w-5 h-5 sm:w-5.5 sm:h-5.5 md:w-6 md:h-6',
+    counter: 'top-2 sm:top-3 md:top-4 left-2 sm:left-3 md:left-4 text-xs sm:text-sm',
+    image: 'max-w-[95vw] sm:max-w-[92vw] md:max-w-[90vw] max-h-[80vh] sm:max-h-[82vh] md:max-h-[85vh]',
+    arrow: 'w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12',
+    arrowIcon: 'w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8',
+    arrowLeft: 'left-1 sm:left-2 md:left-4',
+    arrowRight: 'right-1 sm:right-2 md:right-4',
+    thumbnails: 'bottom-2 sm:bottom-3 md:bottom-4 gap-1 sm:gap-1.5 md:gap-2',
+    thumbnail: 'w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10',
+  },
+  widget: {
+    container: 'mt-4 sm:mt-5 md:mt-6 lg:mt-8 px-3 sm:px-4 md:px-5 lg:px-6',
+    skeleton: 'h-[150px] sm:h-[170px] md:h-[180px] lg:h-[190px]',
+    iframe: 'scale-90 sm:scale-95 md:scale-100',
+  },
+} as const;
+
 type SteamData = {
   screenshots: Array<{ id: number; thumbnail: string; full: string }>;
   videos: Array<{
@@ -283,31 +346,20 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`w-full md:w-[90vw] lg:w-[1100px] max-w-[1100px] min-h-[60vh] md:min-h-[850px] mx-4 md:mx-0 bg-[#181818] rounded-lg overflow-hidden transition-all duration-200 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        className={`${RESPONSIVE_STYLES.modal.container} bg-[#181818] rounded-lg overflow-hidden transition-all duration-200 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
       >
-        <OverlayScrollbarsComponent
-          options={{
-            scrollbars: {
-              autoHide: 'leave',
-              theme: 'os-theme-dark',
-            },
-          }}
-          style={{ maxHeight: '500px' }}
-        >
-          {/* Tu contenido aquí */}
-        </OverlayScrollbarsComponent>
         {/* Botón cerrar */}
         <button
           onClick={handleClose}
-          className="absolute top-2 right-2 md:top-3 md:right-3 bg-black/60 border-none rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center cursor-pointer z-10 hover:bg-black/80 transition-colors"
+          className={`absolute ${RESPONSIVE_STYLES.modal.closeButton} bg-black/70 hover:bg-black/90 border-none rounded-full flex items-center justify-center cursor-pointer z-50 transition-colors shadow-lg`}
         >
-          <X className="text-white w-4 h-4 md:w-5 md:h-5" />
+          <X className={`text-white ${RESPONSIVE_STYLES.modal.closeIcon}`} />
         </button>
 
-        <div className="max-h-[85vh] overflow-y-auto">
+        <div className="max-h-[85vh] overflow-y-auto overflow-x-hidden">
           {/* Hero Image / Trailer */}
-          <div className="h-[250px] md:h-[300px] lg:h-[350px] relative overflow-hidden">
+          <div className={`${RESPONSIVE_STYLES.hero.container} relative overflow-hidden`}>
             {/* Skeleton para el trailer/wallpaper cuando está cargando */}
             {loadingSteam && !showTrailer && (
               <div className="absolute inset-0 bg-gray-800 animate-pulse">
@@ -358,33 +410,33 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
             {/* Título y botones sobre el wallpaper */}
             {!loadingSteam && (
-              <div className={`absolute bottom-3 md:bottom-5 left-4 md:left-6 right-4 md:right-6 z-10 transition-all duration-500 ${showTrailer ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
+              <div className={`absolute ${RESPONSIVE_STYLES.hero.buttonContainer} z-10 transition-all duration-500 ${showTrailer ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
                 }`}>
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 md:mb-3 line-clamp-2">{game.title}</h2>
-                <div className="flex gap-2 md:gap-3 flex-wrap">
+                <h2 className={`${RESPONSIVE_STYLES.hero.title} font-bold text-white line-clamp-2 drop-shadow-lg`}>{game.title}</h2>
+                <div className={`flex ${RESPONSIVE_STYLES.content.gap} flex-wrap`}>
                   {game.links ? (
                     <a
                       href={game.links}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 md:px-7 py-2 md:py-2.5 rounded-full bg-white text-black border-none font-bold text-sm md:text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-200 transition-colors"
+                      className={`${RESPONSIVE_STYLES.hero.button} rounded-full bg-white text-black border-none font-bold cursor-pointer flex items-center gap-2 hover:bg-gray-200 transition-colors shadow-lg`}
                     >
-                      <Download className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-                      <span className="hidden sm:inline">{t.modal.downloadFree}</span>
-                      <span className="sm:hidden">Download</span>
+                      <Download className={RESPONSIVE_STYLES.hero.buttonIcon} />
+                      <span className={RESPONSIVE_STYLES.hero.buttonText}>{t.modal.downloadFree}</span>
+                      <span className={RESPONSIVE_STYLES.hero.buttonTextMobile}>Download</span>
                     </a>
                   ) : (
                     <a
                       href={`https://store.steampowered.com/app/${game.steam_appid}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 md:px-7 py-2 md:py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none font-bold text-sm md:text-[15px] cursor-pointer flex items-center gap-2 hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg"
+                      className={`${RESPONSIVE_STYLES.hero.button} rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none font-bold cursor-pointer flex items-center gap-2 hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg`}
                     >
-                      <svg className="w-4 h-4 md:w-[18px] md:h-[18px]" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className={RESPONSIVE_STYLES.hero.buttonIcon} fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2m0-2a12 12 0 0 0-12 12 12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.5 14.5-5-2.5V9l5 2.5v3z"/>
                       </svg>
-                      <span className="hidden sm:inline">{t.modal.viewOnSteam}</span>
-                      <span className="sm:hidden">Steam</span>
+                      <span className={RESPONSIVE_STYLES.hero.buttonText}>{t.modal.viewOnSteam}</span>
+                      <span className={RESPONSIVE_STYLES.hero.buttonTextMobile}>Steam</span>
                     </a>
                   )}
                   {(hasValidVideo || game.trailer) && (
@@ -393,11 +445,11 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                         setCurrentVideoIndex(0);
                         setShowTrailer(true);
                       }}
-                      className="px-4 md:px-7 py-2 md:py-2.5 rounded-full bg-gray-500/70 text-white border-none font-bold text-sm md:text-[15px] cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors"
+                      className={`${RESPONSIVE_STYLES.hero.button} rounded-full bg-gray-500/70 text-white border-none font-bold cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors shadow-lg`}
                     >
-                      <Play className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-                      <span className="hidden sm:inline">{t.modal.trailer}</span>
-                      <span className="sm:hidden">Play</span>
+                      <Play className={RESPONSIVE_STYLES.hero.buttonIcon} />
+                      <span className={RESPONSIVE_STYLES.hero.buttonText}>{t.modal.trailer}</span>
+                      <span className={RESPONSIVE_STYLES.hero.buttonTextMobile}>Play</span>
                     </button>
                   )}
                 </div>
@@ -453,9 +505,9 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
 
           {/* Detalles */}
-          <div className="p-4 md:p-6">
+          <div className={RESPONSIVE_STYLES.content.padding}>
             {/* Info badges */}
-            <div className="flex gap-2 md:gap-3 items-center mb-3 md:mb-4 flex-wrap">
+            <div className={`flex ${RESPONSIVE_STYLES.content.gap} items-center ${RESPONSIVE_STYLES.content.spacing} flex-wrap`}>
               {loadingSteam ? (
                 <>
                   <div className="h-5 w-20 bg-gray-700 animate-pulse rounded" />
@@ -491,32 +543,32 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
             </div>
 
             {/* Main content grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 md:gap-8">
+            <div className={RESPONSIVE_STYLES.grid.main}>
               {/* Left column */}
               <div>
                 {loadingSteam ? (
-                  <div className="space-y-2 mb-4 md:mb-6">
+                  <div className={`space-y-2 ${RESPONSIVE_STYLES.content.spacingLarge}`}>
                     <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-full" />
                     <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-full" />
                     <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-3/4" />
                   </div>
                 ) : (
-                  <p className="text-sm md:text-base text-gray-200 leading-relaxed mb-4 md:mb-6">
+                  <p className={`${RESPONSIVE_STYLES.text.sm} text-gray-200 leading-relaxed ${RESPONSIVE_STYLES.content.spacingLarge}`}>
                     {steamData?.short_description || game.description}
                   </p>
                 )}
 
                 {/* Features section */}
-                <div className="mb-4 md:mb-6">
-                  <h3 className="text-white font-semibold mb-2 md:mb-3 text-sm md:text-base">{t.modal.gameFeatures}</h3>
+                <div className={RESPONSIVE_STYLES.content.spacingLarge}>
+                  <h3 className={`text-white font-semibold mb-2 md:mb-3 ${RESPONSIVE_STYLES.text.heading}`}>{t.modal.gameFeatures}</h3>
                   {loadingSteam ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
+                    <div className={RESPONSIVE_STYLES.grid.features}>
                       {[...Array(6)].map((_, i) => (
                         <div key={i} className="h-4 md:h-5 bg-gray-700 animate-pulse rounded" />
                       ))}
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
+                    <div className={RESPONSIVE_STYLES.grid.features}>
                       {steamData?.categories?.length ? (
                         steamData.categories.slice(0, 6).map((category, index) => (
                           <div key={index} className="flex items-center gap-1.5 md:gap-2 text-gray-300 text-xs md:text-sm">
@@ -550,8 +602,8 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                 </div>
 
                 {/* Screenshots section with slider */}
-                <div className="mb-4 md:mb-6">
-                  <h3 className="text-white font-semibold mb-2 md:mb-3 text-sm md:text-base">
+                <div className={RESPONSIVE_STYLES.content.spacingLarge}>
+                  <h3 className={`text-white font-semibold mb-2 md:mb-3 ${RESPONSIVE_STYLES.text.heading}`}>
                     {t.modal.screenshotsVideos}
                     {loadingSteam && <span className="text-gray-500 text-sm ml-2">({t.common.loading})</span>}
                     {steamData && <span className="text-green-500 text-sm ml-2">✓ Steam</span>}
@@ -648,7 +700,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* System Requirements */}
                 <div>
-                  <h3 className="text-white font-semibold mb-3 md:mb-4 text-base md:text-lg">{t.modal.systemRequirements}</h3>
+                  <h3 className={`text-white font-semibold mb-3 md:mb-4 ${RESPONSIVE_STYLES.text.base}`}>{t.modal.systemRequirements}</h3>
                   {loadingSteam ? (
                     <div className="grid grid-cols-2 gap-8">
                       {/* MÍNIMO Skeleton */}
@@ -671,7 +723,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                       </div>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                    <div className={RESPONSIVE_STYLES.grid.requirements}>
                       {/* MÍNIMO */}
                       <div>
                         <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.minimum}</h4>
@@ -709,22 +761,22 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
               </div>
 
               {/* Right column - Sidebar */}
-              <div className="space-y-4 md:space-y-6">
+              <div className={RESPONSIVE_STYLES.sidebar.spacing}>
                 {/* Price Card - Destacado */}
                 {loadingSteam ? (
-                  <div className="relative overflow-hidden bg-gradient-to-br from-gray-700/20 via-gray-600/10 to-gray-700/20 border border-gray-600/30 rounded-2xl md:rounded-3xl p-4 md:p-8">
-                    <div className="flex items-center justify-between gap-3 md:gap-6 mb-3 md:mb-4">
-                      <div className="flex items-center gap-2 md:gap-3">
-                        <div className="w-0.5 md:w-1 h-6 md:h-8 bg-gray-600 animate-pulse rounded-full"></div>
-                        <div className="h-3 md:h-4 w-12 md:w-16 bg-gray-600 animate-pulse rounded"></div>
+                  <div className={`relative overflow-hidden bg-gradient-to-br from-gray-700/20 via-gray-600/10 to-gray-700/20 border border-gray-600/30 ${RESPONSIVE_STYLES.sidebar.priceCard}`}>
+                    <div className="flex items-center justify-between gap-2 xs:gap-3 sm:gap-4 md:gap-6 mb-2 xs:mb-3 sm:mb-3.5 md:mb-4">
+                      <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 md:gap-3">
+                        <div className="w-0.5 xs:w-0.5 sm:w-0.5 md:w-1 h-5 xs:h-6 sm:h-7 md:h-8 bg-gray-600 animate-pulse rounded-full"></div>
+                        <div className="h-2.5 xs:h-3 sm:h-3.5 md:h-4 w-10 xs:w-12 sm:w-14 md:w-16 bg-gray-600 animate-pulse rounded"></div>
                       </div>
-                      <div className="h-6 md:h-8 w-20 md:w-24 bg-gray-600 animate-pulse rounded-full"></div>
+                      <div className="h-5 xs:h-6 sm:h-7 md:h-8 w-16 xs:w-20 sm:w-22 md:w-24 bg-gray-600 animate-pulse rounded-full"></div>
                     </div>
-                    <div className="h-8 md:h-10 w-24 md:w-32 bg-gray-600 animate-pulse rounded mb-1.5 md:mb-2"></div>
-                    <div className="h-2.5 md:h-3 w-16 md:w-20 bg-gray-600 animate-pulse rounded"></div>
+                    <div className="h-7 xs:h-8 sm:h-9 md:h-10 w-20 xs:w-24 sm:w-28 md:w-32 bg-gray-600 animate-pulse rounded mb-1 xs:mb-1.5 sm:mb-1.5 md:mb-2"></div>
+                    <div className="h-2 xs:h-2.5 sm:h-2.5 md:h-3 w-14 xs:w-16 sm:w-18 md:w-20 bg-gray-600 animate-pulse rounded"></div>
                   </div>
                 ) : steamData?.price ? (
-                  <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500/10 via-green-500/5 to-teal-500/10 border border-green-400/30 rounded-2xl md:rounded-3xl p-4 md:p-8 backdrop-blur-sm">
+                  <div className={`relative overflow-hidden bg-gradient-to-br from-emerald-500/10 via-green-500/5 to-teal-500/10 border border-green-400/30 ${RESPONSIVE_STYLES.sidebar.priceCard} backdrop-blur-sm`}>
                     <Snowfall
                       style={{
                         position: 'absolute',
@@ -733,13 +785,13 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                       }} />
 
                     <div className="absolute inset-0 bg-gradient-to-tr from-green-500/5 to-transparent"></div>
-                    <div className="relative flex items-center justify-between gap-3 md:gap-6">
-                      <div className="flex items-center gap-2 md:gap-3">
+                    <div className={`relative flex items-center justify-between ${RESPONSIVE_STYLES.content.gap}`}>
+                      <div className={`flex items-center ${RESPONSIVE_STYLES.content.gap}`}>
                         <div className="w-0.5 md:w-1 h-6 md:h-8 bg-gradient-to-b from-green-400 to-emerald-500 rounded-full"></div>
-                        <h4 className="text-gray-300 text-[10px] md:text-xs font-bold tracking-wider uppercase">{t.modal.price}</h4>
+                        <h4 className={`text-gray-300 ${RESPONSIVE_STYLES.sidebar.priceTitle} font-bold tracking-wider uppercase`}>{t.modal.price}</h4>
                       </div>
                       {userLocation && (
-                        <span className="flex items-center gap-1 md:gap-2 text-[10px] md:text-xs text-emerald-400 bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-2 md:px-4 py-1 md:py-2 rounded-full border border-green-400/20 backdrop-blur-sm shadow-lg shadow-green-500/10">
+                        <span className={`flex items-center gap-1 md:gap-2 ${RESPONSIVE_STYLES.sidebar.priceTitle} text-emerald-400 bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-2 md:px-4 py-1 md:py-2 rounded-full border border-green-400/20 backdrop-blur-sm shadow-lg shadow-green-500/10`}>
                           <MapPinCheck className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
                           <span className="font-medium hidden sm:inline">{userLocation.country}</span>
                         </span>
@@ -747,39 +799,39 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                     </div>
 
                     {steamData.is_free ? (
-                      <div className="text-2xl md:text-3xl font-bold text-green-400 mt-2">
+                      <div className={`${RESPONSIVE_STYLES.sidebar.priceAmount} font-bold text-green-400 mt-2`}>
                         {t.modal.free}
                       </div>
                     ) : steamData.price_info ? (
                       <div>
                         {steamData.price_info.discount_percent > 0 ? (
                           <div className="mt-1.5 md:mt-2 space-y-1.5 md:space-y-2">
-                            <div className="flex items-center gap-2 md:gap-3">
-                              <span className="bg-green-600 text-white px-1.5 md:px-2 py-0.5 md:py-1 rounded font-bold text-xs md:text-sm">
+                            <div className={`flex items-center ${RESPONSIVE_STYLES.content.gap}`}>
+                              <span className={`bg-green-600 text-white px-1.5 md:px-2 py-0.5 md:py-1 rounded font-bold ${RESPONSIVE_STYLES.sidebar.priceDiscount}`}>
                                 -{steamData.price_info.discount_percent}%
                               </span>
-                              <span className="text-gray-400 line-through text-sm md:text-lg">
+                              <span className={`text-gray-400 line-through ${RESPONSIVE_STYLES.text.sm}`}>
                                 {steamData.price_info.initial_formatted}
                               </span>
                             </div>
-                            <div className="text-2xl md:text-3xl font-bold text-green-400">
+                            <div className={`${RESPONSIVE_STYLES.sidebar.priceAmount} font-bold text-green-400`}>
                               {steamData.price_info.final_formatted}
                             </div>
                           </div>
                         ) : (
-                          <div className="text-2xl md:text-3xl font-bold text-white mt-2">
+                          <div className={`${RESPONSIVE_STYLES.sidebar.priceAmount} font-bold text-white mt-2`}>
                             {steamData.price_info.final_formatted || steamData.price}
                           </div>
                         )}
                       </div>
                     ) : (
-                      <div className="text-xl md:text-2xl font-bold text-white mt-2">
+                      <div className={`text-xl md:text-2xl font-bold text-white mt-2`}>
                         {steamData.price}
                       </div>
                     )}
 
                     {steamData.price_info && (
-                      <p className="text-[10px] md:text-xs text-gray-400 mt-1.5 md:mt-2">
+                      <p className={`${RESPONSIVE_STYLES.sidebar.priceTitle} text-gray-400 mt-1.5 md:mt-2`}>
                         {t.modal.priceIn} {steamData.price_info.currency}
                       </p>
                     )}
@@ -795,7 +847,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                   </div>
                 ) : (
                   <div className="space-y-2 md:space-y-3">
-                    <p className="text-gray-500 text-xs md:text-sm">
+                    <p className={`text-gray-500 ${RESPONSIVE_STYLES.sidebar.info}`}>
                       <span>{t.modal.genre} </span>
                       <span className="text-white">
                         {steamData?.genres?.length
@@ -803,16 +855,16 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                           : game.genre}
                       </span>
                     </p>
-                    <p className="text-gray-500 text-xs md:text-sm">
+                    <p className="text-gray-500 text-[10px] xs:text-xs sm:text-xs md:text-sm">
                       <span>{t.modal.rating} </span>
                       <span className="text-white flex items-center gap-1">
-                        <Star fill="yellow" stroke="yellow" strokeWidth={0.5} size={14} className="md:w-4 md:h-4" />
+                        <Star fill="yellow" stroke="yellow" strokeWidth={0.5} size={12} className="xs:w-3.5 xs:h-3.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
                         {steamData?.metacritic
                           ? `${steamData.metacritic}/100 (Metacritic)`
                           : `${game.rating}/10`}
                       </span>
                     </p>
-                    <p className="text-gray-500 text-xs md:text-sm">
+                    <p className="text-gray-500 text-[10px] xs:text-xs sm:text-xs md:text-sm">
                       <span>{t.modal.developer} </span>
                       <span className="text-white">
                         {steamData?.developers?.length
@@ -820,7 +872,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                           : 'Pivigames Studio'}
                       </span>
                     </p>
-                    <p className="text-gray-500 text-xs md:text-sm">
+                    <p className="text-gray-500 text-[10px] xs:text-xs sm:text-xs md:text-sm">
                       <span>{t.modal.publisher} </span>
                       <span className="text-white">
                         {steamData?.publishers?.length
@@ -828,16 +880,16 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                           : 'Pivigames Inc.'}
                       </span>
                     </p>
-                    <p className="text-gray-500 text-xs md:text-sm">
+                    <p className="text-gray-500 text-[10px] xs:text-xs sm:text-xs md:text-sm">
                       <span>{t.modal.release} </span>
                       <span className="text-white">
                         {steamData?.release_date || 'Dec 15, 2024'}
                       </span>
                     </p>
-                    <p className="text-gray-500 text-xs md:text-sm">
+                    <p className="text-gray-500 text-[10px] xs:text-xs sm:text-xs md:text-sm">
                       <span>{t.modal.priceHistory} </span>
                       {steamData?.current_price && steamData?.lowest_recorded_price ? (
-                        <span className="text-white text-xs md:text-sm">
+                        <span className="text-white text-[10px] xs:text-xs sm:text-xs md:text-sm">
                           <a 
                             href={`https://steamdb.info/app/${steamData.steam_appid}/`}
                             target="_blank"
@@ -865,11 +917,11 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* Platforms */}
                 <div>
-                  <h4 className="text-gray-400 text-xs md:text-sm mb-1.5 md:mb-2">{t.modal.availableOn}</h4>
+                  <h4 className="text-gray-400 text-[10px] xs:text-xs sm:text-xs md:text-sm mb-1 xs:mb-1.5 sm:mb-1.5 md:mb-2">{t.modal.availableOn}</h4>
                   {loadingSteam ? (
-                    <div className="h-4 md:h-5 w-20 md:w-24 bg-gray-700 animate-pulse rounded" />
+                    <div className="h-3.5 xs:h-4 sm:h-4 md:h-5 w-16 xs:w-20 sm:w-22 md:w-24 bg-gray-700 animate-pulse rounded" />
                   ) : (
-                    <div className="flex gap-2 md:gap-3 text-xs md:text-sm text-gray-300">
+                    <div className="flex gap-1.5 xs:gap-2 sm:gap-2.5 md:gap-3 text-[10px] xs:text-xs sm:text-xs md:text-sm text-gray-300">
                       {steamData?.platforms ? (
                         <>
                           {steamData.platforms.windows && <span title="Windows">Windows</span>}
@@ -885,29 +937,29 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* Tags */}
                 <div>
-                  <h4 className="text-gray-400 text-xs md:text-sm mb-1.5 md:mb-2">{t.modal.tags}</h4>
+                  <h4 className="text-gray-400 text-[10px] xs:text-xs sm:text-xs md:text-sm mb-1 xs:mb-1.5 sm:mb-1.5 md:mb-2">{t.modal.tags}</h4>
                   {loadingSteam ? (
-                    <div className="flex flex-wrap gap-1.5 md:gap-2">
+                    <div className="flex flex-wrap gap-1 xs:gap-1.5 sm:gap-1.5 md:gap-2">
                       {[...Array(6)].map((_, i) => (
-                        <div key={i} className="h-5 md:h-6 w-12 md:w-16 bg-gray-700 animate-pulse rounded" />
+                        <div key={i} className="h-4 xs:h-5 sm:h-5 md:h-6 w-10 xs:w-12 sm:w-14 md:w-16 bg-gray-700 animate-pulse rounded" />
                       ))}
                     </div>
                   ) : (
-                    <div className="flex flex-wrap gap-1.5 md:gap-2">
+                    <div className="flex flex-wrap gap-1 xs:gap-1.5 sm:gap-1.5 md:gap-2">
                       {steamData?.categories?.length ? (
                         steamData.categories.slice(0, 8).map((category, index) => (
-                          <span key={index} className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">
+                          <span key={index} className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>
                             {category}
                           </span>
                         ))
                       ) : (
                         <>
-                          <span className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">Action</span>
-                          <span className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">Adventure</span>
-                          <span className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">Open World</span>
-                          <span className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">RPG</span>
-                          <span className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">Story Rich</span>
-                          <span className="bg-[#333] text-gray-300 px-1.5 md:px-2 py-0.5 md:py-1 rounded text-[10px] md:text-xs">Multiplayer</span>
+                          <span className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>Action</span>
+                          <span className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>Adventure</span>
+                          <span className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>Open World</span>
+                          <span className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>RPG</span>
+                          <span className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>Story Rich</span>
+                          <span className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>Multiplayer</span>
                         </>
                       )}
                     </div>
@@ -916,14 +968,14 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* Languages */}
                 <div>
-                  <h4 className="text-gray-400 text-xs md:text-sm mb-1.5 md:mb-2">{t.modal.languages}</h4>
+                  <h4 className={`text-gray-400 ${RESPONSIVE_STYLES.sidebar.info} mb-1.5 md:mb-2`}>{t.modal.languages}</h4>
                   {loadingSteam ? (
                     <div className="space-y-1.5 md:space-y-2">
                       <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-full" />
                       <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-2/3" />
                     </div>
                   ) : (
-                    <p className="text-gray-300 text-xs md:text-sm">
+                    <p className={`text-gray-300 ${RESPONSIVE_STYLES.sidebar.info}`}>
                       {steamData?.languages?.length
                         ? steamData.languages.slice(0, 10).join(', ')
                         : 'English, Spanish, French, German, Japanese, Korean, Chinese'}
@@ -933,15 +985,15 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* Social */}
                 <div>
-                  <h4 className="text-gray-400 text-xs md:text-sm mb-1.5 md:mb-2">{t.modal.share}</h4>
-                  <div className="flex gap-2 md:gap-3 flex-wrap">
-                    <button className="bg-[#333] hover:bg-[#444] text-white px-2 md:px-3 py-1 md:py-1.5 rounded text-xs md:text-sm transition-colors">
+                  <h4 className={`text-gray-400 ${RESPONSIVE_STYLES.sidebar.info} mb-1.5 md:mb-2`}>{t.modal.share}</h4>
+                  <div className={`flex ${RESPONSIVE_STYLES.content.gap} flex-wrap`}>
+                    <button className={`bg-[#333] hover:bg-[#444] text-white ${RESPONSIVE_STYLES.sidebar.button} rounded transition-colors`}>
                       {t.modal.discord}
                     </button>
-                    <button className="bg-[#333] hover:bg-[#444] text-white px-2 md:px-3 py-1 md:py-1.5 rounded text-xs md:text-sm transition-colors">
+                    <button className={`bg-[#333] hover:bg-[#444] text-white ${RESPONSIVE_STYLES.sidebar.button} rounded transition-colors`}>
                       {t.modal.facebook}
                     </button>
-                    <button className="bg-[#333] hover:bg-[#444] text-white px-2 md:px-3 py-1 md:py-1.5 rounded text-xs md:text-sm transition-colors">
+                    <button className={`bg-[#333] hover:bg-[#444] text-white ${RESPONSIVE_STYLES.sidebar.button} rounded transition-colors`}>
                       {t.modal.copyLink}
                     </button>
                   </div>
@@ -951,14 +1003,14 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
             {/* Buy on Steam Widget - Full Width */}
             {loadingSteam ? (
-              <div className="flex justify-center mt-6 md:mt-8 px-4 md:px-6">
-                <div className="w-full max-w-[646px] h-[190px] bg-gray-700 animate-pulse rounded-lg" />
+              <div className="flex justify-center mt-4 xs:mt-5 sm:mt-6 md:mt-8 px-3 xs:px-4 sm:px-5 md:px-6">
+                <div className="w-full max-w-[646px] h-[150px] xs:h-[170px] sm:h-[180px] md:h-[190px] bg-gray-700 animate-pulse rounded-lg" />
               </div>
             ) : steamData ? (
-              <div className="flex justify-center mt-6 md:mt-8 px-4 md:px-6 overflow-hidden">
+              <div className="flex justify-center mt-4 xs:mt-5 sm:mt-6 md:mt-8 px-3 xs:px-4 sm:px-5 md:px-6 overflow-hidden">
                 <iframe
                   src={`https://store.steampowered.com/widget/${steamData.steam_appid}/?l=${getSteamLanguage(locale)}`}
-                  className="w-full max-w-[646px]"
+                  className="w-full max-w-[646px] scale-90 xs:scale-95 sm:scale-100"
                   width="646"
                   height="190"
                   frameBorder="0"
@@ -972,7 +1024,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
       {/* Fullscreen Image Viewer */}
       {viewerOpen && (
         <div
-          className="fixed inset-0 bg-black/95 z-[10000] flex items-center justify-center"
+          className={`fixed inset-0 bg-black/95 z-[10000] flex items-center justify-center ${RESPONSIVE_STYLES.viewer.container}`}
           onClick={(e) => {
             e.stopPropagation();
             setViewerOpen(false);
@@ -984,49 +1036,49 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
               e.stopPropagation();
               setViewerOpen(false);
             }}
-            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center transition-colors"
+            className={`absolute ${RESPONSIVE_STYLES.viewer.closeButton} bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-50`}
           >
-            <X className="text-white w-6 h-6" />
+            <X className={`text-white ${RESPONSIVE_STYLES.viewer.closeIcon}`} />
           </button>
 
           {/* Image counter */}
-          <div className="absolute top-4 left-4 text-white/70 text-sm">
+          <div className={`absolute ${RESPONSIVE_STYLES.viewer.counter} text-white/70`}>
             {viewerIndex + 1} / {screenshots.length}
           </div>
 
           {/* Main image */}
           <div
-            className="max-w-[90vw] max-h-[85vh] rounded-lg overflow-hidden"
+            className={`${RESPONSIVE_STYLES.viewer.image} rounded-lg overflow-hidden`}
             onClick={(e) => e.stopPropagation()}
           >
             <img
               src={proxySteamImage(screenshots[viewerIndex])}
               alt={`Screenshot ${viewerIndex + 1}`}
-              className="max-w-full max-h-[85vh] object-contain"
+              className={`max-w-full ${RESPONSIVE_STYLES.viewer.image} object-contain`}
             />
           </div>
 
           {/* Navigation arrows */}
           <button
             onClick={(e) => { e.stopPropagation(); prevViewerImage(); }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors"
+            className={`absolute ${RESPONSIVE_STYLES.viewer.arrowLeft} top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full ${RESPONSIVE_STYLES.viewer.arrow} flex items-center justify-center transition-colors`}
           >
-            <ChevronLeft className="w-8 h-8" />
+            <ChevronLeft className={RESPONSIVE_STYLES.viewer.arrowIcon} />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); nextViewerImage(); }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors"
+            className={`absolute ${RESPONSIVE_STYLES.viewer.arrowRight} top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full ${RESPONSIVE_STYLES.viewer.arrow} flex items-center justify-center transition-colors`}
           >
-            <ChevronRight className="w-8 h-8" />
+            <ChevronRight className={RESPONSIVE_STYLES.viewer.arrowIcon} />
           </button>
 
           {/* Thumbnails */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+          <div className={`absolute ${RESPONSIVE_STYLES.viewer.thumbnails} left-1/2 -translate-x-1/2 flex overflow-x-auto max-w-[95vw] px-2`}>
             {screenshots.map((src, index) => (
               <button
                 key={index}
                 onClick={(e) => { e.stopPropagation(); setViewerIndex(index); }}
-                className={`w-16 h-10 rounded overflow-hidden transition-all ${index === viewerIndex ? 'ring-2 ring-white scale-110' : 'opacity-50 hover:opacity-100'
+                className={`flex-shrink-0 ${RESPONSIVE_STYLES.viewer.thumbnail} rounded overflow-hidden transition-all ${index === viewerIndex ? 'ring-2 ring-white scale-110' : 'opacity-50 hover:opacity-100'
                   }`}
               >
                 <div
