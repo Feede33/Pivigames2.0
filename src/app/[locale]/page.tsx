@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import GameModal from '@/components/GameModal';
 import UserProfile from '@/components/UserProfile';
 import HeroSlider from '@/components/HeroSlider';
@@ -51,6 +52,7 @@ export default function Home() {
   const params = useParams();
   const locale = (params?.locale as Locale) || 'es';
   const t = useTranslations(locale);
+  const { user } = useAuth();
 
   const [modalGame, setModalGame] = useState<GameWithSteamData | null>(null);
   const [modalOrigin, setModalOrigin] = useState<{
@@ -426,6 +428,19 @@ export default function Home() {
             />
             <LanguageSelector />
             <UserProfile navOnly />
+            
+            {/* Botón de Login Futurista (solo si no hay usuario) */}
+            {!user && (
+              <a
+                href="/login"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#00ff88] to-[#00d4ff] text-[#0a0e27] font-bold text-sm rounded-full hover:shadow-[0_0_20px_rgba(0,255,136,0.6)] transition-all duration-300 animate-pulse-slow"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+                Login
+              </a>
+            )}
             
             
             {/* Mobile Menu Button */}
