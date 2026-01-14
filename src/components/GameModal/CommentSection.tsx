@@ -317,176 +317,6 @@ export default function CommentSection({ gameId }: Props) {
     }
   };
 
-  const CommentItem = ({ comment, isReply = false, parentId = null }: { 
-    comment: Comment; 
-    isReply?: boolean; 
-    parentId?: string | null;
-  }) => {
-    const isOwner = user?.id === comment.user_id;
-    const displayName = getDisplayName(comment);
-    const initials = getInitials(comment.user_name, comment.user_email);
-    const isNewComment = newCommentIds.has(comment.id);
-
-    return (
-      <div className={`flex gap-3 mb-4 ${isNewComment ? 'animate-fade-in animate-duration-1000 animate-delay-100' : ''}`}>
-        <Avatar className="w-10 h-10 flex-shrink-0">
-          {comment.user_avatar ? (
-            <AvatarImage src={comment.user_avatar} alt={displayName} />
-          ) : null}
-          <AvatarFallback className="bg-blue-500 text-white text-sm">
-            {initials}
-          </AvatarFallback>
-        </Avatar>
-        
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-semibold text-sm text-gray-200">{displayName}</span>
-            <span className="text-xs text-gray-500">{getTimeAgo(comment.created_at)}</span>
-          </div>
-          
-          <p className="text-sm mb-2 text-gray-300">{comment.content}</p>
-          
-          <div className="flex items-center gap-4 relative" style={{ zIndex: 1 }}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className={`h-8 px-2 ${comment.user_has_liked ? 'text-blue-500' : 'text-gray-400'} hover:text-white`}
-              onClick={() => handleLike(comment.id, isReply, parentId || undefined)}
-              disabled={!user}
-              style={{ position: 'relative', zIndex: 1, pointerEvents: 'auto' }}
-            >
-              <ThumbsUp className="w-4 h-4 mr-1" />
-              <span className="text-xs">{comment.likes}</span>
-            </Button>
-            
-            {!isReply && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-2 text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-700"
-                onClick={() => setReplyingTo(comment.id)}
-                disabled={!user}
-                style={{ position: 'relative', zIndex: 1, pointerEvents: 'auto' }}
-              >
-                Responder
-              </Button>
-            )}
-            
-            {isOwner && (
-              <DropdownMenu modal={false}>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-gray-700"
-                    style={{ position: 'relative', zIndex: 1, pointerEvents: 'auto' }}
-                  >
-                    <MoreVertical className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent 
-                  align="end" 
-                  className="bg-gray-800 border-gray-700"
-                  style={{ zIndex: 99999 }}
-                >
-                  <DropdownMenuItem 
-                    className="text-red-600 hover:text-red-500 hover:bg-gray-700 cursor-pointer"
-                    onClick={() => handleDelete(comment.id, isReply, parentId || undefined)}
-                  >
-                    Eliminar
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-          
-          {replyingTo === comment.id && user && (
-            <div className="mt-3 flex gap-2">
-              <Avatar className="w-8 h-8 flex-shrink-0">
-                {user.user_metadata?.avatar_url ? (
-                  <AvatarImage src={user.user_metadata.avatar_url} alt="Tu" />
-                ) : null}
-                <AvatarFallback className="bg-gray-500 text-white text-xs">
-                  {getInitials(user.user_metadata?.full_name || user.user_metadata?.name, user.email)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <Textarea
-                  placeholder="Agregar una respuesta..."
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  className="min-h-[80px] text-sm bg-gray-800 border-gray-700 text-gray-200"
-                />
-                <div className="flex gap-2 mt-2 justify-end">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setReplyingTo(null);
-                      setReplyText('');
-                    }}
-                    className="text-gray-400 hover:text-white"
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => handleAddReply(comment.id)}
-                    disabled={!replyText.trim()}
-                  >
-                    Responder
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {comment.replies && comment.replies.length > 0 && (
-            <div className="mt-4 space-y-4">
-              {comment.replies.map(reply => (
-                <CommentItem
-                  key={reply.id}
-                  comment={reply}
-                  isReply={true}
-                  parentId={comment.id}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  if (loading) {
-    return (
-      <div className="mt-8 pt-8 border-t border-gray-700">
-        <div className="mb-6">
-          <div className="h-8 bg-gray-700 rounded w-48 mb-6 animate-pulse" />
-        </div>
-        <div className="space-y-6">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="flex gap-3">
-              <div className="w-10 h-10 bg-gray-700 rounded-full animate-pulse flex-shrink-0" />
-              <div className="flex-1 space-y-3">
-                <div className="flex gap-2">
-                  <div className="h-4 bg-gray-700 rounded w-32 animate-pulse" />
-                  <div className="h-4 bg-gray-700 rounded w-20 animate-pulse" />
-                </div>
-                <div className="h-3 bg-gray-700 rounded w-full animate-pulse" />
-                <div className="h-3 bg-gray-700 rounded w-5/6 animate-pulse" />
-                <div className="flex gap-4 mt-2">
-                  <div className="h-8 bg-gray-700 rounded w-16 animate-pulse" />
-                  <div className="h-8 bg-gray-700 rounded w-20 animate-pulse" />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="mt-8 pt-8 border-t border-gray-700">
       <div className="mb-6">
@@ -550,10 +380,209 @@ export default function CommentSection({ gameId }: Props) {
       ) : (
         <div className="space-y-6">
           {comments.map(comment => (
-            <CommentItem key={comment.id} comment={comment} />
+            <CommentItem 
+              key={comment.id} 
+              comment={comment}
+              user={user}
+              replyingTo={replyingTo}
+              replyText={replyText}
+              newCommentIds={newCommentIds}
+              onSetReplyingTo={setReplyingTo}
+              onSetReplyText={setReplyText}
+              onAddReply={handleAddReply}
+              onLike={handleLike}
+              onDelete={handleDelete}
+              getInitials={getInitials}
+              getDisplayName={getDisplayName}
+              getTimeAgo={getTimeAgo}
+            />
           ))}
         </div>
       )}
     </div>
   );
 }
+
+// Mover CommentItem fuera del componente principal
+const CommentItem = React.memo(({ 
+  comment, 
+  user,
+  replyingTo,
+  replyText,
+  newCommentIds,
+  onSetReplyingTo,
+  onSetReplyText,
+  onAddReply,
+  onLike,
+  onDelete,
+  getInitials,
+  getDisplayName,
+  getTimeAgo,
+  isReply = false, 
+  parentId = null 
+}: { 
+  comment: Comment; 
+  user: any;
+  replyingTo: string | null;
+  replyText: string;
+  newCommentIds: Set<string>;
+  onSetReplyingTo: (id: string | null) => void;
+  onSetReplyText: (text: string) => void;
+  onAddReply: (commentId: string) => void;
+  onLike: (commentId: string, isReply?: boolean, parentId?: string) => void;
+  onDelete: (commentId: string, isReply?: boolean, parentId?: string) => void;
+  getInitials: (name?: string, email?: string) => string;
+  getDisplayName: (comment: Comment) => string;
+  getTimeAgo: (date: string) => string;
+  isReply?: boolean; 
+  parentId?: string | null;
+}) => {
+  const isOwner = user?.id === comment.user_id;
+  const displayName = getDisplayName(comment);
+  const initials = getInitials(comment.user_name, comment.user_email);
+  const isNewComment = newCommentIds.has(comment.id);
+
+  return (
+    <div className={`flex gap-3 mb-4 ${isNewComment ? 'animate-fade-in animate-duration-1000 animate-delay-100' : ''}`}>
+      <Avatar className="w-10 h-10 flex-shrink-0">
+        {comment.user_avatar ? (
+          <AvatarImage src={comment.user_avatar} alt={displayName} />
+        ) : null}
+        <AvatarFallback className="bg-blue-500 text-white text-sm">
+          {initials}
+        </AvatarFallback>
+      </Avatar>
+      
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="font-semibold text-sm text-gray-200">{displayName}</span>
+          <span className="text-xs text-gray-500">{getTimeAgo(comment.created_at)}</span>
+        </div>
+        
+        <p className="text-sm mb-2 text-gray-300">{comment.content}</p>
+        
+        <div className="flex items-center gap-4 relative" style={{ zIndex: 1 }}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`h-8 px-2 ${comment.user_has_liked ? 'text-blue-500' : 'text-gray-400'} hover:text-white`}
+            onClick={() => onLike(comment.id, isReply, parentId || undefined)}
+            disabled={!user}
+            style={{ position: 'relative', zIndex: 1, pointerEvents: 'auto' }}
+          >
+            <ThumbsUp className="w-4 h-4 mr-1" />
+            <span className="text-xs">{comment.likes}</span>
+          </Button>
+          
+          {!isReply && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-700"
+              onClick={() => onSetReplyingTo(comment.id)}
+              disabled={!user}
+              style={{ position: 'relative', zIndex: 1, pointerEvents: 'auto' }}
+            >
+              Responder
+            </Button>
+          )}
+          
+          {isOwner && (
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-gray-700"
+                  style={{ position: 'relative', zIndex: 1, pointerEvents: 'auto' }}
+                >
+                  <MoreVertical className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="end" 
+                className="bg-gray-800 border-gray-700"
+                style={{ zIndex: 99999 }}
+              >
+                <DropdownMenuItem 
+                  className="text-red-600 hover:text-red-500 hover:bg-gray-700 cursor-pointer"
+                  onClick={() => onDelete(comment.id, isReply, parentId || undefined)}
+                >
+                  Eliminar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
+        
+        {replyingTo === comment.id && user && (
+          <div className="mt-3 flex gap-2">
+            <Avatar className="w-8 h-8 flex-shrink-0">
+              {user.user_metadata?.avatar_url ? (
+                <AvatarImage src={user.user_metadata.avatar_url} alt="Tu" />
+              ) : null}
+              <AvatarFallback className="bg-gray-500 text-white text-xs">
+                {getInitials(user.user_metadata?.full_name || user.user_metadata?.name, user.email)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <Textarea
+                placeholder="Agregar una respuesta..."
+                value={replyText}
+                onChange={(e) => onSetReplyText(e.target.value)}
+                className="min-h-[80px] text-sm bg-gray-800 border-gray-700 text-gray-200"
+              />
+              <div className="flex gap-2 mt-2 justify-end">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    onSetReplyingTo(null);
+                    onSetReplyText('');
+                  }}
+                  className="text-gray-400 hover:text-white"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => onAddReply(comment.id)}
+                  disabled={!replyText.trim()}
+                >
+                  Responder
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {comment.replies && comment.replies.length > 0 && (
+          <div className="mt-4 space-y-4">
+            {comment.replies.map(reply => (
+              <CommentItem
+                key={reply.id}
+                comment={reply}
+                user={user}
+                replyingTo={replyingTo}
+                replyText={replyText}
+                newCommentIds={newCommentIds}
+                onSetReplyingTo={onSetReplyingTo}
+                onSetReplyText={onSetReplyText}
+                onAddReply={onAddReply}
+                onLike={onLike}
+                onDelete={onDelete}
+                getInitials={getInitials}
+                getDisplayName={getDisplayName}
+                getTimeAgo={getTimeAgo}
+                isReply={true}
+                parentId={comment.id}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
+
+CommentItem.displayName = 'CommentItem';
