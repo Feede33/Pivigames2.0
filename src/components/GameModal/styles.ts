@@ -76,7 +76,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
           flexDirection: 'column' as const,
           gap: '0.75rem'
         } as React.CSSProperties,
-        priceCard: { borderRadius: '0.75rem', padding: '0.75rem', minWidth: "100px" },
+        priceCard: { borderRadius: '0.75rem', padding: '0.75rem', minWidth: "20px" },
         priceTitle: { fontSize: '0.5625rem' },
         priceAmount: { fontSize: '1.25rem', lineHeight: '1.75rem' },
         priceDiscount: { fontSize: '0.625rem' },
@@ -106,13 +106,15 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
           paddingRight: '0.25rem',
           display: 'flex',
           justifyContent: 'center',
-          overflow: 'hidden'
+          overflow: 'visible',
+          width: '100%'
         },
         iframe: {
-          width: '100%',
-          maxWidth: '340px', // Ajustado para iPhone SE
+          width: '340px',
+          height: '161px',
           transform: 'scale(0.85)',
-          transformOrigin: 'center center'
+          transformOrigin: 'center center',
+          border: 'none'
         },
         skeleton: {
           height: '140px',
@@ -242,13 +244,15 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
           paddingRight: '0.75rem',
           display: 'flex',
           justifyContent: 'center',
-          overflow: 'hidden'
+          overflow: 'visible',
+          width: '100%'
         },
         iframe: {
-          width: '100%',
-          maxWidth: '500px',
+          width: '500px',
+          height: '190px',
           transform: 'scale(0.9)',
-          transformOrigin: 'center center'
+          transformOrigin: 'center center',
+          border: 'none'
         },
         skeleton: {
           height: '160px',

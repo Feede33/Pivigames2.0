@@ -248,9 +248,8 @@ export default function Sidebar({
           <iframe
             src={`https://store.steampowered.com/widget/${steamData.steam_appid}/?l=${getSteamLanguage(locale)}`}
             style={styles.widget.iframe}
-            width="646"
-            height="190"
             frameBorder="0"
+            title="Steam Widget"
           />
         </div>
       ) : null}
