@@ -17,68 +17,280 @@ import { getSteamLanguage } from '@/lib/steam-languages';
 
 const VideoPlayer = dynamic(() => import('./VideoPlayer'), { ssr: false });
 
-// Responsive styles configuration
-const RESPONSIVE_STYLES = {
-  modal: {
-    container: 'w-full md:w-[90vw] lg:w-[1100px] max-w-[1100px] min-h-[60vh] md:min-h-[850px] mx-4 md:mx-0',
-    closeButton: 'top-3 right-3 md:top-4 md:right-4 w-9 h-9 md:w-10 md:h-10',
-    closeIcon: 'w-5 h-5 md:w-6 md:h-6',
-  },
-  hero: {
-    container: 'h-[250px] md:h-[320px] lg:h-[380px]',
-    title: 'text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-2 md:mb-3',
-    buttonContainer: 'bottom-3 md:bottom-5 left-4 md:left-6 right-4 md:right-6',
-    button: 'px-4 sm:px-5 md:px-7 py-2 md:py-2.5 text-sm md:text-[15px]',
-    buttonIcon: 'w-4 h-4 md:w-[18px] md:h-[18px]',
-    buttonText: 'hidden sm:inline',
-    buttonTextMobile: 'sm:hidden',
-  },
-  content: {
-    padding: 'p-4 md:p-6',
-    gap: 'gap-2 md:gap-3',
-    spacing: 'mb-3 md:mb-4',
-    spacingLarge: 'mb-4 md:mb-6',
-  },
-  text: {
-    xs: 'text-xs md:text-sm',
-    sm: 'text-sm md:text-base',
-    base: 'text-base md:text-lg',
-    heading: 'text-sm md:text-base',
-  },
-  grid: {
-    features: 'grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3',
-    requirements: 'grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8',
-    main: 'grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 md:gap-8',
-  },
-  sidebar: {
-    spacing: 'space-y-4 md:space-y-6',
-    priceCard: 'rounded-2xl md:rounded-3xl p-4 md:p-8',
-    priceTitle: 'text-[10px] md:text-xs',
-    priceAmount: 'text-2xl md:text-3xl',
-    priceDiscount: 'text-xs md:text-sm',
-    info: 'text-xs md:text-sm',
-    tag: 'px-1.5 md:px-2 py-0.5 md:py-1 text-[10px] md:text-xs',
-    button: 'px-2 md:px-3 py-1 md:py-1.5 text-xs md:text-sm',
-  },
-  viewer: {
-    container: 'p-2 sm:p-4',
-    closeButton: 'top-2 sm:top-3 md:top-4 right-2 sm:right-3 md:right-4 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10',
-    closeIcon: 'w-5 h-5 sm:w-5.5 sm:h-5.5 md:w-6 md:h-6',
-    counter: 'top-2 sm:top-3 md:top-4 left-2 sm:left-3 md:left-4 text-xs sm:text-sm',
-    image: 'max-w-[95vw] sm:max-w-[92vw] md:max-w-[90vw] max-h-[80vh] sm:max-h-[82vh] md:max-h-[85vh]',
-    arrow: 'w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12',
-    arrowIcon: 'w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8',
-    arrowLeft: 'left-1 sm:left-2 md:left-4',
-    arrowRight: 'right-1 sm:right-2 md:right-4',
-    thumbnails: 'bottom-2 sm:bottom-3 md:bottom-4 gap-1 sm:gap-1.5 md:gap-2',
-    thumbnail: 'w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10',
-  },
-  widget: {
-    container: 'mt-4 sm:mt-5 md:mt-6 lg:mt-8 px-3 sm:px-4 md:px-5 lg:px-6',
-    skeleton: 'h-[150px] sm:h-[170px] md:h-[180px] lg:h-[190px]',
-    iframe: 'scale-90 sm:scale-95 md:scale-100',
-  },
-} as const;
+type ScreenSize = 'xs' | 'sm' | 'md' | 'lg';
+
+// Hook para detectar el tamaño de pantalla
+const useScreenSize = (): ScreenSize => {
+  const [screenSize, setScreenSize] = useState<ScreenSize>('lg');
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 475) setScreenSize('xs');
+      else if (width < 640) setScreenSize('sm');
+      else if (width < 1024) setScreenSize('md');
+      else setScreenSize('lg');
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return screenSize;
+};
+
+// Función para obtener estilos responsive
+const getResponsiveStyles = (screenSize: ScreenSize) => {
+  const styles = {
+    xs: {
+      modal: {
+        container: 'w-full mx-3 min-h-[65vh]',
+        closeButton: 'w-8 h-8',
+        closeIcon: 'w-4 h-4',
+      },
+      hero: {
+        height: 'h-[200px]',
+        title: 'text-lg',
+        titleMargin: 'mb-2',
+        buttonContainer: 'bottom-2 left-3 right-3',
+        button: 'px-3 py-1.5 text-xs',
+        buttonIcon: 'w-3.5 h-3.5',
+        buttonGap: 'gap-1.5',
+      },
+      content: {
+        padding: 'p-3',
+        gap: 'gap-1.5',
+        spacing: 'mb-2.5',
+        spacingLarge: 'mb-3',
+      },
+      text: {
+        xs: 'text-[10px]',
+        sm: 'text-xs',
+        base: 'text-sm',
+        heading: 'text-xs',
+      },
+      grid: {
+        features: 'grid-cols-1 gap-1.5',
+        requirements: 'grid-cols-1 gap-3',
+        main: 'grid-cols-1 gap-4',
+      },
+      sidebar: {
+        spacing: 'space-y-3',
+        priceCard: 'rounded-xl p-3',
+        priceTitle: 'text-[9px]',
+        priceAmount: 'text-xl',
+        priceDiscount: 'text-[10px]',
+        info: 'text-[10px]',
+        tag: 'px-1 py-0.5 text-[9px]',
+        button: 'px-1.5 py-0.5 text-[10px]',
+      },
+      viewer: {
+        padding: 'p-1',
+        closeButton: 'top-2 right-2 w-7 h-7',
+        closeIcon: 'w-4 h-4',
+        counter: 'top-2 left-2 text-[10px]',
+        image: 'max-w-[98vw] max-h-[75vh]',
+        arrow: 'w-7 h-7',
+        arrowIcon: 'w-4 h-4',
+        arrowLeft: 'left-1',
+        arrowRight: 'right-1',
+        thumbnails: 'bottom-2 gap-1',
+        thumbnail: 'w-10 h-7',
+      },
+      widget: {
+        container: 'mt-3 px-2',
+        skeleton: 'h-[140px]',
+        scale: 'scale-75',
+      },
+    },
+    sm: {
+      modal: {
+        container: 'w-full mx-4 min-h-[70vh]',
+        closeButton: 'w-9 h-9',
+        closeIcon: 'w-5 h-5',
+      },
+      hero: {
+        height: 'h-[250px]',
+        title: 'text-xl',
+        titleMargin: 'mb-2',
+        buttonContainer: 'bottom-3 left-4 right-4',
+        button: 'px-4 py-2 text-sm',
+        buttonIcon: 'w-4 h-4',
+        buttonGap: 'gap-2',
+      },
+      content: {
+        padding: 'p-4',
+        gap: 'gap-2',
+        spacing: 'mb-3',
+        spacingLarge: 'mb-4',
+      },
+      text: {
+        xs: 'text-xs',
+        sm: 'text-sm',
+        base: 'text-base',
+        heading: 'text-sm',
+      },
+      grid: {
+        features: 'grid-cols-2 gap-2',
+        requirements: 'grid-cols-1 gap-4',
+        main: 'grid-cols-1 gap-5',
+      },
+      sidebar: {
+        spacing: 'space-y-4',
+        priceCard: 'rounded-2xl p-4',
+        priceTitle: 'text-[10px]',
+        priceAmount: 'text-2xl',
+        priceDiscount: 'text-xs',
+        info: 'text-xs',
+        tag: 'px-1.5 py-0.5 text-[10px]',
+        button: 'px-2 py-1 text-xs',
+      },
+      viewer: {
+        padding: 'p-2',
+        closeButton: 'top-3 right-3 w-8 h-8',
+        closeIcon: 'w-5 h-5',
+        counter: 'top-3 left-3 text-xs',
+        image: 'max-w-[95vw] max-h-[80vh]',
+        arrow: 'w-9 h-9',
+        arrowIcon: 'w-5 h-5',
+        arrowLeft: 'left-2',
+        arrowRight: 'right-2',
+        thumbnails: 'bottom-3 gap-1.5',
+        thumbnail: 'w-12 h-8',
+      },
+      widget: {
+        container: 'mt-4 px-3',
+        skeleton: 'h-[160px]',
+        scale: 'scale-90',
+      },
+    },
+    md: {
+      modal: {
+        container: 'w-[90vw] mx-0 min-h-[75vh]',
+        closeButton: 'w-10 h-10',
+        closeIcon: 'w-5 h-5',
+      },
+      hero: {
+        height: 'h-[320px]',
+        title: 'text-3xl',
+        titleMargin: 'mb-3',
+        buttonContainer: 'bottom-5 left-6 right-6',
+        button: 'px-6 py-2.5 text-sm',
+        buttonIcon: 'w-[18px] h-[18px]',
+        buttonGap: 'gap-2',
+      },
+      content: {
+        padding: 'p-5',
+        gap: 'gap-2.5',
+        spacing: 'mb-4',
+        spacingLarge: 'mb-5',
+      },
+      text: {
+        xs: 'text-xs',
+        sm: 'text-sm',
+        base: 'text-base',
+        heading: 'text-base',
+      },
+      grid: {
+        features: 'grid-cols-2 gap-2.5',
+        requirements: 'grid-cols-2 gap-6',
+        main: 'grid-cols-1 gap-6',
+      },
+      sidebar: {
+        spacing: 'space-y-5',
+        priceCard: 'rounded-2xl p-6',
+        priceTitle: 'text-xs',
+        priceAmount: 'text-2xl',
+        priceDiscount: 'text-sm',
+        info: 'text-sm',
+        tag: 'px-1.5 py-0.5 text-xs',
+        button: 'px-2.5 py-1 text-sm',
+      },
+      viewer: {
+        padding: 'p-3',
+        closeButton: 'top-4 right-4 w-10 h-10',
+        closeIcon: 'w-6 h-6',
+        counter: 'top-4 left-4 text-sm',
+        image: 'max-w-[90vw] max-h-[85vh]',
+        arrow: 'w-11 h-11',
+        arrowIcon: 'w-7 h-7',
+        arrowLeft: 'left-3',
+        arrowRight: 'right-3',
+        thumbnails: 'bottom-4 gap-2',
+        thumbnail: 'w-14 h-9',
+      },
+      widget: {
+        container: 'mt-6 px-5',
+        skeleton: 'h-[180px]',
+        scale: 'scale-95',
+      },
+    },
+    lg: {
+      modal: {
+        container: 'w-[1100px] max-w-[1100px] mx-0 min-h-[850px]',
+        closeButton: 'w-10 h-10',
+        closeIcon: 'w-6 h-6',
+      },
+      hero: {
+        height: 'h-[380px]',
+        title: 'text-4xl',
+        titleMargin: 'mb-3',
+        buttonContainer: 'bottom-5 left-6 right-6',
+        button: 'px-7 py-2.5 text-[15px]',
+        buttonIcon: 'w-[18px] h-[18px]',
+        buttonGap: 'gap-2',
+      },
+      content: {
+        padding: 'p-6',
+        gap: 'gap-3',
+        spacing: 'mb-4',
+        spacingLarge: 'mb-6',
+      },
+      text: {
+        xs: 'text-sm',
+        sm: 'text-base',
+        base: 'text-lg',
+        heading: 'text-base',
+      },
+      grid: {
+        features: 'grid-cols-2 gap-3',
+        requirements: 'grid-cols-2 gap-8',
+        main: 'grid-cols-[2fr_1fr] gap-8',
+      },
+      sidebar: {
+        spacing: 'space-y-6',
+        priceCard: 'rounded-3xl p-8',
+        priceTitle: 'text-xs',
+        priceAmount: 'text-3xl',
+        priceDiscount: 'text-sm',
+        info: 'text-sm',
+        tag: 'px-2 py-1 text-xs',
+        button: 'px-3 py-1.5 text-sm',
+      },
+      viewer: {
+        padding: 'p-4',
+        closeButton: 'top-4 right-4 w-10 h-10',
+        closeIcon: 'w-6 h-6',
+        counter: 'top-4 left-4 text-sm',
+        image: 'max-w-[90vw] max-h-[85vh]',
+        arrow: 'w-12 h-12',
+        arrowIcon: 'w-8 h-8',
+        arrowLeft: 'left-4',
+        arrowRight: 'right-4',
+        thumbnails: 'bottom-4 gap-2',
+        thumbnail: 'w-16 h-10',
+      },
+      widget: {
+        container: 'mt-8 px-6',
+        skeleton: 'h-[190px]',
+        scale: 'scale-100',
+      },
+    },
+  };
+
+  return styles[screenSize] || styles.md;
+};
 
 type SteamData = {
   screenshots: Array<{ id: number; thumbnail: string; full: string }>;
@@ -133,6 +345,9 @@ type Props = {
 
 export default function GameModal({ game, onCloseAction, locale = 'es' }: Props) {
   const t = useTranslations(locale as Locale);
+  const screenSize = useScreenSize();
+  const styles = getResponsiveStyles(screenSize);
+  
   const [ready, setReady] = useState(false);
   const [visible, setVisible] = useState(false);
   const [screenshotIndex, setScreenshotIndex] = useState(0);
@@ -346,20 +561,20 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`${RESPONSIVE_STYLES.modal.container} bg-[#181818] rounded-lg overflow-hidden transition-all duration-200 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        className={`${styles.modal.container} bg-[#181818] rounded-lg overflow-hidden transition-all duration-200 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
       >
         {/* Botón cerrar */}
         <button
           onClick={handleClose}
-          className={`absolute ${RESPONSIVE_STYLES.modal.closeButton} bg-black/70 hover:bg-black/90 border-none rounded-full flex items-center justify-center cursor-pointer z-50 transition-colors shadow-lg`}
+          className={`absolute top-3 right-3 ${styles.modal.closeButton} bg-black/70 hover:bg-black/90 border-none rounded-full flex items-center justify-center cursor-pointer z-50 transition-colors shadow-lg`}
         >
-          <X className={`text-white ${RESPONSIVE_STYLES.modal.closeIcon}`} />
+          <X className={`text-white ${styles.modal.closeIcon}`} />
         </button>
 
         <div className="max-h-[85vh] overflow-y-auto overflow-x-hidden">
           {/* Hero Image / Trailer */}
-          <div className={`${RESPONSIVE_STYLES.hero.container} relative overflow-hidden`}>
+          <div className={`${styles.hero.height} relative overflow-hidden`}>
             {/* Skeleton para el trailer/wallpaper cuando está cargando */}
             {loadingSteam && !showTrailer && (
               <div className="absolute inset-0 bg-gray-800 animate-pulse">
@@ -410,33 +625,31 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
             {/* Título y botones sobre el wallpaper */}
             {!loadingSteam && (
-              <div className={`absolute ${RESPONSIVE_STYLES.hero.buttonContainer} z-10 transition-all duration-500 ${showTrailer ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
+              <div className={`absolute ${styles.hero.buttonContainer} z-10 transition-all duration-500 ${showTrailer ? 'opacity-0 translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
                 }`}>
-                <h2 className={`${RESPONSIVE_STYLES.hero.title} font-bold text-white line-clamp-2 drop-shadow-lg`}>{game.title}</h2>
-                <div className={`flex ${RESPONSIVE_STYLES.content.gap} flex-wrap`}>
+                <h2 className={`${styles.hero.title} ${styles.hero.titleMargin} font-bold text-white line-clamp-2 drop-shadow-lg`}>{game.title}</h2>
+                <div className={`flex ${styles.hero.buttonGap} flex-wrap`}>
                   {game.links ? (
                     <a
                       href={game.links}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`${RESPONSIVE_STYLES.hero.button} rounded-full bg-white text-black border-none font-bold cursor-pointer flex items-center gap-2 hover:bg-gray-200 transition-colors shadow-lg`}
+                      className={`${styles.hero.button} rounded-full bg-white text-black border-none font-bold cursor-pointer flex items-center ${styles.hero.buttonGap} hover:bg-gray-200 transition-colors shadow-lg`}
                     >
-                      <Download className={RESPONSIVE_STYLES.hero.buttonIcon} />
-                      <span className={RESPONSIVE_STYLES.hero.buttonText}>{t.modal.downloadFree}</span>
-                      <span className={RESPONSIVE_STYLES.hero.buttonTextMobile}>Download</span>
+                      <Download className={styles.hero.buttonIcon} />
+                      <span>{screenSize === 'xs' ? 'Download' : t.modal.downloadFree}</span>
                     </a>
                   ) : (
                     <a
                       href={`https://store.steampowered.com/app/${game.steam_appid}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`${RESPONSIVE_STYLES.hero.button} rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none font-bold cursor-pointer flex items-center gap-2 hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg`}
+                      className={`${styles.hero.button} rounded-full bg-gradient-to-r from-blue-600 to-blue-700 text-white border-none font-bold cursor-pointer flex items-center ${styles.hero.buttonGap} hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg`}
                     >
-                      <svg className={RESPONSIVE_STYLES.hero.buttonIcon} fill="currentColor" viewBox="0 0 24 24">
+                      <svg className={styles.hero.buttonIcon} fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2m0-2a12 12 0 0 0-12 12 12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.5 14.5-5-2.5V9l5 2.5v3z"/>
                       </svg>
-                      <span className={RESPONSIVE_STYLES.hero.buttonText}>{t.modal.viewOnSteam}</span>
-                      <span className={RESPONSIVE_STYLES.hero.buttonTextMobile}>Steam</span>
+                      <span>{screenSize === 'xs' ? 'Steam' : t.modal.viewOnSteam}</span>
                     </a>
                   )}
                   {(hasValidVideo || game.trailer) && (
@@ -445,11 +658,10 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                         setCurrentVideoIndex(0);
                         setShowTrailer(true);
                       }}
-                      className={`${RESPONSIVE_STYLES.hero.button} rounded-full bg-gray-500/70 text-white border-none font-bold cursor-pointer flex items-center gap-2 hover:bg-gray-500/90 transition-colors shadow-lg`}
+                      className={`${styles.hero.button} rounded-full bg-gray-500/70 text-white border-none font-bold cursor-pointer flex items-center ${styles.hero.buttonGap} hover:bg-gray-500/90 transition-colors shadow-lg`}
                     >
-                      <Play className={RESPONSIVE_STYLES.hero.buttonIcon} />
-                      <span className={RESPONSIVE_STYLES.hero.buttonText}>{t.modal.trailer}</span>
-                      <span className={RESPONSIVE_STYLES.hero.buttonTextMobile}>Play</span>
+                      <Play className={styles.hero.buttonIcon} />
+                      <span>{screenSize === 'xs' ? 'Play' : t.modal.trailer}</span>
                     </button>
                   )}
                 </div>
@@ -505,9 +717,9 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
 
           {/* Detalles */}
-          <div className={RESPONSIVE_STYLES.content.padding}>
+          <div className={styles.content.padding}>
             {/* Info badges */}
-            <div className={`flex ${RESPONSIVE_STYLES.content.gap} items-center ${RESPONSIVE_STYLES.content.spacing} flex-wrap`}>
+            <div className={`flex ${styles.content.gap} items-center ${styles.content.spacing} flex-wrap`}>
               {loadingSteam ? (
                 <>
                   <div className="h-5 w-20 bg-gray-700 animate-pulse rounded" />
@@ -543,32 +755,32 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
             </div>
 
             {/* Main content grid */}
-            <div className={RESPONSIVE_STYLES.grid.main}>
+            <div className={`grid ${styles.grid.main}`}>
               {/* Left column */}
               <div>
                 {loadingSteam ? (
-                  <div className={`space-y-2 ${RESPONSIVE_STYLES.content.spacingLarge}`}>
+                  <div className={`space-y-2 ${styles.content.spacingLarge}`}>
                     <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-full" />
                     <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-full" />
                     <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-3/4" />
                   </div>
                 ) : (
-                  <p className={`${RESPONSIVE_STYLES.text.sm} text-gray-200 leading-relaxed ${RESPONSIVE_STYLES.content.spacingLarge}`}>
+                  <p className={`${styles.text.sm} text-gray-200 leading-relaxed ${styles.content.spacingLarge}`}>
                     {steamData?.short_description || game.description}
                   </p>
                 )}
 
                 {/* Features section */}
-                <div className={RESPONSIVE_STYLES.content.spacingLarge}>
-                  <h3 className={`text-white font-semibold mb-2 md:mb-3 ${RESPONSIVE_STYLES.text.heading}`}>{t.modal.gameFeatures}</h3>
+                <div className={styles.content.spacingLarge}>
+                  <h3 className={`text-white font-semibold mb-2 md:mb-3 ${styles.text.heading}`}>{t.modal.gameFeatures}</h3>
                   {loadingSteam ? (
-                    <div className={RESPONSIVE_STYLES.grid.features}>
+                    <div className={`grid ${styles.grid.features}`}>
                       {[...Array(6)].map((_, i) => (
                         <div key={i} className="h-4 md:h-5 bg-gray-700 animate-pulse rounded" />
                       ))}
                     </div>
                   ) : (
-                    <div className={RESPONSIVE_STYLES.grid.features}>
+                    <div className={`grid ${styles.grid.features}`}>
                       {steamData?.categories?.length ? (
                         steamData.categories.slice(0, 6).map((category, index) => (
                           <div key={index} className="flex items-center gap-1.5 md:gap-2 text-gray-300 text-xs md:text-sm">
@@ -602,8 +814,8 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                 </div>
 
                 {/* Screenshots section with slider */}
-                <div className={RESPONSIVE_STYLES.content.spacingLarge}>
-                  <h3 className={`text-white font-semibold mb-2 md:mb-3 ${RESPONSIVE_STYLES.text.heading}`}>
+                <div className={styles.content.spacingLarge}>
+                  <h3 className={`text-white font-semibold mb-2 md:mb-3 ${styles.text.heading}`}>
                     {t.modal.screenshotsVideos}
                     {loadingSteam && <span className="text-gray-500 text-sm ml-2">({t.common.loading})</span>}
                     {steamData && <span className="text-green-500 text-sm ml-2">✓ Steam</span>}
@@ -700,7 +912,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* System Requirements */}
                 <div>
-                  <h3 className={`text-white font-semibold mb-3 md:mb-4 ${RESPONSIVE_STYLES.text.base}`}>{t.modal.systemRequirements}</h3>
+                  <h3 className={`text-white font-semibold mb-3 md:mb-4 ${styles.text.base}`}>{t.modal.systemRequirements}</h3>
                   {loadingSteam ? (
                     <div className="grid grid-cols-2 gap-8">
                       {/* MÍNIMO Skeleton */}
@@ -723,7 +935,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                       </div>
                     </div>
                   ) : (
-                    <div className={RESPONSIVE_STYLES.grid.requirements}>
+                    <div className={`grid ${styles.grid.requirements}`}>
                       {/* MÍNIMO */}
                       <div>
                         <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.minimum}</h4>
@@ -761,10 +973,10 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
               </div>
 
               {/* Right column - Sidebar */}
-              <div className={RESPONSIVE_STYLES.sidebar.spacing}>
+              <div className={styles.sidebar.spacing}>
                 {/* Price Card - Destacado */}
                 {loadingSteam ? (
-                  <div className={`relative overflow-hidden bg-gradient-to-br from-gray-700/20 via-gray-600/10 to-gray-700/20 border border-gray-600/30 ${RESPONSIVE_STYLES.sidebar.priceCard}`}>
+                  <div className={`relative overflow-hidden bg-gradient-to-br from-gray-700/20 via-gray-600/10 to-gray-700/20 border border-gray-600/30 ${styles.sidebar.priceCard}`}>
                     <div className="flex items-center justify-between gap-2 xs:gap-3 sm:gap-4 md:gap-6 mb-2 xs:mb-3 sm:mb-3.5 md:mb-4">
                       <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 md:gap-3">
                         <div className="w-0.5 xs:w-0.5 sm:w-0.5 md:w-1 h-5 xs:h-6 sm:h-7 md:h-8 bg-gray-600 animate-pulse rounded-full"></div>
@@ -776,7 +988,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                     <div className="h-2 xs:h-2.5 sm:h-2.5 md:h-3 w-14 xs:w-16 sm:w-18 md:w-20 bg-gray-600 animate-pulse rounded"></div>
                   </div>
                 ) : steamData?.price ? (
-                  <div className={`relative overflow-hidden bg-gradient-to-br from-emerald-500/10 via-green-500/5 to-teal-500/10 border border-green-400/30 ${RESPONSIVE_STYLES.sidebar.priceCard} backdrop-blur-sm`}>
+                  <div className={`relative overflow-hidden bg-gradient-to-br from-emerald-500/10 via-green-500/5 to-teal-500/10 border border-green-400/30 ${styles.sidebar.priceCard} backdrop-blur-sm`}>
                     <Snowfall
                       style={{
                         position: 'absolute',
@@ -785,13 +997,13 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                       }} />
 
                     <div className="absolute inset-0 bg-gradient-to-tr from-green-500/5 to-transparent"></div>
-                    <div className={`relative flex items-center justify-between ${RESPONSIVE_STYLES.content.gap}`}>
-                      <div className={`flex items-center ${RESPONSIVE_STYLES.content.gap}`}>
+                    <div className={`relative flex items-center justify-between ${styles.content.gap}`}>
+                      <div className={`flex items-center ${styles.content.gap}`}>
                         <div className="w-0.5 md:w-1 h-6 md:h-8 bg-gradient-to-b from-green-400 to-emerald-500 rounded-full"></div>
-                        <h4 className={`text-gray-300 ${RESPONSIVE_STYLES.sidebar.priceTitle} font-bold tracking-wider uppercase`}>{t.modal.price}</h4>
+                        <h4 className={`text-gray-300 ${styles.sidebar.priceTitle} font-bold tracking-wider uppercase`}>{t.modal.price}</h4>
                       </div>
                       {userLocation && (
-                        <span className={`flex items-center gap-1 md:gap-2 ${RESPONSIVE_STYLES.sidebar.priceTitle} text-emerald-400 bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-2 md:px-4 py-1 md:py-2 rounded-full border border-green-400/20 backdrop-blur-sm shadow-lg shadow-green-500/10`}>
+                        <span className={`flex items-center gap-1 md:gap-2 ${styles.sidebar.priceTitle} text-emerald-400 bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-2 md:px-4 py-1 md:py-2 rounded-full border border-green-400/20 backdrop-blur-sm shadow-lg shadow-green-500/10`}>
                           <MapPinCheck className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
                           <span className="font-medium hidden sm:inline">{userLocation.country}</span>
                         </span>
@@ -799,27 +1011,27 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                     </div>
 
                     {steamData.is_free ? (
-                      <div className={`${RESPONSIVE_STYLES.sidebar.priceAmount} font-bold text-green-400 mt-2`}>
+                      <div className={`${styles.sidebar.priceAmount} font-bold text-green-400 mt-2`}>
                         {t.modal.free}
                       </div>
                     ) : steamData.price_info ? (
                       <div>
                         {steamData.price_info.discount_percent > 0 ? (
                           <div className="mt-1.5 md:mt-2 space-y-1.5 md:space-y-2">
-                            <div className={`flex items-center ${RESPONSIVE_STYLES.content.gap}`}>
-                              <span className={`bg-green-600 text-white px-1.5 md:px-2 py-0.5 md:py-1 rounded font-bold ${RESPONSIVE_STYLES.sidebar.priceDiscount}`}>
+                            <div className={`flex items-center ${styles.content.gap}`}>
+                              <span className={`bg-green-600 text-white px-1.5 md:px-2 py-0.5 md:py-1 rounded font-bold ${styles.sidebar.priceDiscount}`}>
                                 -{steamData.price_info.discount_percent}%
                               </span>
-                              <span className={`text-gray-400 line-through ${RESPONSIVE_STYLES.text.sm}`}>
+                              <span className={`text-gray-400 line-through ${styles.text.sm}`}>
                                 {steamData.price_info.initial_formatted}
                               </span>
                             </div>
-                            <div className={`${RESPONSIVE_STYLES.sidebar.priceAmount} font-bold text-green-400`}>
+                            <div className={`${styles.sidebar.priceAmount} font-bold text-green-400`}>
                               {steamData.price_info.final_formatted}
                             </div>
                           </div>
                         ) : (
-                          <div className={`${RESPONSIVE_STYLES.sidebar.priceAmount} font-bold text-white mt-2`}>
+                          <div className={`${styles.sidebar.priceAmount} font-bold text-white mt-2`}>
                             {steamData.price_info.final_formatted || steamData.price}
                           </div>
                         )}
@@ -831,7 +1043,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                     )}
 
                     {steamData.price_info && (
-                      <p className={`${RESPONSIVE_STYLES.sidebar.priceTitle} text-gray-400 mt-1.5 md:mt-2`}>
+                      <p className={`${styles.sidebar.priceTitle} text-gray-400 mt-1.5 md:mt-2`}>
                         {t.modal.priceIn} {steamData.price_info.currency}
                       </p>
                     )}
@@ -847,7 +1059,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                   </div>
                 ) : (
                   <div className="space-y-2 md:space-y-3">
-                    <p className={`text-gray-500 ${RESPONSIVE_STYLES.sidebar.info}`}>
+                    <p className={`text-gray-500 ${styles.sidebar.info}`}>
                       <span>{t.modal.genre} </span>
                       <span className="text-white">
                         {steamData?.genres?.length
@@ -948,18 +1160,18 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                     <div className="flex flex-wrap gap-1 xs:gap-1.5 sm:gap-1.5 md:gap-2">
                       {steamData?.categories?.length ? (
                         steamData.categories.slice(0, 8).map((category, index) => (
-                          <span key={index} className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>
+                          <span key={index} className={`bg-[#333] text-gray-300 ${styles.sidebar.tag} rounded`}>
                             {category}
                           </span>
                         ))
                       ) : (
                         <>
-                          <span className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>Action</span>
-                          <span className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>Adventure</span>
-                          <span className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>Open World</span>
-                          <span className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>RPG</span>
-                          <span className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>Story Rich</span>
-                          <span className={`bg-[#333] text-gray-300 ${RESPONSIVE_STYLES.sidebar.tag} rounded`}>Multiplayer</span>
+                          <span className={`bg-[#333] text-gray-300 ${styles.sidebar.tag} rounded`}>Action</span>
+                          <span className={`bg-[#333] text-gray-300 ${styles.sidebar.tag} rounded`}>Adventure</span>
+                          <span className={`bg-[#333] text-gray-300 ${styles.sidebar.tag} rounded`}>Open World</span>
+                          <span className={`bg-[#333] text-gray-300 ${styles.sidebar.tag} rounded`}>RPG</span>
+                          <span className={`bg-[#333] text-gray-300 ${styles.sidebar.tag} rounded`}>Story Rich</span>
+                          <span className={`bg-[#333] text-gray-300 ${styles.sidebar.tag} rounded`}>Multiplayer</span>
                         </>
                       )}
                     </div>
@@ -968,14 +1180,14 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* Languages */}
                 <div>
-                  <h4 className={`text-gray-400 ${RESPONSIVE_STYLES.sidebar.info} mb-1.5 md:mb-2`}>{t.modal.languages}</h4>
+                  <h4 className={`text-gray-400 ${styles.sidebar.info} mb-1.5 md:mb-2`}>{t.modal.languages}</h4>
                   {loadingSteam ? (
                     <div className="space-y-1.5 md:space-y-2">
                       <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-full" />
                       <div className="h-3 md:h-4 bg-gray-700 animate-pulse rounded w-2/3" />
                     </div>
                   ) : (
-                    <p className={`text-gray-300 ${RESPONSIVE_STYLES.sidebar.info}`}>
+                    <p className={`text-gray-300 ${styles.sidebar.info}`}>
                       {steamData?.languages?.length
                         ? steamData.languages.slice(0, 10).join(', ')
                         : 'English, Spanish, French, German, Japanese, Korean, Chinese'}
@@ -985,15 +1197,15 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
                 {/* Social */}
                 <div>
-                  <h4 className={`text-gray-400 ${RESPONSIVE_STYLES.sidebar.info} mb-1.5 md:mb-2`}>{t.modal.share}</h4>
-                  <div className={`flex ${RESPONSIVE_STYLES.content.gap} flex-wrap`}>
-                    <button className={`bg-[#333] hover:bg-[#444] text-white ${RESPONSIVE_STYLES.sidebar.button} rounded transition-colors`}>
+                  <h4 className={`text-gray-400 ${styles.sidebar.info} mb-1.5 md:mb-2`}>{t.modal.share}</h4>
+                  <div className={`flex ${styles.content.gap} flex-wrap`}>
+                    <button className={`bg-[#333] hover:bg-[#444] text-white ${styles.sidebar.button} rounded transition-colors`}>
                       {t.modal.discord}
                     </button>
-                    <button className={`bg-[#333] hover:bg-[#444] text-white ${RESPONSIVE_STYLES.sidebar.button} rounded transition-colors`}>
+                    <button className={`bg-[#333] hover:bg-[#444] text-white ${styles.sidebar.button} rounded transition-colors`}>
                       {t.modal.facebook}
                     </button>
-                    <button className={`bg-[#333] hover:bg-[#444] text-white ${RESPONSIVE_STYLES.sidebar.button} rounded transition-colors`}>
+                    <button className={`bg-[#333] hover:bg-[#444] text-white ${styles.sidebar.button} rounded transition-colors`}>
                       {t.modal.copyLink}
                     </button>
                   </div>
@@ -1024,7 +1236,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
       {/* Fullscreen Image Viewer */}
       {viewerOpen && (
         <div
-          className={`fixed inset-0 bg-black/95 z-[10000] flex items-center justify-center ${RESPONSIVE_STYLES.viewer.container}`}
+          className={`fixed inset-0 bg-black/95 z-[10000] flex items-center justify-center ${styles.viewer.padding}`}
           onClick={(e) => {
             e.stopPropagation();
             setViewerOpen(false);
@@ -1036,49 +1248,49 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
               e.stopPropagation();
               setViewerOpen(false);
             }}
-            className={`absolute ${RESPONSIVE_STYLES.viewer.closeButton} bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-50`}
+            className={`absolute ${styles.viewer.closeButton} bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors z-50`}
           >
-            <X className={`text-white ${RESPONSIVE_STYLES.viewer.closeIcon}`} />
+            <X className={`text-white ${styles.viewer.closeIcon}`} />
           </button>
 
           {/* Image counter */}
-          <div className={`absolute ${RESPONSIVE_STYLES.viewer.counter} text-white/70`}>
+          <div className={`absolute ${styles.viewer.counter} text-white/70`}>
             {viewerIndex + 1} / {screenshots.length}
           </div>
 
           {/* Main image */}
           <div
-            className={`${RESPONSIVE_STYLES.viewer.image} rounded-lg overflow-hidden`}
+            className={`${styles.viewer.image} rounded-lg overflow-hidden`}
             onClick={(e) => e.stopPropagation()}
           >
             <img
               src={proxySteamImage(screenshots[viewerIndex])}
               alt={`Screenshot ${viewerIndex + 1}`}
-              className={`max-w-full ${RESPONSIVE_STYLES.viewer.image} object-contain`}
+              className={`max-w-full ${styles.viewer.image} object-contain`}
             />
           </div>
 
           {/* Navigation arrows */}
           <button
             onClick={(e) => { e.stopPropagation(); prevViewerImage(); }}
-            className={`absolute ${RESPONSIVE_STYLES.viewer.arrowLeft} top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full ${RESPONSIVE_STYLES.viewer.arrow} flex items-center justify-center transition-colors`}
+            className={`absolute ${styles.viewer.arrowLeft} top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full ${styles.viewer.arrow} flex items-center justify-center transition-colors`}
           >
-            <ChevronLeft className={RESPONSIVE_STYLES.viewer.arrowIcon} />
+            <ChevronLeft className={styles.viewer.arrowIcon} />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); nextViewerImage(); }}
-            className={`absolute ${RESPONSIVE_STYLES.viewer.arrowRight} top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full ${RESPONSIVE_STYLES.viewer.arrow} flex items-center justify-center transition-colors`}
+            className={`absolute ${styles.viewer.arrowRight} top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full ${styles.viewer.arrow} flex items-center justify-center transition-colors`}
           >
-            <ChevronRight className={RESPONSIVE_STYLES.viewer.arrowIcon} />
+            <ChevronRight className={styles.viewer.arrowIcon} />
           </button>
 
           {/* Thumbnails */}
-          <div className={`absolute ${RESPONSIVE_STYLES.viewer.thumbnails} left-1/2 -translate-x-1/2 flex overflow-x-auto max-w-[95vw] px-2`}>
+          <div className={`absolute ${styles.viewer.thumbnails} left-1/2 -translate-x-1/2 flex overflow-x-auto max-w-[95vw] px-2`}>
             {screenshots.map((src, index) => (
               <button
                 key={index}
                 onClick={(e) => { e.stopPropagation(); setViewerIndex(index); }}
-                className={`flex-shrink-0 ${RESPONSIVE_STYLES.viewer.thumbnail} rounded overflow-hidden transition-all ${index === viewerIndex ? 'ring-2 ring-white scale-110' : 'opacity-50 hover:opacity-100'
+                className={`flex-shrink-0 ${styles.viewer.thumbnail} rounded overflow-hidden transition-all ${index === viewerIndex ? 'ring-2 ring-white scale-110' : 'opacity-50 hover:opacity-100'
                   }`}
               >
                 <div
