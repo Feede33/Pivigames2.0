@@ -1,3 +1,5 @@
+import './globals.css';
+
 // Root layout - solo para configuración global
 export default function RootLayout({
   children,
