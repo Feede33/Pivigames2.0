@@ -141,7 +141,7 @@ export default function MainContent({
                   <div
                     key={index}
                     style={styles.slider.thumbnail}
-                    className="flex-shrink-0 w-[calc(33.33%-4px)] md:w-[calc(33.33%-5px)] aspect-video bg-gray-700 rounded overflow-hidden cursor-pointer relative group"
+                    className="bg-gray-700 rounded overflow-hidden cursor-pointer relative group"
                     onClick={() => onMediaClick(item)}
                   >
                     <div

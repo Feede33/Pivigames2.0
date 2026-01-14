@@ -1,3 +1,6 @@
+import { AlignJustify } from "lucide-react";
+import { Content } from "next/font/google";
+
 type ScreenSize = 'xs' | 'sm' | 'md' | 'lg';
 
 export const getResponsiveStyles = (screenSize: ScreenSize) => {
@@ -37,10 +40,15 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         spacingLarge: { marginBottom: '0.75rem' },
       },
       slider: {
-        dot: { minWidth: '5px', minHeight: '5px' }, // 8px - más grande para xs
+        dot: { minWidth: '5px', minHeight: '5px', justifyContent: "center" },
         dotGap: { gap: '6px' },
         dotMargin: { marginTop: '0.5rem', marginBottom: "1rem" },
-        thumbnail: { minWidth: '60px', minHeight: '10px' }, // Tamaño mínimo para xs
+        thumbnail: { 
+          width: '200px', 
+          height: '112px',
+          flexShrink: 0,
+          aspectRatio: '16/9'
+        },
       },
       text: {
         xs: { fontSize: '0.625rem' },
@@ -133,10 +141,15 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         spacingLarge: { marginBottom: '1rem' },
       },
       slider: {
-        dot: { width: '0.625rem', height: '0.625rem' }, // 10px - más grande para sm
+        dot: { width: '0.625rem', height: '0.625rem' },
         dotGap: { gap: '0.625rem' },
         dotMargin: { marginTop: '0.625rem' },
-        thumbnail: { minWidth: '220px', minHeight: '110px' }, // Tamaño mínimo para sm
+        thumbnail: { 
+          width: '220px', 
+          height: '124px',
+          flexShrink: 0,
+          aspectRatio: '16/9'
+        },
       },
       text: {
         xs: { fontSize: '0.75rem' },
@@ -226,10 +239,15 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         spacingLarge: { marginBottom: '1.5rem' },
       },
       slider: {
-        dot: { width: '0.5rem', height: '0.5rem' }, // 8px
+        dot: { width: '0.5rem', height: '0.5rem' },
         dotGap: { gap: '0.5rem' },
         dotMargin: { marginTop: '0.75rem' },
-        thumbnail: { minWidth: '240px', minHeight: '120px' }, // Tamaño mínimo para md
+        thumbnail: { 
+          width: '240px', 
+          height: '135px',
+          flexShrink: 0,
+          aspectRatio: '16/9'
+        },
       },
       text: {
         xs: { fontSize: '0.875rem' },
@@ -319,10 +337,15 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         spacingLarge: { marginBottom: '1.5rem' },
       },
       slider: {
-        dot: { width: '0.5rem', height: '0.5rem' }, // 8px
+        dot: { width: '0.5rem', height: '0.5rem' },
         dotGap: { gap: '0.5rem' },
         dotMargin: { marginTop: '0.75rem' },
-        thumbnail: { minWidth: '260px', minHeight: '130px' }, // Tamaño mínimo para lg
+        thumbnail: { 
+          width: '260px', 
+          height: '146px',
+          flexShrink: 0,
+          aspectRatio: '16/9'
+        },
       },
       text: {
         xs: { fontSize: '0.875rem' },
