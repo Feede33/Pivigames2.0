@@ -136,10 +136,7 @@ export default function CommentSection({ gameId }: Props) {
   };
 
   const getDisplayName = (comment: Comment) => {
-    return comment.user?.user_metadata?.full_name || 
-           comment.user?.user_metadata?.name || 
-           comment.user?.email?.split('@')[0] || 
-           'Usuario';
+    return comment.user_name || comment.user_email?.split('@')[0] || 'Usuario';
   };
 
   const getTimeAgo = (date: string) => {
@@ -157,16 +154,13 @@ export default function CommentSection({ gameId }: Props) {
   }) => {
     const isOwner = user?.id === comment.user_id;
     const displayName = getDisplayName(comment);
-    const initials = getInitials(
-      comment.user?.user_metadata?.full_name || comment.user?.user_metadata?.name,
-      comment.user?.email
-    );
+    const initials = getInitials(comment.user_name, comment.user_email);
 
     return (
       <div className="flex gap-3 mb-4">
         <Avatar className="w-10 h-10 flex-shrink-0">
-          {comment.user?.user_metadata?.avatar_url ? (
-            <AvatarImage src={comment.user.user_metadata.avatar_url} alt={displayName} />
+          {comment.user_avatar ? (
+            <AvatarImage src={comment.user_avatar} alt={displayName} />
           ) : null}
           <AvatarFallback className="bg-blue-500 text-white text-sm">
             {initials}

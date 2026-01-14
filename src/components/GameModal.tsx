@@ -316,7 +316,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                 />
               </div>
 
-              <div style={{ maxHeight: '800px', overflowY: 'auto' }} className="scrollbar-thin">
+              <div style={{ maxHeight: '1200px', overflowY: 'auto' }} className="scrollbar-thin">
                 <Sidebar
                   loadingSteam={loadingSteam}
                   steamData={steamData}

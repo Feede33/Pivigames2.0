@@ -9,15 +9,9 @@ export type Comment = {
   likes: number;
   created_at: string;
   updated_at: string;
-  user?: {
-    id: string;
-    email?: string;
-    user_metadata?: {
-      avatar_url?: string;
-      full_name?: string;
-      name?: string;
-    };
-  };
+  user_name?: string;
+  user_avatar?: string;
+  user_email?: string;
   replies?: Comment[];
   user_has_liked?: boolean;
 };
@@ -29,14 +23,7 @@ export async function getComments(gameId: number) {
   // Obtener comentarios principales (sin parent_id)
   const { data: comments, error } = await supabase
     .from('comments')
-    .select(`
-      *,
-      user:user_id (
-        id,
-        email,
-        user_metadata
-      )
-    `)
+    .select('*')
     .eq('game_id', gameId)
     .is('parent_id', null)
     .order('created_at', { ascending: false });
@@ -51,14 +38,7 @@ export async function getComments(gameId: number) {
     (comments || []).map(async (comment) => {
       const { data: replies } = await supabase
         .from('comments')
-        .select(`
-          *,
-          user:user_id (
-            id,
-            email,
-            user_metadata
-          )
-        `)
+        .select('*')
         .eq('parent_id', comment.id)
         .order('created_at', { ascending: true });
 
@@ -121,6 +101,9 @@ export async function createComment(gameId: number, content: string, parentId?: 
     game_id: gameId,
     content,
     parent_id: parentId || null,
+    user_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Usuario',
+    user_avatar: user.user_metadata?.avatar_url || null,
+    user_email: user.email || null,
   };
   
   console.log('Inserting comment:', insertData);
@@ -128,14 +111,7 @@ export async function createComment(gameId: number, content: string, parentId?: 
   const { data, error } = await supabase
     .from('comments')
     .insert(insertData)
-    .select(`
-      *,
-      user:user_id (
-        id,
-        email,
-        user_metadata
-      )
-    `)
+    .select('*')
     .single();
 
   if (error) {
