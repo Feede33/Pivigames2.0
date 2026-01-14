@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { getComments, createComment, toggleLike, deleteComment, type Comment } from '@/lib/comments';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -26,8 +26,6 @@ export default function CommentSection({ gameId }: Props) {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-
-  const supabase = createClient();
 
   // Cargar usuario y comentarios
   useEffect(() => {
