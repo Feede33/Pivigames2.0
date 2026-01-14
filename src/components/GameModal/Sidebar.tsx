@@ -225,7 +225,7 @@ export default function Sidebar({
         <h4 style={styles.sidebar.info} className="text-gray-400 mb-1.5 md:mb-2">
           {t.modal.share}
         </h4>
-        <div style={styles.content.gap} className="flex flex-wrap">
+        <div style={styles.sidebar.shareContainer || styles.content.gap} className="flex flex-wrap">
           <button style={styles.sidebar.button} className="bg-[#333] hover:bg-[#444] text-white rounded transition-colors">
             {t.modal.discord}
           </button>
@@ -240,14 +240,14 @@ export default function Sidebar({
 
       {/* Buy on Steam Widget */}
       {loadingSteam ? (
-        <div className="flex justify-center mt-4 xs:mt-5 sm:mt-6 md:mt-8">
-          <div className="w-full max-w-[646px] h-[150px] xs:h-[170px] sm:h-[180px] md:h-[190px] bg-gray-700 animate-pulse rounded-lg" />
+        <div style={styles.widget?.container || { marginTop: '1rem' }}>
+          <div style={styles.widget?.skeleton} className="bg-gray-700 animate-pulse rounded-lg" />
         </div>
       ) : steamData ? (
-        <div className="flex justify-center mt-4 xs:mt-5 sm:mt-6 md:mt-8 overflow-hidden">
+        <div style={styles.widget?.container || { marginTop: '1rem' }}>
           <iframe
             src={`https://store.steampowered.com/widget/${steamData.steam_appid}/?l=${getSteamLanguage(locale)}`}
-            className="w-full max-w-[646px] scale-90 xs:scale-95 sm:scale-100"
+            style={styles.widget?.iframe}
             width="646"
             height="190"
             frameBorder="0"

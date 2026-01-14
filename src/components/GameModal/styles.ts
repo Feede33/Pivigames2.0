@@ -1,6 +1,3 @@
-import { AlignJustify } from "lucide-react";
-import { Content } from "next/font/google";
-
 type ScreenSize = 'xs' | 'sm' | 'md' | 'lg';
 
 export const getResponsiveStyles = (screenSize: ScreenSize) => {
@@ -85,7 +82,39 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         priceDiscount: { fontSize: '0.625rem' },
         info: { fontSize: '0.625rem' },
         tag: { padding: '0.125rem 0.25rem', fontSize: '0.5625rem' },
-        button: { padding: '0.125rem 0.375rem', fontSize: '0.625rem' },
+        button: { 
+          padding: '0.5rem 0.75rem', 
+          fontSize: '0.75rem',
+          minWidth: '90px',
+          textAlign: 'center' as const
+        },
+        shareContainer: {
+          display: 'flex',
+          gap: '0.5rem',
+          flexWrap: 'wrap' as const,
+          justifyContent: 'center' as const
+        },
+      },
+      widget: {
+        container: { 
+          marginTop: '0.75rem', 
+          paddingLeft: '0.25rem', 
+          paddingRight: '0.25rem',
+          display: 'flex',
+          justifyContent: 'center',
+          overflow: 'hidden'
+        },
+        iframe: {
+          width: '100%',
+          maxWidth: '340px', // Ajustado para iPhone SE
+          transform: 'scale(0.85)',
+          transformOrigin: 'center center'
+        },
+        skeleton: { 
+          height: '140px',
+          maxWidth: '340px',
+          margin: '0 auto'
+        },
       },
       viewer: {
         padding: { padding: '0.25rem' },
@@ -99,11 +128,6 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         arrowRight: { right: '0.25rem' },
         thumbnails: { bottom: '0.5rem', gap: '0.25rem' },
         thumbnail: { width: '2.5rem', height: '1.75rem' },
-      },
-      widget: {
-        container: { marginTop: '0.75rem', paddingLeft: '0.5rem', paddingRight: '0.5rem' },
-        skeleton: { height: '140px' },
-        scale: { transform: 'scale(0.75)' },
       },
     },
     sm: {
@@ -187,6 +211,12 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         info: { fontSize: '0.75rem' },
         tag: { padding: '0.125rem 0.375rem', fontSize: '0.625rem' },
         button: { padding: '0.25rem 0.5rem', fontSize: '0.75rem' },
+        shareContainer: {
+          display: 'flex',
+          gap: '0.5rem',
+          flexWrap: 'wrap' as const,
+          justifyContent: 'center' as const
+        },
       },
       viewer: {
         padding: { padding: '0.5rem' },
@@ -202,9 +232,25 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         thumbnail: { width: '3rem', height: '2rem' },
       },
       widget: {
-        container: { marginTop: '1rem', paddingLeft: '0.75rem', paddingRight: '0.75rem' },
-        skeleton: { height: '160px' },
-        scale: { transform: 'scale(0.9)' },
+        container: { 
+          marginTop: '1rem', 
+          paddingLeft: '0.75rem', 
+          paddingRight: '0.75rem',
+          display: 'flex',
+          justifyContent: 'center',
+          overflow: 'hidden'
+        },
+        iframe: {
+          width: '100%',
+          maxWidth: '500px',
+          transform: 'scale(0.9)',
+          transformOrigin: 'center center'
+        },
+        skeleton: { 
+          height: '160px',
+          maxWidth: '500px',
+          margin: '0 auto'
+        },
       },
     },
     md: {
@@ -285,6 +331,33 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         info: { fontSize: '0.875rem' },
         tag: { padding: '0.25rem 0.5rem', fontSize: '0.75rem' },
         button: { padding: '0.375rem 0.75rem', fontSize: '0.875rem' },
+        shareContainer: {
+          display: 'flex',
+          gap: '0.5rem',
+          flexWrap: 'wrap' as const,
+          justifyContent: 'center' as const
+        },
+      },
+      widget: {
+        container: { 
+          marginTop: '1.75rem', 
+          paddingLeft: '1.5rem', 
+          paddingRight: '1.5rem',
+          display: 'flex',
+          justifyContent: 'center',
+          overflow: 'hidden'
+        },
+        iframe: {
+          width: '100%',
+          maxWidth: '646px',
+          transform: 'scale(1)',
+          transformOrigin: 'center center'
+        },
+        skeleton: { 
+          height: '190px',
+          maxWidth: '646px',
+          margin: '0 auto'
+        },
       },
       viewer: {
         padding: { padding: '1rem' },
@@ -298,11 +371,6 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         arrowRight: { right: '1rem' },
         thumbnails: { bottom: '1rem', gap: '0.5rem' },
         thumbnail: { width: '4rem', height: '2.5rem' },
-      },
-      widget: {
-        container: { marginTop: '1.75rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' },
-        skeleton: { height: '190px' },
-        scale: { transform: 'scale(1)' },
       },
     },
     lg: {
@@ -383,6 +451,33 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         info: { fontSize: '0.875rem' },
         tag: { padding: '0.25rem 0.5rem', fontSize: '0.75rem' },
         button: { padding: '0.375rem 0.75rem', fontSize: '0.875rem' },
+        shareContainer: {
+          display: 'flex',
+          gap: '0.5rem',
+          flexWrap: 'wrap' as const,
+          justifyContent: 'center' as const
+        },
+      },
+      widget: {
+        container: { 
+          marginTop: '2rem', 
+          paddingLeft: '1.5rem', 
+          paddingRight: '1.5rem',
+          display: 'flex',
+          justifyContent: 'center',
+          overflow: 'hidden'
+        },
+        iframe: {
+          width: '100%',
+          maxWidth: '646px',
+          transform: 'scale(1)',
+          transformOrigin: 'center center'
+        },
+        skeleton: { 
+          height: '190px',
+          maxWidth: '646px',
+          margin: '0 auto'
+        },
       },
       viewer: {
         padding: { padding: '1rem' },
@@ -396,11 +491,6 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
         arrowRight: { right: '1rem' },
         thumbnails: { bottom: '1rem', gap: '0.5rem' },
         thumbnail: { width: '4rem', height: '2.5rem' },
-      },
-      widget: {
-        container: { marginTop: '2rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' },
-        skeleton: { height: '190px' },
-        scale: { transform: 'scale(1)' },
       },
     },
   };
