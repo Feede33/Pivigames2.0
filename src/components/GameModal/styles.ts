@@ -219,7 +219,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
           display: 'flex',
           gap: '0.5rem',
           flexWrap: 'wrap' as const,
-          justifyContent: 'center' as const
+          justifyContent: 'start' as const
         },
       },
       viewer: {
@@ -339,7 +339,7 @@ export const getResponsiveStyles = (screenSize: ScreenSize) => {
           display: 'flex',
           gap: '0.5rem',
           flexWrap: 'wrap' as const,
-          justifyContent: 'center' as const
+          justifyContent: 'start' as const
         },
       },
       widget: {
