@@ -137,8 +137,7 @@ export default function MainContent({
               <div
                 className="flex gap-2 md:gap-3 transition-transform duration-300"
                 style={{ 
-                  transform: `translateX(-${screenshotIndex * 100}%)`,
-                  width: 'max-content'
+                  transform: `translateX(calc(-${screenshotIndex * 100}% - ${screenshotIndex * 8}px))`,
                 }}
               >
                 {mediaItems.map((item, index) => (
@@ -146,8 +145,7 @@ export default function MainContent({
                     key={index}
                     className="flex-shrink-0 aspect-video bg-gray-700 overflow-hidden cursor-pointer relative group"
                     style={{
-                      width: 'calc((100vw - 12rem) / 4)',
-                      maxWidth: '280px',
+                      width: 'calc(25% - 6px)',
                       borderRadius: '12px',
                       border: '2px solid rgba(255, 255, 255, 0.1)',
                       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
