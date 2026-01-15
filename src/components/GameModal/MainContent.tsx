@@ -148,7 +148,8 @@ export default function MainContent({
                       width: 'calc(25% - 12px)',
                       borderRadius: '10px',
                       boxShadow: '0 3px 10px rgba(0, 0, 0, 0.5)',
-                      minWidth: '220px',
+                      minWidth: '280px',
+                      minHeight: "158px"
                     }}
                     onClick={() => onMediaClick(item)}
                   >
