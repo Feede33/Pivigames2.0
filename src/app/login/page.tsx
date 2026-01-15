@@ -28,13 +28,41 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      // Primero intentamos iniciar sesión
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      // Si el error es que el usuario no existe o credenciales inválidas, intentamos registrarlo
+      if (signInError) {
+        if (signInError.message.includes('Invalid login credentials') || 
+            signInError.message.includes('Email not confirmed')) {
+          
+          // Intentamos registrar al usuario
+          const { error: signUpError } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: `${window.location.origin}/auth/callback`,
+            }
+          });
 
+          if (signUpError) {
+            throw signUpError;
+          }
+
+          // Registro exitoso
+          setError('');
+          alert('¡Cuenta creada exitosamente! Por favor revisa tu email para confirmar tu cuenta.');
+          return;
+        }
+        
+        // Si es otro tipo de error, lo lanzamos
+        throw signInError;
+      }
+
+      // Login exitoso
       router.push('/');
     } catch (error: any) {
       setError(error.message || 'Error al iniciar sesión');
@@ -74,10 +102,10 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm relative z-10 border-[#212121]/30 bg-[#171717] backdrop-blur-lg">
         <CardHeader>
           <CardTitle className="text-2xl text-center text-white">
-            Iniciar Sesión
+            Iniciar Sesión o Registrarse
           </CardTitle>
           <CardDescription className="text-center text-[#A1A1A1]">
-            Ingresa tu email para acceder a tu cuenta
+            Ingresa tu email y contraseña. Si no tienes cuenta, se creará automáticamente.
           </CardDescription>
         </CardHeader>
 
@@ -135,7 +163,7 @@ export default function LoginPage() {
             disabled={isLoading}
             className="w-full bg-white text-[#171717] hover:bg-[#D1D1D1]/90 font-semibold"
           >
-            {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+            {isLoading ? 'Procesando...' : 'Continuar'}
           </Button>
 
           <div className="relative w-full">
@@ -196,11 +224,8 @@ export default function LoginPage() {
             </span>
           </Button>
 
-          <div className="text-center text-sm text-muted-foreground mt-2">
-            ¿No tienes cuenta?{' '}
-            <a href="/signup" className="font-semibold underline text-white hover:text-[#00ff88]/80">
-              Regístrate
-            </a>
+          <div className="text-center text-sm text-[#A1A1A1] mt-2">
+            Al continuar, aceptas nuestros términos y condiciones
           </div>
         </CardFooter>
       </Card>
