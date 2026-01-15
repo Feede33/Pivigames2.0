@@ -402,6 +402,11 @@ export default function Home() {
     }
   };
 
+  // Prevent hydration mismatch - don't render until mounted
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
