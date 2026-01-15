@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export default function CommentSection({ gameId }: Props) {
+  const router = useRouter();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
@@ -366,7 +368,7 @@ export default function CommentSection({ gameId }: Props) {
           <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-lg p-6 text-center backdrop-blur-sm">
             <p className="text-gray-300 mb-4 text-lg">Inicia sesión para comentar</p>
             <Button
-              onClick={() => setAuthDialogOpen(true)}
+              onClick={() => router.push('/login')}
               className="bg-white text-gray-900 hover:bg-gray-100 font-semibold px-6 py-2 transition-all duration-300 hover:scale-105"
             >
               Iniciar sesión
