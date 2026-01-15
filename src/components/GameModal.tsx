@@ -224,11 +224,11 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
   };
 
   const nextScreenshot = () => {
-    setScreenshotIndex((prev) => (prev + 1) % Math.max(1, mediaItems.length - 2));
+    setScreenshotIndex((prev) => (prev + 1) % Math.max(1, mediaItems.length - 1));
   };
 
   const prevScreenshot = () => {
-    setScreenshotIndex((prev) => (prev - 1 + Math.max(1, mediaItems.length - 2)) % Math.max(1, mediaItems.length - 2));
+    setScreenshotIndex((prev) => (prev - 1 + Math.max(1, mediaItems.length - 1)) % Math.max(1, mediaItems.length - 1));
   };
 
   const nextViewerImage = () => {

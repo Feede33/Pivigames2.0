@@ -115,48 +115,47 @@ export default function MainContent({
         {loadingSteam ? (
           <div className="relative">
             <div className="overflow-hidden rounded-lg">
-              <div className="flex gap-1.5 md:gap-2">
-                {[...Array(3)].map((_, i) => (
+              <div className="flex gap-3 md:gap-4">
+                {[...Array(2)].map((_, i) => (
                   <div
                     key={i}
-                    className="flex-shrink-0 w-[calc(33.33%-4px)] md:w-[calc(33.33%-5px)] aspect-video bg-gray-700 animate-pulse rounded"
+                    className="flex-shrink-0 w-[calc(50%-6px)] md:w-[calc(50%-8px)] aspect-video bg-gray-700 animate-pulse rounded"
                   />
                 ))}
               </div>
             </div>
-            <div className="flex justify-center gap-1 md:gap-1.5 mt-2 md:mt-3">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-gray-700 animate-pulse" />
+            <div className="flex justify-center gap-1.5 md:gap-2 mt-3 md:mt-4">
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-gray-700 animate-pulse" />
               ))}
             </div>
           </div>
         ) : (
-          <div className="relative" style={{ padding: '0 2rem' }}>
+          <div className="relative" style={{ padding: '0 3rem' }}>
             {/* Slider container with overflow hidden */}
             <div className="relative overflow-hidden rounded-lg" style={{ width: '100%' }}>
               <div
-                className="flex gap-1.5 md:gap-2 transition-transform duration-300"
+                className="flex gap-3 md:gap-4 transition-transform duration-300"
                 style={{ 
-                  transform: `translateX(-${screenshotIndex * 33.33}%)`,
+                  transform: `translateX(-${screenshotIndex * 50}%)`,
                   width: 'max-content'
                 }}
               >
                 {mediaItems.map((item, index) => (
                   <div
                     key={index}
-                    style={styles.slider.thumbnail}
-                    className="bg-gray-700 rounded overflow-hidden cursor-pointer relative group"
+                    className="flex-shrink-0 w-[calc(50vw-4rem)] md:w-[calc(45vw-4rem)] lg:w-[calc(40vw-4rem)] max-w-[600px] aspect-video bg-gray-700 rounded-lg overflow-hidden cursor-pointer relative group"
                     onClick={() => onMediaClick(item)}
                   >
                     <div
-                      className="w-full h-full bg-cover bg-center hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full bg-cover bg-center hover:scale-105 transition-transform duration-300"
                       style={{ backgroundImage: `url(${proxySteamImage(item.src)})` }}
                     />
                     {/* Indicador de video */}
                     {item.type === 'video' && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-colors">
-                        <div className="bg-white/90 rounded-full p-2 md:p-3 group-hover:scale-110 transition-transform">
-                          <Play className="w-4 h-4 md:w-6 md:h-6 text-black" />
+                        <div className="bg-white/90 rounded-full p-3 md:p-4 group-hover:scale-110 transition-transform">
+                          <Play className="w-6 h-6 md:w-8 md:h-8 text-black" />
                         </div>
                       </div>
                     )}
@@ -166,32 +165,32 @@ export default function MainContent({
             </div>
 
             {/* Navigation arrows - Outside overflow container */}
-            {mediaItems.length > 3 && (
+            {mediaItems.length > 2 && (
               <>
                 <button
                   onClick={onPrevScreenshot}
-                  className="absolute left-1 sm:left-2 md:left-3 lg:left-4 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center transition-colors z-20"
+                  className="absolute left-2 md:left-3 lg:left-4 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-9 h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 flex items-center justify-center transition-colors z-20"
                 >
-                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+                  <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
                 </button>
                 <button
                   onClick={onNextScreenshot}
-                  className="absolute right-1 sm:right-2 md:right-3 lg:right-4 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center transition-colors z-20"
+                  className="absolute right-2 md:right-3 lg:right-4 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-9 h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 flex items-center justify-center transition-colors z-20"
                 >
-                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+                  <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
                 </button>
               </>
             )}
 
             {/* Dots indicator */}
-            <div style={{ ...styles.slider.dotGap, ...styles.slider.dotMargin }} className="flex justify-center">
-              {Array.from({ length: Math.max(1, mediaItems.length - 2) }).map((_, index) => (
+            <div className="flex justify-center gap-2 md:gap-2.5 mt-3 md:mt-4">
+              {Array.from({ length: Math.max(1, mediaItems.length - 1) }).map((_, index) => (
                 <button
                   key={index}
                   onClick={() => onSetScreenshotIndex(index)}
-                  style={styles.slider.dot}
-                  className={`rounded-full transition-colors ${index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
-                    }`}
+                  className={`w-2 h-2 md:w-2.5 md:h-2.5 rounded-full transition-colors ${
+                    index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
+                  }`}
                 />
               ))}
             </div>
