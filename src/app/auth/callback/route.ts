@@ -34,6 +34,9 @@ export async function GET(request: Request) {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (user) {
+      console.log('User metadata:', JSON.stringify(user.user_metadata, null, 2));
+      console.log('User identities:', JSON.stringify(user.identities, null, 2));
+      
       // Verificar si ya existe un perfil
       const { data: existingProfile } = await supabase
         .from('user_profiles')
@@ -43,16 +46,28 @@ export async function GET(request: Request) {
       
       // Si no existe perfil, crearlo automáticamente
       if (!existingProfile) {
-        const nickname = user.user_metadata?.full_name || 
-                        user.user_metadata?.name || 
+        // Extraer datos según el proveedor
+        const metadata = user.user_metadata;
+        const identity = user.identities?.[0];
+        
+        // Para Google: full_name, avatar_url, picture
+        // Para Discord: full_name, avatar_url
+        const nickname = metadata?.full_name || 
+                        metadata?.name || 
+                        metadata?.user_name ||
                         user.email?.split('@')[0] || 
                         'Usuario';
         
-        const avatarUrl = user.user_metadata?.avatar_url || 
-                         user.user_metadata?.picture || 
+        // Google usa 'picture', Discord usa 'avatar_url'
+        const avatarUrl = metadata?.avatar_url || 
+                         metadata?.picture ||
+                         identity?.identity_data?.avatar_url ||
+                         identity?.identity_data?.picture ||
                          `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`;
         
-        await supabase.from('user_profiles').insert({
+        console.log('Creating profile with:', { nickname, avatarUrl, email: user.email });
+        
+        const { error: insertError } = await supabase.from('user_profiles').insert({
           user_id: user.id,
           nickname: nickname,
           avatar_url: avatarUrl,
@@ -60,6 +75,14 @@ export async function GET(request: Request) {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         });
+        
+        if (insertError) {
+          console.error('Error creating profile:', insertError);
+        } else {
+          console.log('Profile created successfully');
+        }
+      } else {
+        console.log('Profile already exists:', existingProfile);
       }
     }
   }
