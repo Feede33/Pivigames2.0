@@ -71,14 +71,21 @@ export function sanitizeSteamHTML(html: string): string {
       'p', 'br', 'strong', 'em', 'u', 'ul', 'ol', 'li', 
       'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
       'span', 'div', 'table', 'tr', 'td', 'th',
-      'b', 'i', 'small'
+      'b', 'i', 'small', 'a'
     ];
     
     // Clases CSS permitidas de Steam (whitelist)
     const allowedClasses = ['bb_ul', 'bb_ol', 'bb_li'];
     
+    // Primero, limpiar el HTML de Steam que a veces viene mal formateado
+    // Eliminar etiquetas de cierre sin apertura y viceversa
+    let cleanedHtml = html
+      .replace(/<br\s*\/?>/gi, '<br />') // Normalizar <br>
+      .replace(/\*:/g, ':') // Eliminar asteriscos extraños
+      .trim();
+    
     const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
+    const doc = parser.parseFromString(cleanedHtml, 'text/html');
     
     // Verificar que el documento se parseó correctamente
     if (!doc || !doc.body) {
