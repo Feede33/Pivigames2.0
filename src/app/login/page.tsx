@@ -159,7 +159,7 @@ export default function LoginPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="tu@ejemplo.com"
+                  placeholder="Coreo Electrónico"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -202,7 +202,7 @@ export default function LoginPage() {
             {isLoading ? 'Procesando...' : 'Continuar'}
           </Button>
 
-          <div className="relative w-full">
+          <div className="relative w-full py-2">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-border" />
             </div>

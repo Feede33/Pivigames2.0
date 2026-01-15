@@ -573,13 +573,15 @@
   line-height: 1.5;
 }
 
-.steam-requirements ul {
+.steam-requirements ul,
+.steam-requirements ul.bb_ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.steam-requirements ul li {
+.steam-requirements ul li,
+.steam-requirements ul.bb_ul li {
   margin-bottom: 0.25rem;
   line-height: 1.5;
 }

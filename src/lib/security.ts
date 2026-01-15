@@ -74,6 +74,9 @@ export function sanitizeSteamHTML(html: string): string {
       'b', 'i', 'small'
     ];
     
+    // Clases CSS permitidas de Steam (whitelist)
+    const allowedClasses = ['bb_ul', 'bb_ol', 'bb_li'];
+    
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     
@@ -107,6 +110,18 @@ export function sanitizeSteamHTML(html: string): string {
           element.removeAttribute(attr);
         }
       });
+      
+      // Limpiar clases CSS - solo mantener las permitidas
+      if (element.hasAttribute('class')) {
+        const classes = element.className.split(' ').filter(cls => 
+          allowedClasses.includes(cls.trim())
+        );
+        if (classes.length > 0) {
+          element.className = classes.join(' ');
+        } else {
+          element.removeAttribute('class');
+        }
+      }
       
       // Eliminar tags no permitidos - reemplazar con su contenido
       if (!allowedTags.includes(element.tagName.toLowerCase())) {
