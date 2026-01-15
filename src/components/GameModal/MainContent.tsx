@@ -131,7 +131,7 @@ export default function MainContent({
             </div>
           </div>
         ) : (
-          <div className="relative" style={{ padding: '0 3rem' }}>
+          <div className="relative" style={{ padding: '0 1rem' }}>
             {/* Slider container with overflow hidden */}
             <div className="relative overflow-hidden rounded-lg" style={{ width: '100%' }}>
               <div
