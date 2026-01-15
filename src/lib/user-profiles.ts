@@ -5,174 +5,127 @@ export type UserProfile = {
   nickname: string;
   avatar_url: string | null;
   avatar_seed: string | null;
+  email?: string | null; // Puede estar ofuscado
+  user_id_short?: string; // ID corto ofuscado
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 };
 
 /**
- * Obtener el perfil del usuario actual
+ * Obtiene el perfil del usuario actual (con datos completos, no ofuscados)
+ * Solo funciona si el usuario está autenticado
  */
 export async function getCurrentUserProfile(): Promise<UserProfile | null> {
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) return null;
-
-  const { data, error } = await supabase
-    .from('user_profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single();
-
-  if (error) {
-    console.error('Error fetching user profile:', error);
+  try {
+    const { data, error } = await supabase.rpc('get_my_profile');
+    
+    if (error) {
+      console.error('Error fetching current user profile:', error);
+      return null;
+    }
+    
+    return data?.[0] || null;
+  } catch (error) {
+    console.error('Error fetching current user profile:', error);
     return null;
   }
-
-  return data;
 }
 
 /**
- * Obtener perfil de usuario por ID
+ * Obtiene el perfil de otro usuario (con datos ofuscados)
+ * @param userId - ID del usuario a consultar
  */
 export async function getUserProfile(userId: string): Promise<UserProfile | null> {
-  const { data, error } = await supabase
-    .from('user_profiles')
-    .select('*')
-    .eq('id', userId)
-    .single();
-
-  if (error) {
+  try {
+    const { data, error } = await supabase.rpc('get_user_profile', {
+      user_id: userId
+    });
+    
+    if (error) {
+      console.error('Error fetching user profile:', error);
+      return null;
+    }
+    
+    return data?.[0] || null;
+  } catch (error) {
     console.error('Error fetching user profile:', error);
     return null;
   }
-
-  return data;
 }
 
 /**
- * Obtener múltiples perfiles de usuario
+ * Obtiene el avatar del usuario
+ * Prioriza avatar_url, luego genera uno con dicebear usando avatar_seed
  */
-export async function getUserProfiles(userIds: string[]): Promise<Map<string, UserProfile>> {
-  const { data, error } = await supabase
-    .from('user_profiles')
-    .select('*')
-    .in('id', userIds);
-
-  if (error) {
-    console.error('Error fetching user profiles:', error);
-    return new Map();
-  }
-
-  const profileMap = new Map<string, UserProfile>();
-  data?.forEach(profile => {
-    profileMap.set(profile.id, profile);
-  });
-
-  return profileMap;
-}
-
-/**
- * Actualizar nickname del usuario
- */
-export async function updateNickname(newNickname: string): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    throw new Error('Debes iniciar sesión');
-  }
-
-  // Validar nickname
-  if (!newNickname || newNickname.trim().length < 3) {
-    throw new Error('El nickname debe tener al menos 3 caracteres');
-  }
-
-  if (newNickname.length > 20) {
-    throw new Error('El nickname no puede tener más de 20 caracteres');
-  }
-
-  // Solo permitir letras, números y guiones bajos
-  if (!/^[a-zA-Z0-9_]+$/.test(newNickname)) {
-    throw new Error('El nickname solo puede contener letras, números y guiones bajos');
-  }
-
-  const { error } = await supabase
-    .from('user_profiles')
-    .update({ nickname: newNickname })
-    .eq('id', user.id);
-
-  if (error) {
-    // Si el error es por duplicado
-    if (error.code === '23505') {
-      throw new Error('Este nickname ya está en uso');
-    }
-    console.error('Error updating nickname:', error);
-    throw new Error('Error al actualizar el nickname: ' + error.message);
-  }
-}
-
-/**
- * Actualizar avatar URL del usuario
- */
-export async function updateAvatarUrl(avatarUrl: string): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    throw new Error('Debes iniciar sesión');
-  }
-
-  const { error } = await supabase
-    .from('user_profiles')
-    .update({ avatar_url: avatarUrl })
-    .eq('id', user.id);
-
-  if (error) {
-    console.error('Error updating avatar:', error);
-    throw new Error('Error al actualizar el avatar: ' + error.message);
-  }
-}
-
-/**
- * Generar URL de avatar usando DiceBear API
- * https://www.dicebear.com/
- */
-export function generateAvatarUrl(seed: string, style: string = 'avataaars'): string {
-  // Estilos disponibles: avataaars, bottts, identicon, initials, pixel-art, etc.
-  return `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(seed)}`;
-}
-
-/**
- * Obtener avatar del usuario (URL personalizada o generada)
- */
-export function getUserAvatar(profile: UserProfile | null): string {
-  if (!profile) {
-    return generateAvatarUrl('anonymous', 'identicon');
-  }
-
+export function getUserAvatar(profile: UserProfile): string {
   if (profile.avatar_url) {
     return profile.avatar_url;
   }
-
-  if (profile.avatar_seed) {
-    return generateAvatarUrl(profile.avatar_seed, 'avataaars');
-  }
-
-  return generateAvatarUrl(profile.id, 'identicon');
+  
+  const seed = profile.avatar_seed || profile.id;
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
 }
 
 /**
- * Verificar si un nickname está disponible
+ * Actualiza el perfil del usuario actual
  */
-export async function isNicknameAvailable(nickname: string): Promise<boolean> {
-  const { data, error } = await supabase
-    .from('user_profiles')
-    .select('id')
-    .eq('nickname', nickname)
-    .single();
-
-  if (error && error.code === 'PGRST116') {
-    // No se encontró, está disponible
-    return true;
+export async function updateUserProfile(updates: {
+  nickname?: string;
+  avatar_url?: string;
+  avatar_seed?: string;
+}): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return { success: false, error: 'Not authenticated' };
+    }
+    
+    const { error } = await supabase
+      .from('user_profiles')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', user.id);
+    
+    if (error) {
+      console.error('Error updating profile:', error);
+      return { success: false, error: error.message };
+    }
+    
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error updating profile:', error);
+    return { success: false, error: error.message };
   }
+}
 
-  return !data;
+/**
+ * Verifica si un nickname está disponible
+ */
+export async function isNicknameAvailable(nickname: string, currentUserId?: string): Promise<boolean> {
+  try {
+    let query = supabase
+      .from('user_profiles')
+      .select('id')
+      .eq('nickname', nickname);
+    
+    // Si estamos actualizando, excluir el usuario actual
+    if (currentUserId) {
+      query = query.neq('id', currentUserId);
+    }
+    
+    const { data, error } = await query;
+    
+    if (error) {
+      console.error('Error checking nickname availability:', error);
+      return false;
+    }
+    
+    return data.length === 0;
+  } catch (error) {
+    console.error('Error checking nickname availability:', error);
+    return false;
+  }
 }
