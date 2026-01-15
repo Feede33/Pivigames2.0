@@ -27,20 +27,34 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
 
+    console.log('🔐 [Login] Starting email/password login...', { email });
+
     try {
       // Primero intentamos iniciar sesión
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      console.log('🔐 [Login] Attempting sign in...');
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
+      console.log('🔐 [Login] Sign in response:', {
+        hasData: !!signInData,
+        hasSession: !!signInData?.session,
+        hasUser: !!signInData?.user,
+        error: signInError?.message
+      });
+
       // Si el error es que el usuario no existe o credenciales inválidas, intentamos registrarlo
       if (signInError) {
+        console.log('❌ [Login] Sign in failed, checking if we should register...');
+        
         if (signInError.message.includes('Invalid login credentials') || 
             signInError.message.includes('Email not confirmed')) {
           
+          console.log('🔐 [Login] Attempting sign up...');
+          
           // Intentamos registrar al usuario
-          const { error: signUpError } = await supabase.auth.signUp({
+          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
             email,
             password,
             options: {
@@ -48,23 +62,35 @@ export default function LoginPage() {
             }
           });
 
+          console.log('🔐 [Login] Sign up response:', {
+            hasData: !!signUpData,
+            hasSession: !!signUpData?.session,
+            hasUser: !!signUpData?.user,
+            error: signUpError?.message
+          });
+
           if (signUpError) {
+            console.error('❌ [Login] Sign up failed:', signUpError);
             throw signUpError;
           }
 
           // Registro exitoso
+          console.log('✅ [Login] Sign up successful!');
           setError('');
           alert('¡Cuenta creada exitosamente! Por favor revisa tu email para confirmar tu cuenta.');
           return;
         }
         
         // Si es otro tipo de error, lo lanzamos
+        console.error('❌ [Login] Other error:', signInError);
         throw signInError;
       }
 
       // Login exitoso
+      console.log('✅ [Login] Sign in successful! Redirecting...');
       router.push('/');
     } catch (error: any) {
+      console.error('❌ [Login] Error:', error);
       setError(error.message || 'Error al iniciar sesión');
     } finally {
       setIsLoading(false);
@@ -75,8 +101,10 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
 
+    console.log(`🔐 [Login] Starting ${provider} OAuth...`);
+
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
@@ -86,8 +114,16 @@ export default function LoginPage() {
         }
       });
 
-      if (error) throw error;
+      console.log(`🔐 [Login] ${provider} OAuth response:`, { data, error });
+
+      if (error) {
+        console.error(`❌ [Login] ${provider} OAuth error:`, error);
+        throw error;
+      }
+      
+      console.log(`✅ [Login] ${provider} OAuth initiated successfully`);
     } catch (error: any) {
+      console.error(`❌ [Login] ${provider} OAuth failed:`, error);
       setError(error.message || 'Error al iniciar sesión');
       setIsLoading(false);
     }
