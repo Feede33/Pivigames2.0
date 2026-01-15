@@ -135,7 +135,7 @@ export default function MainContent({
             {/* Slider container with overflow hidden */}
             <div className="relative overflow-hidden rounded-lg" style={{ width: '100%' }}>
               <div
-                className="flex gap-3 md:gap-4 transition-all duration-500 ease-in-out"
+                className="flex gap-3 md:gap-2 transition-all duration-500 ease-in-out"
                 style={{ 
                   transform: `translateX(calc(-${screenshotIndex * 100}% - ${screenshotIndex * 16}px))`,
                 }}
