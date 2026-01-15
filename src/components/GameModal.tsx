@@ -213,8 +213,6 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
     }
   }, [game]);
 
-  if (!game || !ready) return null;
-
   const handleClose = () => {
     setVisible(false);
     setTimeout(onCloseAction, 200);
@@ -249,6 +247,12 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
       openViewer(item.index);
     }
   };
+
+  // No renderizar el portal hasta que el juego esté listo y el DOM esté disponible
+  if (!game || !ready) return null;
+  
+  // Verificar que document.body existe antes de crear el portal
+  if (typeof document === 'undefined') return null;
 
   return createPortal(
     <div
