@@ -1,19 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { LocaleUpdater } from "@/components/LocaleUpdater"
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Pegasusgames - Stream Your Favorite Games",
@@ -50,18 +39,16 @@ export default async function LocaleLayout({
   const { locale } = await params;
   
   return (
-    <>
-      <LocaleUpdater />
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-      </ThemeProvider>
-    </>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="dark"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <AuthProvider>
+        <LocaleUpdater />
+        {children}
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
