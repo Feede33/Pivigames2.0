@@ -144,7 +144,12 @@ export default function MainContent({
                 {mediaItems.map((item, index) => (
                   <div
                     key={index}
-                    className="flex-shrink-0 w-[calc(50vw-4rem)] md:w-[calc(45vw-4rem)] lg:w-[calc(40vw-4rem)] max-w-[600px] aspect-video bg-gray-700 rounded-lg overflow-hidden cursor-pointer relative group"
+                    className="flex-shrink-0 w-[calc(50vw-4rem)] md:w-[calc(45vw-4rem)] lg:w-[calc(40vw-4rem)] max-w-[600px] aspect-video bg-gray-700 overflow-hidden cursor-pointer relative group"
+                    style={{
+                      borderRadius: '12px',
+                      border: '2px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                    }}
                     onClick={() => onMediaClick(item)}
                   >
                     <div
