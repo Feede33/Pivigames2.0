@@ -55,7 +55,6 @@ export default function Home() {
   const t = useTranslations(locale);
   const { user } = useAuth();
 
-  const [mounted, setMounted] = useState(false);
   const [modalGame, setModalGame] = useState<GameWithSteamData | null>(null);
   const [modalOrigin, setModalOrigin] = useState<{
     x: number;
@@ -77,11 +76,6 @@ export default function Home() {
   const [totalGamesCount, setTotalGamesCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const GAMES_PER_PAGE = 100;
-
-  // Prevent hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Detectar errores de autenticación en la URL
   useEffect(() => {
@@ -401,11 +395,6 @@ export default function Home() {
       // El juego temporal ya está configurado, no hacer nada más
     }
   };
-
-  // Prevent hydration mismatch - don't render until mounted
-  if (!mounted) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">

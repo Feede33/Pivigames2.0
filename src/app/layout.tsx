@@ -1,6 +1,7 @@
 import './globals.css';
 
-// Root layout - solo para configuración global
+// Root layout - Next.js requiere que el root layout tenga html/body
+// pero delegamos el contenido real al locale layout
 export default function RootLayout({
   children,
 }: {
