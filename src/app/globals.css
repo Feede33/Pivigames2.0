@@ -680,17 +680,14 @@
   }
 }
 
-/* Comment Section Grid - Full width on mobile/tablet, 2 columns on lg */
-.comment-section-grid {
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  gap: 1.5rem !important;
+/* Thumbnails Section - Full width row after widget */
+.thumbnails-section-container {
+  width: 100%;
   margin-top: 2rem;
 }
 
-@media (min-width: 1280px) {
-  .comment-section-grid {
-    grid-template-columns: 2.5fr 1fr !important;
-    gap: 2rem !important;
-  }
+/* Comment Section - Full width */
+.comment-section-full-width {
+  width: 100%;
+  margin-top: 2rem;
 }

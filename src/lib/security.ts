@@ -83,14 +83,25 @@ export function sanitizeSteamHTML(html: string): string {
     // Clases CSS permitidas de Steam (whitelist)
     const allowedClasses = ['bb_ul', 'bb_ol', 'bb_li'];
     
-    // Primero, limpiar el HTML de Steam que a veces viene mal formateado
+    // Limpiar el HTML de Steam
     let cleanedHtml = html
-      .replace(/<br\s*\/?>/gi, '<br />') // Normalizar <br>
-      .replace(/\*:/g, ':') // Eliminar asteriscos extraños
+      // Eliminar prefijos de texto plano como "MÍNIMO:", "RECOMENDADO:", etc.
+      .replace(/^(MÍNIMO|RECOMENDADO|MINIMUM|RECOMMENDED):\s*/i, '')
+      // Normalizar <br>
+      .replace(/<br\s*\/?>/gi, '<br />')
+      // Eliminar asteriscos extraños
+      .replace(/\*:/g, ':')
+      // Eliminar cualquier texto después de </ul> que no sea HTML (como "PrecioUruguay", etc.)
+      .replace(/(<\/ul>)[\s\S]*?(?=<|$)/gi, '$1')
       .trim();
     
-    // Envolver en un div para asegurar que siempre haya un contenedor
-    cleanedHtml = `<div>${cleanedHtml}</div>`;
+    // Si el HTML comienza con <strong>, asegurarse de que esté dentro de una estructura válida
+    if (cleanedHtml.startsWith('<strong>')) {
+      cleanedHtml = `<div>${cleanedHtml}</div>`;
+    } else {
+      // Envolver en un div para asegurar que siempre haya un contenedor
+      cleanedHtml = `<div>${cleanedHtml}</div>`;
+    }
     
     const parser = new DOMParser();
     const doc = parser.parseFromString(cleanedHtml, 'text/html');
@@ -153,7 +164,12 @@ export function sanitizeSteamHTML(html: string): string {
     
     // Obtener el contenido del div wrapper
     const wrapper = doc.body.firstChild as HTMLElement;
-    return wrapper?.innerHTML || '';
+    let result = wrapper?.innerHTML || '';
+    
+    // Limpiar cualquier texto residual después del último </ul> o </li>
+    result = result.replace(/(<\/ul>|<\/li>)[\s\S]*?(?=<|$)/gi, '$1');
+    
+    return result;
   } catch (error) {
     console.error('Error sanitizing Steam HTML:', error);
     // En caso de error, devolver el texto escapado como fallback

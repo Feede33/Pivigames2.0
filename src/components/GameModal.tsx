@@ -351,24 +351,22 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
               ) : null}
             </div>
 
-            {/* Comment Section - Full width row with optional sidebar on lg */}
-            <div className="comment-section-grid" style={{ display: 'grid' }}>
-              <CommentSection gameId={game.id} />
-              
-              {/* Sidebar placeholder for lg screens only */}
-              {screenSize === 'lg' && (
-                <div className="hidden lg:block">
-                  <div className="bg-gray-800 rounded-lg p-4 h-[600px] animate-pulse">
-                    {/* Skeleton para futuras promociones/thumbnails */}
-                    <div className="space-y-4">
-                      <div className="h-32 bg-gray-700 rounded"></div>
-                      <div className="h-32 bg-gray-700 rounded"></div>
-                      <div className="h-32 bg-gray-700 rounded"></div>
-                      <div className="h-32 bg-gray-700 rounded"></div>
-                    </div>
-                  </div>
+            {/* Thumbnails Section - Full width row after widget */}
+            <div className="thumbnails-section-container">
+              <div className="bg-gray-800 rounded-lg p-4">
+                <h3 className="text-white font-semibold mb-4 text-lg">Juegos Relacionados</h3>
+                {/* Grid de thumbnails */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="aspect-[3/4] bg-gray-700 rounded animate-pulse"></div>
+                  ))}
                 </div>
-              )}
+              </div>
+            </div>
+
+            {/* Comment Section - Full width */}
+            <div className="comment-section-full-width">
+              <CommentSection gameId={game.id} />
             </div>
           </div>
         </div>
