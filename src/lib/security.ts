@@ -67,8 +67,9 @@ export function sanitizeSteamHTML(html: string): string {
   
   // Verificar que estamos en el navegador
   if (typeof window === 'undefined' || typeof DOMParser === 'undefined') {
-    console.warn('DOMParser not available, returning escaped text');
-    return escapeHTML(html);
+    console.warn('DOMParser not available, returning plain text');
+    // En servidor, devolver texto plano sin etiquetas pero sin escapar
+    return html.replace(/<[^>]*>/g, '').trim();
   }
   
   try {
@@ -87,8 +88,8 @@ export function sanitizeSteamHTML(html: string): string {
     let cleanedHtml = html
       // Eliminar prefijos de texto plano como "MÍNIMO:", "RECOMENDADO:", etc.
       .replace(/^(MÍNIMO|RECOMENDADO|MINIMUM|RECOMMENDED):\s*/i, '')
-      // Normalizar <br>
-      .replace(/<br\s*\/?>/gi, '<br />')
+      // Normalizar <br> y convertir a saltos de línea reales
+      .replace(/<br\s*\/?>/gi, '<br>')
       // Eliminar asteriscos extraños
       .replace(/\*:/g, ':')
       .trim();
@@ -101,8 +102,8 @@ export function sanitizeSteamHTML(html: string): string {
     
     // Verificar que el documento se parseó correctamente
     if (!doc || !doc.body || !doc.body.firstChild) {
-      console.warn('Failed to parse HTML, returning escaped text');
-      return escapeHTML(html);
+      console.warn('Failed to parse HTML, returning plain text');
+      return html.replace(/<[^>]*>/g, '').trim();
     }
     
     // Eliminar scripts
@@ -111,22 +112,28 @@ export function sanitizeSteamHTML(html: string): string {
     // Eliminar iframes
     doc.querySelectorAll('iframe').forEach(el => el.remove());
     
+    // Eliminar objetos y embeds peligrosos
+    doc.querySelectorAll('object, embed').forEach(el => el.remove());
+    
     // Limpiar todos los elementos - convertir a array para evitar problemas con live collections
     const elements = Array.from(doc.querySelectorAll('*'));
     
     elements.forEach(element => {
-      // Eliminar event handlers
+      // Eliminar event handlers (onclick, onerror, etc.)
       Array.from(element.attributes).forEach(attr => {
         if (attr.name.startsWith('on')) {
           element.removeAttribute(attr.name);
         }
       });
       
-      // Limpiar javascript: en URLs
+      // Limpiar javascript: y data: en URLs
       ['href', 'src'].forEach(attr => {
         const value = element.getAttribute(attr);
-        if (value && value.toLowerCase().startsWith('javascript:')) {
-          element.removeAttribute(attr);
+        if (value) {
+          const lowerValue = value.toLowerCase().trim();
+          if (lowerValue.startsWith('javascript:') || lowerValue.startsWith('data:')) {
+            element.removeAttribute(attr);
+          }
         }
       });
       
@@ -159,11 +166,16 @@ export function sanitizeSteamHTML(html: string): string {
     const wrapper = doc.body.firstChild as HTMLElement;
     let result = wrapper?.innerHTML || '';
     
+    // Asegurar que el resultado no esté vacío
+    if (!result || result.trim() === '') {
+      return html.replace(/<[^>]*>/g, '').trim();
+    }
+    
     return result;
   } catch (error) {
     console.error('Error sanitizing Steam HTML:', error);
-    // En caso de error, devolver el texto escapado como fallback
-    return escapeHTML(html);
+    // En caso de error, devolver texto plano sin etiquetas
+    return html.replace(/<[^>]*>/g, '').trim();
   }
 }
 

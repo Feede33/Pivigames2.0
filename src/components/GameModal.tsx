@@ -356,6 +356,16 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
               ) : null}
             </div>
 
+            {/* Dos columnas con divs vacíos 16:9 */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
+              <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', backgroundColor: '#2a2a2a', borderRadius: '8px' }}>
+                {/* Div 1 - 16:9 ratio */}
+              </div>
+              <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', backgroundColor: '#2a2a2a', borderRadius: '8px' }}>
+                {/* Div 2 - 16:9 ratio */}
+              </div>
+            </div>
+
             {/* Comment Section - Full width */}
             <div className="comment-section-full-width">
               <CommentSection gameId={game.id} />
