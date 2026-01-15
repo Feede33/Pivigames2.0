@@ -13,10 +13,10 @@ import { supabase } from '@/lib/supabase';
 
 type Props = {
   isOpen: boolean;
-  onClose: () => void;
+  onCloseAction: () => void;
 };
 
-export default function AuthProviderDialog({ isOpen, onClose }: Props) {
+export default function AuthProviderDialog({ isOpen, onCloseAction }: Props) {
   const [isLoading, setIsLoading] = useState<'discord' | 'google' | null>(null);
 
   const handleSignIn = async (provider: 'discord' | 'google') => {
@@ -47,7 +47,7 @@ export default function AuthProviderDialog({ isOpen, onClose }: Props) {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onCloseAction}>
       <DialogContent className="bg-gray-900 border-gray-700 text-gray-200 max-w-sm">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-white text-center">

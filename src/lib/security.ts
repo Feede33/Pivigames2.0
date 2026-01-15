@@ -91,17 +91,10 @@ export function sanitizeSteamHTML(html: string): string {
       .replace(/<br\s*\/?>/gi, '<br />')
       // Eliminar asteriscos extraños
       .replace(/\*:/g, ':')
-      // Eliminar cualquier texto después de </ul> que no sea HTML (como "PrecioUruguay", etc.)
-      .replace(/(<\/ul>)[\s\S]*?(?=<|$)/gi, '$1')
       .trim();
     
-    // Si el HTML comienza con <strong>, asegurarse de que esté dentro de una estructura válida
-    if (cleanedHtml.startsWith('<strong>')) {
-      cleanedHtml = `<div>${cleanedHtml}</div>`;
-    } else {
-      // Envolver en un div para asegurar que siempre haya un contenedor
-      cleanedHtml = `<div>${cleanedHtml}</div>`;
-    }
+    // Envolver en un div para asegurar que siempre haya un contenedor
+    cleanedHtml = `<div>${cleanedHtml}</div>`;
     
     const parser = new DOMParser();
     const doc = parser.parseFromString(cleanedHtml, 'text/html');
@@ -165,9 +158,6 @@ export function sanitizeSteamHTML(html: string): string {
     // Obtener el contenido del div wrapper
     const wrapper = doc.body.firstChild as HTMLElement;
     let result = wrapper?.innerHTML || '';
-    
-    // Limpiar cualquier texto residual después del último </ul> o </li>
-    result = result.replace(/(<\/ul>|<\/li>)[\s\S]*?(?=<|$)/gi, '$1');
     
     return result;
   } catch (error) {
