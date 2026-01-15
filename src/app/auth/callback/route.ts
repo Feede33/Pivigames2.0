@@ -85,70 +85,25 @@ export async function GET(request: Request) {
       metadata: user.user_metadata
     });
     
-    console.log('🔄 [Callback] Checking for existing profile...');
+    console.log('🔄 [Callback] Profile should be created automatically by trigger');
     
-    // Verificar si ya existe un perfil
-    const { data: existingProfile, error: profileCheckError } = await supabase
+    // El perfil se crea automáticamente mediante el trigger on_auth_user_created
+    // No necesitamos crear el perfil manualmente aquí
+    
+    // Esperar un momento para que el trigger termine
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Verificar que el perfil se creó correctamente
+    const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
       .select('*')
-      .eq('id', user.id)  // ← CORRECTO: usar 'id' no 'user_id'
+      .eq('id', user.id)
       .single();
     
-    if (profileCheckError && profileCheckError.code !== 'PGRST116') {
-      console.error('❌ [Callback] Error checking profile:', profileCheckError);
-    }
-    
-    console.log('🔄 [Callback] Profile check result:', {
-      hasProfile: !!existingProfile,
-      profileId: existingProfile?.id,
-      error: profileCheckError?.code
-    });
-    
-    // Si no existe perfil, crearlo automáticamente
-    if (!existingProfile) {
-      console.log('🔄 [Callback] Creating new profile...');
-      
-      // Extraer datos según el proveedor
-      const metadata = user.user_metadata;
-      const identity = user.identities?.[0];
-      
-      // Para Google: full_name, avatar_url, picture
-      // Para Discord: full_name, avatar_url
-      const nickname = metadata?.full_name || 
-                      metadata?.name || 
-                      metadata?.user_name ||
-                      user.email?.split('@')[0] || 
-                      'Usuario';
-      
-      // Google usa 'picture', Discord usa 'avatar_url'
-      const avatarUrl = metadata?.avatar_url || 
-                       metadata?.picture ||
-                       identity?.identity_data?.avatar_url ||
-                       identity?.identity_data?.picture ||
-                       `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`;
-      
-      console.log('🔄 [Callback] Profile data:', { 
-        nickname, 
-        avatarUrl, 
-        email: user.email,
-        provider: user.app_metadata?.provider
-      });
-      
-      const { data: newProfile, error: insertError } = await supabase.from('user_profiles').insert({
-        id: user.id,
-        nickname: nickname,
-        avatar_url: avatarUrl,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }).select().single();
-      
-      if (insertError) {
-        console.error('❌ [Callback] Error creating profile:', insertError);
-      } else {
-        console.log('✅ [Callback] Profile created successfully:', newProfile);
-      }
+    if (profileError) {
+      console.error('❌ [Callback] Profile not found after trigger:', profileError);
     } else {
-      console.log('✅ [Callback] Profile already exists:', existingProfile);
+      console.log('✅ [Callback] Profile created by trigger:', profile);
     }
     
     console.log('✅ [Callback] Redirecting to home page...');
