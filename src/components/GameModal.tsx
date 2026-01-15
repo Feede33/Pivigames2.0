@@ -6,7 +6,6 @@ import type { GameWithSteamData } from '@/lib/supabase';
 import { useTranslations, type Locale } from '@/lib/i18n';
 import { useScreenSize } from '@/hooks/useScreenSize';
 import { getResponsiveStyles } from './GameModal/styles';
-import { getSteamLanguage } from '@/lib/steam-languages';
 import {
   ModalHeader,
   HeroSection,
@@ -342,7 +341,6 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
                   <iframe
                     src={`https://store.steampowered.com/widget/${steamData.steam_appid}/?l=${locale}`}
                     style={styles.widget.iframe}
-                    frameBorder="0"
                     title="Steam Widget"
                   />
                 </div>
