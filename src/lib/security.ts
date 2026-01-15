@@ -63,58 +63,70 @@ export function sanitizeHTML(html: string): string {
  * Permite algunos tags de formato que Steam usa
  */
 export function sanitizeSteamHTML(html: string): string {
-  if (!html) return '';
+  if (!html || typeof html !== 'string') return '';
   
-  // Steam usa algunos tags específicos que queremos mantener
-  const allowedTags = [
-    'p', 'br', 'strong', 'em', 'u', 'ul', 'ol', 'li', 
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
-    'span', 'div', 'table', 'tr', 'td', 'th',
-    'b', 'i', 'small'
-  ];
-  
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  
-  // Eliminar scripts
-  doc.querySelectorAll('script').forEach(el => el.remove());
-  
-  // Eliminar iframes
-  doc.querySelectorAll('iframe').forEach(el => el.remove());
-  
-  // Limpiar todos los elementos - convertir a array para evitar problemas con live collections
-  const elements = Array.from(doc.querySelectorAll('*'));
-  
-  elements.forEach(element => {
-    // Eliminar event handlers
-    Array.from(element.attributes).forEach(attr => {
-      if (attr.name.startsWith('on')) {
-        element.removeAttribute(attr.name);
-      }
-    });
+  try {
+    // Steam usa algunos tags específicos que queremos mantener
+    const allowedTags = [
+      'p', 'br', 'strong', 'em', 'u', 'ul', 'ol', 'li', 
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
+      'span', 'div', 'table', 'tr', 'td', 'th',
+      'b', 'i', 'small'
+    ];
     
-    // Limpiar javascript: en URLs
-    ['href', 'src'].forEach(attr => {
-      const value = element.getAttribute(attr);
-      if (value && value.toLowerCase().startsWith('javascript:')) {
-        element.removeAttribute(attr);
-      }
-    });
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
     
-    // Eliminar tags no permitidos - reemplazar con su contenido
-    if (!allowedTags.includes(element.tagName.toLowerCase())) {
-      const parent = element.parentNode;
-      if (parent && parent !== doc && parent.nodeType === Node.ELEMENT_NODE) {
-        // Mover los hijos del elemento al padre antes de eliminarlo
-        while (element.firstChild) {
-          parent.insertBefore(element.firstChild, element);
-        }
-        parent.removeChild(element);
-      }
+    // Verificar que el documento se parseó correctamente
+    if (!doc || !doc.body) {
+      console.warn('Failed to parse HTML, returning escaped text');
+      return escapeHTML(html);
     }
-  });
-  
-  return doc.body.innerHTML;
+    
+    // Eliminar scripts
+    doc.querySelectorAll('script').forEach(el => el.remove());
+    
+    // Eliminar iframes
+    doc.querySelectorAll('iframe').forEach(el => el.remove());
+    
+    // Limpiar todos los elementos - convertir a array para evitar problemas con live collections
+    const elements = Array.from(doc.querySelectorAll('*'));
+    
+    elements.forEach(element => {
+      // Eliminar event handlers
+      Array.from(element.attributes).forEach(attr => {
+        if (attr.name.startsWith('on')) {
+          element.removeAttribute(attr.name);
+        }
+      });
+      
+      // Limpiar javascript: en URLs
+      ['href', 'src'].forEach(attr => {
+        const value = element.getAttribute(attr);
+        if (value && value.toLowerCase().startsWith('javascript:')) {
+          element.removeAttribute(attr);
+        }
+      });
+      
+      // Eliminar tags no permitidos - reemplazar con su contenido
+      if (!allowedTags.includes(element.tagName.toLowerCase())) {
+        const parent = element.parentNode;
+        if (parent && parent !== doc && parent.nodeType === Node.ELEMENT_NODE) {
+          // Mover los hijos del elemento al padre antes de eliminarlo
+          while (element.firstChild) {
+            parent.insertBefore(element.firstChild, element);
+          }
+          parent.removeChild(element);
+        }
+      }
+    });
+    
+    return doc.body.innerHTML || '';
+  } catch (error) {
+    console.error('Error sanitizing Steam HTML:', error);
+    // En caso de error, devolver el texto escapado como fallback
+    return escapeHTML(html);
+  }
 }
 
 // ============================================
