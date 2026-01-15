@@ -577,7 +577,7 @@
 .steam-requirements ul.bb_ul {
   list-style: disc;
   padding-left: 1.25rem;
-  margin: 0.5rem 0;
+  margin: 0.75rem 0;
 }
 
 .steam-requirements ul li,
@@ -587,10 +587,17 @@
   padding-left: 0.25rem;
 }
 
-.steam-requirements strong {
+.steam-requirements strong,
+.steam-requirements b {
   color: #ffffff;
   font-weight: 600;
-  display: inline;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.steam-requirements strong:first-child,
+.steam-requirements b:first-child {
+  margin-top: 0;
 }
 
 .steam-requirements br {
@@ -600,10 +607,20 @@
 }
 
 /* Mejorar espaciado entre secciones */
-.steam-requirements > strong:first-child {
+.steam-requirements > strong:first-child,
+.steam-requirements > b:first-child {
   display: block;
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+/* Asegurar que el texto después de strong se vea bien */
+.steam-requirements p {
+  margin: 0.5rem 0;
+}
+
+.steam-requirements div {
+  margin: 0.25rem 0;
 }
 
 /* System Requirements Grid */
