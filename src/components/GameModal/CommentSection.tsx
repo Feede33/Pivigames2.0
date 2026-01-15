@@ -444,7 +444,7 @@ export default function CommentSection({ gameId }: Props) {
 
       <AuthProviderDialog
         isOpen={authDialogOpen}
-        onClose={() => setAuthDialogOpen(false)}
+        onCloseAction={() => setAuthDialogOpen(false)}
       />
 
       <ReportCommentDialog
