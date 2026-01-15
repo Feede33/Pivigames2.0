@@ -573,6 +573,36 @@
   line-height: 1.8;
 }
 
+/* Lista de requisitos formateada */
+.steam-requirements .requirements-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.steam-requirements .requirements-list li {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.8;
+  padding-left: 1.25rem;
+  position: relative;
+}
+
+.steam-requirements .requirements-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #9ca3af;
+  font-weight: bold;
+}
+
+.steam-requirements .requirements-list li strong {
+  color: #ffffff;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
 .steam-requirements ul,
 .steam-requirements ul.bb_ul {
   list-style: disc;
@@ -592,34 +622,11 @@
 .steam-requirements b {
   color: #ffffff;
   font-weight: 600;
-  display: list-item;
-  list-style-type: disc;
-  list-style-position: outside;
-  margin-left: 1.5rem;
-  margin-top: 0.75rem;
-  margin-bottom: 0.25rem;
-  padding-left: 0.5rem;
-}
-
-.steam-requirements strong:first-child,
-.steam-requirements b:first-child {
-  margin-top: 0;
 }
 
 /* Ocultar br tags para mejor espaciado */
 .steam-requirements br {
   display: none;
-}
-
-/* Mejorar espaciado entre secciones */
-.steam-requirements > strong:first-child,
-.steam-requirements > b:first-child {
-  display: block;
-  list-style-type: none;
-  margin-left: 0;
-  margin-bottom: 0.75rem;
-  padding-left: 0;
-  font-size: 0.95rem;
 }
 
 /* Texto después de strong también como bullet */

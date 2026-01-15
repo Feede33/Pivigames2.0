@@ -179,6 +179,54 @@ export function sanitizeSteamHTML(html: string): string {
   }
 }
 
+/**
+ * Parsea y formatea los requisitos del sistema de Steam en una lista HTML estructurada
+ */
+export function formatSteamRequirements(html: string): string {
+  if (!html || typeof html !== 'string') return '';
+  
+  try {
+    // Primero sanitizar el HTML
+    const sanitized = sanitizeSteamHTML(html);
+    
+    // Extraer texto plano
+    const text = sanitized.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    
+    // Dividir por líneas usando patrones comunes de Steam
+    // Steam suele usar patrones como "SO:", "Procesador:", "Memoria:", etc.
+    const requirementPattern = /(SO|Procesador|Memoria|Gráficos|DirectX|Red|Almacenamiento|Tarjeta de sonido|Notas adicionales|OS|Processor|Memory|Graphics|Storage|Sound Card|Additional Notes|Network)(\s*\*?):/gi;
+    
+    // Dividir el texto en partes
+    const parts = text.split(requirementPattern).filter(part => part && part.trim());
+    
+    // Si no hay partes reconocibles, devolver el HTML sanitizado original
+    if (parts.length < 2) {
+      return sanitized;
+    }
+    
+    // Construir lista HTML
+    let listHTML = '<ul class="requirements-list">';
+    
+    for (let i = 0; i < parts.length; i += 2) {
+      const label = parts[i]?.trim();
+      const value = parts[i + 1]?.trim();
+      
+      if (label && value) {
+        // Limpiar el valor de asteriscos y espacios extra
+        const cleanValue = value.replace(/\*+/g, '').trim();
+        listHTML += `<li><strong>${escapeHTML(label)}:</strong> ${escapeHTML(cleanValue)}</li>`;
+      }
+    }
+    
+    listHTML += '</ul>';
+    
+    return listHTML;
+  } catch (error) {
+    console.error('Error formatting Steam requirements:', error);
+    return sanitizeSteamHTML(html);
+  }
+}
+
 // ============================================
 // SANITIZACIÓN DE TEXTO (Protección XSS)
 // ============================================

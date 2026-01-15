@@ -1,6 +1,6 @@
 import { Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { proxySteamImage } from '@/lib/image-proxy';
-import { sanitizeSteamHTML } from '@/lib/security';
+import { formatSteamRequirements } from '@/lib/security';
 
 type SteamData = {
   short_description: string | null;
@@ -131,13 +131,13 @@ export default function MainContent({
             </div>
           </div>
         ) : (
-          <div className="relative" style={{ padding: '0 2.5rem' }}>
+          <div className="relative" style={{ padding: '0 3rem' }}>
             {/* Slider container with overflow hidden */}
             <div className="relative overflow-hidden rounded-lg" style={{ width: '100%' }}>
               <div
                 className="flex gap-3 md:gap-4 transition-all duration-500 ease-in-out"
                 style={{ 
-                  transform: `translateX(calc(-${screenshotIndex * 100}% - ${screenshotIndex * 12}px))`,
+                  transform: `translateX(calc(-${screenshotIndex * 100}% - ${screenshotIndex * 16}px))`,
                 }}
               >
                 {mediaItems.map((item, index) => (
@@ -145,10 +145,10 @@ export default function MainContent({
                     key={index}
                     className="flex-shrink-0 aspect-video bg-gray-700 overflow-hidden cursor-pointer relative group"
                     style={{
-                      width: 'calc(25% - 9px)',
-                      borderRadius: '8px',
-                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
-                      minWidth: '180px',
+                      width: 'calc(25% - 12px)',
+                      borderRadius: '10px',
+                      boxShadow: '0 3px 10px rgba(0, 0, 0, 0.5)',
+                      minWidth: '220px',
                     }}
                     onClick={() => onMediaClick(item)}
                   >
@@ -159,8 +159,8 @@ export default function MainContent({
                     {/* Indicador de video */}
                     {item.type === 'video' && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-colors">
-                        <div className="bg-white/90 rounded-full p-2 md:p-3 group-hover:scale-110 transition-transform">
-                          <Play className="w-4 h-4 md:w-5 md:h-5 text-black" />
+                        <div className="bg-white/90 rounded-full p-3 md:p-4 group-hover:scale-110 transition-transform">
+                          <Play className="w-5 h-5 md:w-6 md:h-6 text-black" />
                         </div>
                       </div>
                     )}
@@ -174,15 +174,15 @@ export default function MainContent({
               <>
                 <button
                   onClick={onPrevScreenshot}
-                  className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center transition-all duration-200 z-20 hover:scale-110"
+                  className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-9 h-9 md:w-10 md:h-10 flex items-center justify-center transition-all duration-200 z-20 hover:scale-110"
                 >
-                  <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+                  <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
                 </button>
                 <button
                   onClick={onNextScreenshot}
-                  className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center transition-all duration-200 z-20 hover:scale-110"
+                  className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-9 h-9 md:w-10 md:h-10 flex items-center justify-center transition-all duration-200 z-20 hover:scale-110"
                 >
-                  <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+                  <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
                 </button>
               </>
             )}
@@ -239,7 +239,7 @@ export default function MainContent({
               {steamData?.pc_requirements?.minimum ? (
                 <div
                   className="steam-requirements text-sm text-gray-300"
-                  dangerouslySetInnerHTML={{ __html: sanitizeSteamHTML(steamData.pc_requirements.minimum) }}
+                  dangerouslySetInnerHTML={{ __html: formatSteamRequirements(steamData.pc_requirements.minimum) }}
                 />
               ) : (
                 <div className="space-y-2 text-sm text-gray-300">
@@ -254,7 +254,7 @@ export default function MainContent({
               {steamData?.pc_requirements?.recommended ? (
                 <div
                   className="steam-requirements text-sm text-gray-300"
-                  dangerouslySetInnerHTML={{ __html: sanitizeSteamHTML(steamData.pc_requirements.recommended) }}
+                  dangerouslySetInnerHTML={{ __html: formatSteamRequirements(steamData.pc_requirements.recommended) }}
                 />
               ) : (
                 <div className="space-y-2 text-sm text-gray-300">
