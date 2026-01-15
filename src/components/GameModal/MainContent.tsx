@@ -115,11 +115,11 @@ export default function MainContent({
         {loadingSteam ? (
           <div className="relative">
             <div className="overflow-hidden rounded-lg">
-              <div className="flex gap-3 md:gap-4">
-                {[...Array(2)].map((_, i) => (
+              <div className="flex gap-2 md:gap-3">
+                {[...Array(4)].map((_, i) => (
                   <div
                     key={i}
-                    className="flex-shrink-0 w-[calc(50%-6px)] md:w-[calc(50%-8px)] aspect-video bg-gray-700 animate-pulse rounded"
+                    className="flex-shrink-0 w-[calc(25%-6px)] md:w-[calc(25%-9px)] aspect-video bg-gray-700 animate-pulse rounded"
                   />
                 ))}
               </div>
@@ -131,21 +131,23 @@ export default function MainContent({
             </div>
           </div>
         ) : (
-          <div className="relative" style={{ padding: '0 3rem' }}>
+          <div className="relative" style={{ padding: '0 2.5rem' }}>
             {/* Slider container with overflow hidden */}
             <div className="relative overflow-hidden rounded-lg" style={{ width: '100%' }}>
               <div
-                className="flex gap-3 md:gap-4 transition-transform duration-300"
+                className="flex gap-2 md:gap-3 transition-transform duration-300"
                 style={{ 
-                  transform: `translateX(-${screenshotIndex * 50}%)`,
+                  transform: `translateX(-${screenshotIndex * 100}%)`,
                   width: 'max-content'
                 }}
               >
                 {mediaItems.map((item, index) => (
                   <div
                     key={index}
-                    className="flex-shrink-0 w-[calc(50vw-4rem)] md:w-[calc(45vw-4rem)] lg:w-[calc(40vw-4rem)] max-w-[600px] aspect-video bg-gray-700 overflow-hidden cursor-pointer relative group"
+                    className="flex-shrink-0 aspect-video bg-gray-700 overflow-hidden cursor-pointer relative group"
                     style={{
+                      width: 'calc((100vw - 12rem) / 4)',
+                      maxWidth: '280px',
                       borderRadius: '12px',
                       border: '2px solid rgba(255, 255, 255, 0.1)',
                       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
@@ -159,8 +161,8 @@ export default function MainContent({
                     {/* Indicador de video */}
                     {item.type === 'video' && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-colors">
-                        <div className="bg-white/90 rounded-full p-3 md:p-4 group-hover:scale-110 transition-transform">
-                          <Play className="w-6 h-6 md:w-8 md:h-8 text-black" />
+                        <div className="bg-white/90 rounded-full p-2 md:p-3 group-hover:scale-110 transition-transform">
+                          <Play className="w-4 h-4 md:w-5 md:h-5 text-black" />
                         </div>
                       </div>
                     )}
@@ -170,35 +172,39 @@ export default function MainContent({
             </div>
 
             {/* Navigation arrows - Outside overflow container */}
-            {mediaItems.length > 2 && (
+            {mediaItems.length > 4 && (
               <>
                 <button
                   onClick={onPrevScreenshot}
-                  className="absolute left-2 md:left-3 lg:left-4 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-9 h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 flex items-center justify-center transition-colors z-20"
+                  disabled={screenshotIndex === 0}
+                  className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center transition-colors z-20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+                  <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
                 <button
                   onClick={onNextScreenshot}
-                  className="absolute right-2 md:right-3 lg:right-4 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-9 h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 flex items-center justify-center transition-colors z-20"
+                  disabled={screenshotIndex >= Math.ceil(mediaItems.length / 4) - 1}
+                  className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center transition-colors z-20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+                  <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
               </>
             )}
 
             {/* Dots indicator */}
-            <div className="flex justify-center gap-2 md:gap-2.5 mt-3 md:mt-4">
-              {Array.from({ length: Math.max(1, mediaItems.length - 1) }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => onSetScreenshotIndex(index)}
-                  className={`w-2 h-2 md:w-2.5 md:h-2.5 rounded-full transition-colors ${
-                    index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
-                  }`}
-                />
-              ))}
-            </div>
+            {mediaItems.length > 4 && (
+              <div className="flex justify-center gap-2 md:gap-2.5 mt-3 md:mt-4">
+                {Array.from({ length: Math.ceil(mediaItems.length / 4) }).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => onSetScreenshotIndex(index)}
+                    className={`w-2 h-2 md:w-2.5 md:h-2.5 rounded-full transition-colors ${
+                      index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
