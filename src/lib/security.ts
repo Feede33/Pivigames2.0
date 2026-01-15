@@ -82,8 +82,10 @@ export function sanitizeSteamHTML(html: string): string {
   // Eliminar iframes
   doc.querySelectorAll('iframe').forEach(el => el.remove());
   
-  // Limpiar todos los elementos
-  doc.querySelectorAll('*').forEach(element => {
+  // Limpiar todos los elementos - convertir a array para evitar problemas con live collections
+  const elements = Array.from(doc.querySelectorAll('*'));
+  
+  elements.forEach(element => {
     // Eliminar event handlers
     Array.from(element.attributes).forEach(attr => {
       if (attr.name.startsWith('on')) {
@@ -99,10 +101,16 @@ export function sanitizeSteamHTML(html: string): string {
       }
     });
     
-    // Eliminar tags no permitidos
+    // Eliminar tags no permitidos - reemplazar con su contenido
     if (!allowedTags.includes(element.tagName.toLowerCase())) {
-      const textNode = document.createTextNode(element.textContent || '');
-      element.parentNode?.replaceChild(textNode, element);
+      const parent = element.parentNode;
+      if (parent && parent !== doc && parent.nodeType === Node.ELEMENT_NODE) {
+        // Mover los hijos del elemento al padre antes de eliminarlo
+        while (element.firstChild) {
+          parent.insertBefore(element.firstChild, element);
+        }
+        parent.removeChild(element);
+      }
     }
   });
   
