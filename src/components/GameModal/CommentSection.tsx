@@ -363,11 +363,11 @@ export default function CommentSection({ gameId }: Props) {
         </h2>
         
         {!user ? (
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 text-center">
-            <p className="text-gray-400 mb-3">Inicia sesión para comentar</p>
+          <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-lg p-6 text-center backdrop-blur-sm">
+            <p className="text-gray-300 mb-4 text-lg">Inicia sesión para comentar</p>
             <Button
               onClick={() => setAuthDialogOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-white text-gray-900 hover:bg-gray-100 font-semibold px-6 py-2 transition-all duration-300 hover:scale-105"
             >
               Iniciar sesión
             </Button>
