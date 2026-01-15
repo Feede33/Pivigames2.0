@@ -243,6 +243,11 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
     if (item.type === 'video' && item.videoUrl) {
       setCurrentVideoIndex(item.videoIndex || 0);
       setShowTrailer(true);
+      // Scroll hacia arriba para ver el video
+      const modalContent = document.querySelector('.max-h-\\[85vh\\]');
+      if (modalContent) {
+        modalContent.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     } else {
       openViewer(item.index);
     }
