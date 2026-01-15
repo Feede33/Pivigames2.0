@@ -1,5 +1,6 @@
 import { Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { proxySteamImage } from '@/lib/image-proxy';
+import { sanitizeSteamHTML } from '@/lib/security';
 
 type SteamData = {
   short_description: string | null;
@@ -232,7 +233,7 @@ export default function MainContent({
               {steamData?.pc_requirements?.minimum ? (
                 <div
                   className="steam-requirements text-sm text-gray-300"
-                  dangerouslySetInnerHTML={{ __html: steamData.pc_requirements.minimum }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeSteamHTML(steamData.pc_requirements.minimum) }}
                 />
               ) : (
                 <div className="space-y-2 text-sm text-gray-300">
@@ -247,7 +248,7 @@ export default function MainContent({
               {steamData?.pc_requirements?.recommended ? (
                 <div
                   className="steam-requirements text-sm text-gray-300"
-                  dangerouslySetInnerHTML={{ __html: steamData.pc_requirements.recommended }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeSteamHTML(steamData.pc_requirements.recommended) }}
                 />
               ) : (
                 <div className="space-y-2 text-sm text-gray-300">
