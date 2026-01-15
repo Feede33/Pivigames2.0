@@ -135,9 +135,9 @@ export default function MainContent({
             {/* Slider container with overflow hidden */}
             <div className="relative overflow-hidden rounded-lg" style={{ width: '100%' }}>
               <div
-                className="flex gap-2 md:gap-3 transition-all duration-500 ease-in-out"
+                className="flex gap-3 md:gap-4 transition-all duration-500 ease-in-out"
                 style={{ 
-                  transform: `translateX(calc(-${screenshotIndex * 100}% - ${screenshotIndex * 8}px))`,
+                  transform: `translateX(calc(-${screenshotIndex * 100}% - ${screenshotIndex * 12}px))`,
                 }}
               >
                 {mediaItems.map((item, index) => (
@@ -145,9 +145,10 @@ export default function MainContent({
                     key={index}
                     className="flex-shrink-0 aspect-video bg-gray-700 overflow-hidden cursor-pointer relative group"
                     style={{
-                      width: 'calc(25% - 6px)',
+                      width: 'calc(25% - 9px)',
                       borderRadius: '8px',
                       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
+                      minWidth: '180px',
                     }}
                     onClick={() => onMediaClick(item)}
                   >
@@ -173,15 +174,13 @@ export default function MainContent({
               <>
                 <button
                   onClick={onPrevScreenshot}
-                  disabled={screenshotIndex === 0}
-                  className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center transition-all duration-200 z-20 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-110"
+                  className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center transition-all duration-200 z-20 hover:scale-110"
                 >
                   <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
                 <button
                   onClick={onNextScreenshot}
-                  disabled={screenshotIndex >= Math.ceil(mediaItems.length / 4) - 1}
-                  className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center transition-all duration-200 z-20 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-110"
+                  className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center transition-all duration-200 z-20 hover:scale-110"
                 >
                   <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                 </button>

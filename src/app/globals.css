@@ -570,29 +570,35 @@
 .steam-requirements {
   font-size: 0.875rem;
   color: #d1d5db;
-  line-height: 1.6;
+  line-height: 1.8;
 }
 
 .steam-requirements ul,
 .steam-requirements ul.bb_ul {
   list-style: disc;
-  padding-left: 1.25rem;
+  padding-left: 1.5rem;
   margin: 0.75rem 0;
 }
 
 .steam-requirements ul li,
 .steam-requirements ul.bb_ul li {
-  margin-bottom: 0.5rem;
-  line-height: 1.6;
-  padding-left: 0.25rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.8;
+  padding-left: 0.5rem;
 }
 
+/* Convertir strong/b en items de lista visual */
 .steam-requirements strong,
 .steam-requirements b {
   color: #ffffff;
   font-weight: 600;
-  display: inline-block;
-  margin-top: 0.5rem;
+  display: list-item;
+  list-style-type: disc;
+  list-style-position: outside;
+  margin-left: 1.5rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+  padding-left: 0.5rem;
 }
 
 .steam-requirements strong:first-child,
@@ -600,27 +606,30 @@
   margin-top: 0;
 }
 
+/* Ocultar br tags para mejor espaciado */
 .steam-requirements br {
-  display: block;
-  content: "";
-  margin-top: 0.25rem;
+  display: none;
 }
 
 /* Mejorar espaciado entre secciones */
 .steam-requirements > strong:first-child,
 .steam-requirements > b:first-child {
   display: block;
-  margin-bottom: 0.5rem;
+  list-style-type: none;
+  margin-left: 0;
+  margin-bottom: 0.75rem;
+  padding-left: 0;
   font-size: 0.95rem;
 }
 
-/* Asegurar que el texto después de strong se vea bien */
+/* Texto después de strong también como bullet */
 .steam-requirements p {
-  margin: 0.5rem 0;
+  margin: 0;
+  padding: 0;
 }
 
 .steam-requirements div {
-  margin: 0.25rem 0;
+  margin: 0;
 }
 
 /* System Requirements Grid */
