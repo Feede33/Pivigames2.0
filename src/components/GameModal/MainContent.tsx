@@ -135,7 +135,7 @@ export default function MainContent({
             {/* Slider container with overflow hidden */}
             <div className="relative overflow-hidden rounded-lg" style={{ width: '100%' }}>
               <div
-                className="flex gap-2 md:gap-3 transition-transform duration-300"
+                className="flex gap-2 md:gap-3 transition-all duration-500 ease-in-out"
                 style={{ 
                   transform: `translateX(calc(-${screenshotIndex * 100}% - ${screenshotIndex * 8}px))`,
                 }}
@@ -146,14 +146,13 @@ export default function MainContent({
                     className="flex-shrink-0 aspect-video bg-gray-700 overflow-hidden cursor-pointer relative group"
                     style={{
                       width: 'calc(25% - 6px)',
-                      borderRadius: '12px',
-                      border: '2px solid rgba(255, 255, 255, 0.1)',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
                     }}
                     onClick={() => onMediaClick(item)}
                   >
                     <div
-                      className="w-full h-full bg-cover bg-center hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-300"
                       style={{ backgroundImage: `url(${proxySteamImage(item.src)})` }}
                     />
                     {/* Indicador de video */}
@@ -175,14 +174,14 @@ export default function MainContent({
                 <button
                   onClick={onPrevScreenshot}
                   disabled={screenshotIndex === 0}
-                  className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center transition-colors z-20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center transition-all duration-200 z-20 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-110"
                 >
                   <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
                 <button
                   onClick={onNextScreenshot}
                   disabled={screenshotIndex >= Math.ceil(mediaItems.length / 4) - 1}
-                  className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center transition-colors z-20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-8 h-8 md:w-9 md:h-9 flex items-center justify-center transition-all duration-200 z-20 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-110"
                 >
                   <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
@@ -196,8 +195,8 @@ export default function MainContent({
                   <button
                     key={index}
                     onClick={() => onSetScreenshotIndex(index)}
-                    className={`w-2 h-2 md:w-2.5 md:h-2.5 rounded-full transition-colors ${
-                      index === screenshotIndex ? 'bg-white' : 'bg-gray-600'
+                    className={`w-2 h-2 md:w-2.5 md:h-2.5 rounded-full transition-all duration-300 ${
+                      index === screenshotIndex ? 'bg-white scale-125' : 'bg-gray-600 hover:bg-gray-500'
                     }`}
                   />
                 ))}
