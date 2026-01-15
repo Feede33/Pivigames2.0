@@ -428,7 +428,7 @@ export default function Home() {
               locale={locale}
             />
             <LanguageSelector />
-            <FuturisticLoginButtonCompact />
+            {!user && <FuturisticLoginButtonCompact />}
             <UserProfile navOnly />
             
             {/* Mobile Menu Button */}
@@ -475,10 +475,12 @@ export default function Home() {
                 {t.nav.offers}
               </a>
               
-              {/* Botón de Login en móvil */}
-              <div className="pt-2 border-t border-border/50">
-                <FuturisticLoginButtonMobile onClickAction={() => setMobileMenuOpen(false)} />
-              </div>
+              {/* Botón de Login en móvil - solo si no hay usuario */}
+              {!user && (
+                <div className="pt-2 border-t border-border/50">
+                  <FuturisticLoginButtonMobile onClickAction={() => setMobileMenuOpen(false)} />
+                </div>
+              )}
             </div>
           </div>
         )}
