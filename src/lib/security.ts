@@ -65,6 +65,12 @@ export function sanitizeHTML(html: string): string {
 export function sanitizeSteamHTML(html: string): string {
   if (!html || typeof html !== 'string') return '';
   
+  // Verificar que estamos en el navegador
+  if (typeof window === 'undefined' || typeof DOMParser === 'undefined') {
+    console.warn('DOMParser not available, returning escaped text');
+    return escapeHTML(html);
+  }
+  
   try {
     // Steam usa algunos tags específicos que queremos mantener
     const allowedTags = [
@@ -78,17 +84,19 @@ export function sanitizeSteamHTML(html: string): string {
     const allowedClasses = ['bb_ul', 'bb_ol', 'bb_li'];
     
     // Primero, limpiar el HTML de Steam que a veces viene mal formateado
-    // Eliminar etiquetas de cierre sin apertura y viceversa
     let cleanedHtml = html
       .replace(/<br\s*\/?>/gi, '<br />') // Normalizar <br>
       .replace(/\*:/g, ':') // Eliminar asteriscos extraños
       .trim();
     
+    // Envolver en un div para asegurar que siempre haya un contenedor
+    cleanedHtml = `<div>${cleanedHtml}</div>`;
+    
     const parser = new DOMParser();
     const doc = parser.parseFromString(cleanedHtml, 'text/html');
     
     // Verificar que el documento se parseó correctamente
-    if (!doc || !doc.body) {
+    if (!doc || !doc.body || !doc.body.firstChild) {
       console.warn('Failed to parse HTML, returning escaped text');
       return escapeHTML(html);
     }
@@ -133,7 +141,7 @@ export function sanitizeSteamHTML(html: string): string {
       // Eliminar tags no permitidos - reemplazar con su contenido
       if (!allowedTags.includes(element.tagName.toLowerCase())) {
         const parent = element.parentNode;
-        if (parent && parent !== doc && parent.nodeType === Node.ELEMENT_NODE) {
+        if (parent && parent.nodeType === Node.ELEMENT_NODE) {
           // Mover los hijos del elemento al padre antes de eliminarlo
           while (element.firstChild) {
             parent.insertBefore(element.firstChild, element);
@@ -143,7 +151,9 @@ export function sanitizeSteamHTML(html: string): string {
       }
     });
     
-    return doc.body.innerHTML || '';
+    // Obtener el contenido del div wrapper
+    const wrapper = doc.body.firstChild as HTMLElement;
+    return wrapper?.innerHTML || '';
   } catch (error) {
     console.error('Error sanitizing Steam HTML:', error);
     // En caso de error, devolver el texto escapado como fallback
