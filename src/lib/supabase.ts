@@ -1,5 +1,4 @@
 import { createBrowserClient } from '@supabase/ssr';
-import { getRawgRating } from './rawg';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -200,17 +199,13 @@ export async function enrichGameWithSteamData(
     // Usar header_image o wallpaper como fallback si library_600x900 no existe
     const imageFallback = steamData.header_image || wallpaperUrl || '';
     
-    // Obtener rating de RAWG si no hay Metacritic
+    // Obtener rating: priorizar Metacritic, luego RAWG, luego fallback
     let rating = 7.5; // Valor por defecto
     
     if (steamData.metacritic) {
       rating = steamData.metacritic / 10;
-    } else {
-      // Intentar obtener rating de RAWG
-      const rawgRating = await getRawgRating(steamData.name || game.title || '');
-      if (rawgRating > 0) {
-        rating = rawgRating;
-      }
+    } else if (steamData.rawg_rating && steamData.rawg_rating > 0) {
+      rating = steamData.rawg_rating;
     }
     
     return {

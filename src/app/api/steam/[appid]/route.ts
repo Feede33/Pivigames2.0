@@ -1,6 +1,52 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSteamLanguageFromHeader, getSteamLanguage } from '@/lib/steam-languages';
 
+const RAWG_API_KEY = process.env.RAWG_API_KEY;
+
+// Función para convertir nombre de juego a slug de RAWG
+function gameNameToSlug(gameName: string): string {
+  return gameName
+    .toLowerCase()
+    .replace(/[™®©]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Función para obtener rating de RAWG
+async function getRawgRating(gameName: string): Promise<number> {
+  if (!RAWG_API_KEY) {
+    console.warn('[RAWG] API key not configured');
+    return 0;
+  }
+
+  try {
+    const slug = gameNameToSlug(gameName);
+    const response = await fetch(
+      `https://api.rawg.io/api/games/${slug}?key=${RAWG_API_KEY}`,
+      {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
+        next: { revalidate: 86400 },
+      }
+    );
+
+    if (!response.ok) {
+      console.warn(`[RAWG] Failed to fetch rating for ${gameName} (${response.status})`);
+      return 0;
+    }
+
+    const data = await response.json();
+    const rating = (data.rating || 0) * 2; // Convertir de 0-5 a 0-10
+    
+    console.log(`[RAWG] Rating for ${gameName}: ${rating}/10`);
+    return rating;
+  } catch (error) {
+    console.error(`[RAWG] Error fetching rating for ${gameName}:`, error);
+    return 0;
+  }
+}
+
 // Función auxiliar para reintentar fetch con backoff exponencial
 async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
   let lastError: Error | null = null;
@@ -204,6 +250,12 @@ export async function GET(
     // Extraer Metacritic score (si existe)
     const metacritic = gameData.metacritic?.score || null;
 
+    // Obtener rating de RAWG si no hay Metacritic
+    let rawgRating = 0;
+    if (!metacritic) {
+      rawgRating = await getRawgRating(gameData.name);
+    }
+
     // Extraer edad requerida (ESRB/PEGI)
     const requiredAge = gameData.required_age || 0;
 
@@ -252,6 +304,7 @@ export async function GET(
       release_date: releaseDate,
       release_year: releaseYear,
       metacritic,
+      rawg_rating: rawgRating, // Rating de RAWG (0-10)
       required_age: requiredAge,
       pc_requirements: {
         minimum: pcRequirements.minimum || null,

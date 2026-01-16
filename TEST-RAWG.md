@@ -1,38 +1,58 @@
 # Test de Integración RAWG
 
-## Verificación de la implementación
+## ✅ Implementación Corregida
 
-### ✅ Archivos creados
-- [x] `src/app/api/rawg/[slug]/route.ts` - API endpoint para RAWG
-- [x] `src/lib/rawg.ts` - Funciones helper
-- [x] `RAWG-SETUP.md` - Documentación
+### Cambio importante
+La lógica de RAWG ahora se ejecuta en el **servidor** (API de Steam) en lugar del cliente, lo que permite:
+- Acceso seguro a la API key de RAWG
+- Mejor rendimiento (una sola llamada)
+- Cache más eficiente
 
-### ✅ Archivos modificados
-- [x] `src/lib/supabase.ts` - Función `enrichGameWithSteamData` actualizada
-- [x] `src/app/[locale]/page.tsx` - Función `handleSpecialClick` actualizada
-- [x] `.env.local.example` - Variable `RAWG_API_KEY` agregada
+### Archivos modificados
 
-### ✅ Flujo de rating implementado
+**1. `src/app/api/steam/[appid]/route.ts`**
+- ✅ Agregada función `getRawgRating()` en el servidor
+- ✅ Se obtiene rating de RAWG cuando no hay Metacritic
+- ✅ Se incluye `rawg_rating` en la respuesta de la API
+
+**2. `src/lib/supabase.ts`**
+- ✅ Usa `steamData.rawg_rating` de la API
+- ✅ Eliminado import de `getRawgRating` (ya no se usa en cliente)
+
+**3. `src/app/[locale]/page.tsx`**
+- ✅ Usa `steamData.rawg_rating` de la API
+- ✅ Eliminado import de `getRawgRating`
+
+**4. `.env.local`**
+- ✅ Agregada variable `RAWG_API_KEY=`
+
+### Flujo de rating implementado
 
 ```
-1. Cargar juego desde DB
+Cliente solicita juego
    ↓
-2. Obtener datos de Steam
+API Steam (/api/steam/[appid])
    ↓
-3. ¿Tiene Metacritic?
-   ├─ SÍ → Usar Metacritic / 10
-   └─ NO → Consultar RAWG
+Obtener datos de Steam
+   ↓
+¿Tiene Metacritic?
+   ├─ SÍ → Incluir Metacritic en respuesta
+   └─ NO → Consultar RAWG API
        ↓
-       ¿RAWG tiene rating?
-       ├─ SÍ → Usar rating de RAWG (0-5) * 2
-       └─ NO → Usar 7.5 como fallback
+       Incluir rawg_rating en respuesta
+   ↓
+Cliente recibe datos con rating
+   ↓
+Mostrar rating (Metacritic > RAWG > 7.5)
 ```
 
 ### 🧪 Cómo probar
 
 1. **Configurar RAWG API Key**
+   - Ve a https://rawg.io/apidocs
+   - Crea una cuenta y obtén tu API key
+   - Agrégala a `.env.local`:
    ```bash
-   # En .env.local
    RAWG_API_KEY=tu_api_key_aqui
    ```
 
@@ -41,14 +61,14 @@
    npm run dev
    ```
 
-3. **Verificar en consola del navegador**
+3. **Verificar en consola del servidor (terminal)**
    - Busca logs como: `[RAWG] Rating for [Game Name]: X/10`
-   - Verifica que juegos sin Metacritic muestren ratings diferentes a 7.5
+   - Verifica que juegos sin Metacritic consulten RAWG
 
-4. **Probar con juegos específicos**
-   - Juegos con Metacritic: Deberían mostrar el rating de Metacritic
-   - Juegos sin Metacritic: Deberían consultar RAWG
-   - Juegos no encontrados en RAWG: Deberían mostrar 7.5
+4. **Verificar en la aplicación**
+   - Abre un juego que NO tenga Metacritic
+   - El rating debería ser diferente a 7.5
+   - Revisa la consola del navegador para ver el rating recibido
 
 ### 📊 Ejemplos de juegos para probar
 
@@ -60,33 +80,36 @@
 
 ### 🔍 Verificar en el código
 
-**En `src/lib/supabase.ts` línea ~204:**
+**En `src/app/api/steam/[appid]/route.ts` línea ~18:**
 ```typescript
-// Obtener rating de RAWG si no hay Metacritic
-let rating = 7.5; // Valor por defecto
-
-if (steamData.metacritic) {
-  rating = steamData.metacritic / 10;
-} else {
-  // Intentar obtener rating de RAWG
-  const rawgRating = await getRawgRating(steamData.name || game.title || '');
-  if (rawgRating > 0) {
-    rating = rawgRating;
+// Función para obtener rating de RAWG
+async function getRawgRating(gameName: string): Promise<number> {
+  if (!RAWG_API_KEY) {
+    console.warn('[RAWG] API key not configured');
+    return 0;
   }
+  // ... consulta a RAWG API
 }
 ```
 
-**En `src/app/[locale]/page.tsx` línea ~372:**
+**En `src/app/api/steam/[appid]/route.ts` línea ~255:**
 ```typescript
 // Obtener rating de RAWG si no hay Metacritic
+let rawgRating = 0;
+if (!metacritic) {
+  rawgRating = await getRawgRating(gameData.name);
+}
+```
+
+**En `src/lib/supabase.ts` línea ~206:**
+```typescript
+// Obtener rating: priorizar Metacritic, luego RAWG, luego fallback
 let rating = 7.5;
+
 if (steamData.metacritic) {
   rating = steamData.metacritic / 10;
-} else {
-  const rawgRating = await getRawgRating(steamData.name || special.name);
-  if (rawgRating > 0) {
-    rating = rawgRating;
-  }
+} else if (steamData.rawg_rating && steamData.rawg_rating > 0) {
+  rating = steamData.rawg_rating;
 }
 ```
 
