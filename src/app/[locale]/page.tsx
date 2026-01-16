@@ -367,13 +367,10 @@ export default function Home() {
       if (response.ok) {
         const steamData = await response.json();
 
-        // Obtener rating: priorizar Metacritic, luego RAWG, luego fallback
-        let rating = 7.5;
-        if (steamData.metacritic) {
-          rating = steamData.metacritic / 10;
-        } else if (steamData.rawg_rating && steamData.rawg_rating > 0) {
-          rating = steamData.rawg_rating;
-        }
+        // Obtener rating: priorizar Metacritic, luego RAWG
+        const rating = steamData.metacritic 
+          ? steamData.metacritic / 10 
+          : (steamData.rawg_rating || 0);
 
         const fullGame: GameWithSteamData = {
           id: special.id,
