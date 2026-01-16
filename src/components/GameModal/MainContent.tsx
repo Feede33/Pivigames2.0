@@ -197,7 +197,7 @@ export default function MainContent({
                   <button
                     key={index}
                     onClick={() => onSetScreenshotIndex(index)}
-                    className={`w-2 h-2 md:w-2.5 md:h-2.5 rounded-full transition-all duration-300 ${
+                    className={`w-1 h-1 md:w-2.5 md:h-2.5 rounded-full transition-all duration-300 ${
                       index === screenshotIndex ? 'bg-white scale-125' : 'bg-gray-600 hover:bg-gray-500'
                     }`}
                   />
