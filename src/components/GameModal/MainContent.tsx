@@ -168,14 +168,13 @@ export default function MainContent({
                   </div>
                 ))}
               </div>
-            </div>
 
-            {/* Navigation arrows - Outside overflow container */}
+               {/* Navigation arrows - Outside overflow container */}
             {mediaItems.length > 4 && (
               <>
                 <button
                   onClick={onPrevScreenshot}
-                  className="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-9 h-9 md:w-10 md:h-10 flex items-center justify-center transition-all duration-200 z-20 hover:scale-110"
+                  className="absolute left-4 md:left-3 top-1/2 -translate-y-1/2 bg-black/80 hover:bg-black text-white rounded-full w-9 h-9 md:w-10 md:h-10 flex items-center justify-center transition-all duration-200 z-20 hover:scale-110"
                 >
                   <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
                 </button>
@@ -187,6 +186,9 @@ export default function MainContent({
                 </button>
               </>
             )}
+            </div>
+
+           
 
             {/* Dots indicator */}
             {mediaItems.length > 4 && (
