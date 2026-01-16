@@ -368,8 +368,8 @@ export default function Home() {
         const steamData = await response.json();
 
         // Obtener rating: priorizar Metacritic, luego RAWG
-        const rating = steamData.metacritic 
-          ? steamData.metacritic / 10 
+        const rating = steamData.metacritic
+          ? steamData.metacritic / 10
           : (steamData.rawg_rating || 0);
 
         const fullGame: GameWithSteamData = {
@@ -408,7 +408,7 @@ export default function Home() {
         <div className="flex items-center justify-between gap-2 sm:gap-3">
           <div className="flex items-center gap-4 md:gap-8 flex-shrink-0">
             <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-brand">Pegasusgames</h1>
-            
+
             {/* Desktop Menu */}
             <div className="hidden lg:flex gap-6 text-sm animate-fade-in animate-duration-500 animate-delay-300'
 ">
@@ -421,10 +421,10 @@ export default function Home() {
               <a href="#" className="hover:text-muted-foreground transition">
                 {t.nav.offers}
               </a>
-          
+
             </div>
           </div>
-          
+
           <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 flex-shrink-0">
             <SearchSystem
               games={games}
@@ -435,7 +435,7 @@ export default function Home() {
             <LanguageSelector />
             {!user && <FuturisticLoginButtonCompact />}
             <UserProfile navOnly />
-            
+
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -453,33 +453,33 @@ export default function Home() {
             </button>
           </div>
         </div>
-        
+
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
           <div className="lg:hidden absolute top-full left-0 right-0 mt-2 mx-4 bg-background/95 backdrop-blur-lg border border-border rounded-lg shadow-2xl overflow-hidden animate-fade-in animate-duration-200">
             <div className="p-4 space-y-2">
-              <a 
-                href="#" 
+              <a
+                href="#"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-4 py-3 rounded-lg hover:bg-muted/50 transition text-sm font-medium"
               >
                 {t.nav.discover}
               </a>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-4 py-3 rounded-lg hover:bg-muted/50 transition text-sm font-medium"
               >
                 {t.nav.browse}
               </a>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-4 py-3 rounded-lg hover:bg-muted/50 transition text-sm font-medium"
               >
                 {t.nav.offers}
               </a>
-              
+
               {/* Botón de Login en móvil - solo si no hay usuario */}
               {!user && (
                 <div className="pt-2 border-t border-border/50">
@@ -620,7 +620,6 @@ export default function Home() {
               </PaginationContent>
             </Pagination>
 
-            {/* RAWG.io Credits */}
             <div className="text-center mt-6 text-sm text-muted-foreground">
               <p>
                 Powered by{' '}
@@ -630,8 +629,9 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="text-primary hover:underline font-medium"
                 >
-                  RAWG.io, 
+                  RAWG.io
                 </a>
+                {', '}
                 <a
                   href="https://www.metacritic.com/"
                   target="_blank"
@@ -639,6 +639,24 @@ export default function Home() {
                   className="text-primary hover:underline font-medium"
                 >
                   Metacritic
+                </a>
+                {', '}
+                <a
+                  href="https://steamspy.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline font-medium"
+                >
+                  SteamSpy
+                </a>
+                {' and '}
+                <a
+                  href="https://store.steampowered.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline font-medium"
+                >
+                  Steam
                 </a>
               </p>
             </div>
