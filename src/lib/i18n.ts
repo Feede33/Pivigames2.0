@@ -6,6 +6,7 @@ export const translations = {
       discover: 'Categorias',
       browse: 'No Steam Games',
       offers: 'Historial de Precios',
+      popular: "Popular in 2025"
     },
     hero: {
       match: 'Match',

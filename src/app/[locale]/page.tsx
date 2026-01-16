@@ -421,6 +421,9 @@ export default function Home() {
               <a href="#" className="hover:text-muted-foreground transition">
                 {t.nav.offers}
               </a>
+               <a href="#" className="hover:text-muted-foreground transition">
+                {t.nav.popular}
+              </a>
 
             </div>
           </div>
