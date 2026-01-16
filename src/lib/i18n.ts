@@ -3,9 +3,9 @@ export const translations = {
   // Español
   es: {
     nav: {
-      discover: 'Descubrir',
-      browse: 'Explorar',
-      offers: 'Ofertas e Historial de Precios',
+      discover: 'Categorias',
+      browse: 'No Steam Games',
+      offers: 'Historial de Precios',
     },
     hero: {
       match: 'Match',
