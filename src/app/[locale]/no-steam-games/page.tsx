@@ -9,6 +9,8 @@ import GamesGrid from '@/components/GamesGrid';
 import LanguageSelector from '@/components/LanguageSelector';
 import { SearchSystem } from '@/components/ui/search-system';
 import { FuturisticLoginButtonCompact, FuturisticLoginButtonMobile } from '@/components/FuturisticLoginButton';
+import { AppSidebar } from '@/components/app-sidebar';
+import { SidebarProvider, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
 import {
   Pagination,
   PaginationContent,
@@ -46,8 +48,12 @@ export default function NoSteamGamesPage() {
   const [prefetchingPage, setPrefetchingPage] = useState<number | null>(null);
   const [totalGamesCount, setTotalGamesCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [orderBy, setOrderBy] = useState<'popularity' | 'rating' | 'name'>('popularity');
-  const [platformFilter, setPlatformFilter] = useState<string>('all');
+  const [filters, setFilters] = useState({
+    orderBy: 'popularity' as 'popularity' | 'rating' | 'name' | 'downloads' | 'release_date',
+    platform: 'all',
+    genre: 'all',
+    minRating: 0,
+  });
   const GAMES_PER_PAGE = 100;
 
   // Obtener el total de juegos sin Steam al inicio
@@ -184,12 +190,21 @@ export default function NoSteamGamesPage() {
     setModalOrigin(null);
   };
 
+  const handleFilterChange = (newFilters: Partial<typeof filters>) => {
+    setFilters((prev) => ({ ...prev, ...newFilters }));
+    setCurrentPage(0); // Reset to first page when filters change
+  };
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <SidebarProvider defaultOpen={true}>
+      <AppSidebar filters={filters} onFilterChangeAction={handleFilterChange} locale={locale as 'es' | 'en'} />
+      <SidebarInset>
+        <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
-      <nav className="fixed top-0 z-50 w-full bg-gradient-to-b from-background to-transparent px-4 md:px-8 py-3 md:py-4">
+      <nav className="sticky top-0 z-50 w-full bg-gradient-to-b from-background to-transparent px-4 md:px-8 py-3 md:py-4 border-b border-border/40 backdrop-blur-sm">
         <div className="flex items-center justify-between gap-2 sm:gap-3">
           <div className="flex items-center gap-4 md:gap-8 flex-shrink-0">
+            <SidebarTrigger className="mr-2" />
             <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-brand">Pegasusgames</h1>
 
             {/* Desktop Menu */}
@@ -282,7 +297,7 @@ export default function NoSteamGamesPage() {
       </nav>
 
       {/* Hero Section */}
-      <div className="relative pt-20 md:pt-24 pb-12 md:pb-16 px-4 md:px-8 bg-gradient-to-b from-background via-background/95 to-black">
+      <div className="relative pt-6 md:pt-8 pb-12 md:pb-16 px-4 md:px-8 bg-gradient-to-b from-background via-background/95 to-black">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-brand via-purple-500 to-pink-500 bg-clip-text text-transparent">
             No Steam Games
@@ -293,34 +308,28 @@ export default function NoSteamGamesPage() {
               : 'Discover amazing games that are not available on Steam. A curated collection of unique and independent titles.'}
           </p>
 
-          {/* Filters */}
-          <div className="mt-8 flex flex-wrap gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Order by:</span>
-              <select
-                value={orderBy}
-                onChange={(e) => setOrderBy(e.target.value as any)}
-                className="bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
-              >
-                <option value="popularity">Popularity</option>
-                <option value="rating">Rating</option>
-                <option value="name">Name</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Platform:</span>
-              <select
-                value={platformFilter}
-                onChange={(e) => setPlatformFilter(e.target.value)}
-                className="bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
-              >
-                <option value="all">All</option>
-                <option value="windows">Windows</option>
-                <option value="mac">Mac</option>
-                <option value="linux">Linux</option>
-              </select>
-            </div>
+          {/* Active Filters Display */}
+          <div className="mt-6 flex flex-wrap gap-2">
+            {filters.orderBy !== 'popularity' && (
+              <div className="px-3 py-1.5 bg-brand/10 border border-brand/20 rounded-full text-xs font-medium text-brand">
+                {filters.orderBy}
+              </div>
+            )}
+            {filters.platform !== 'all' && (
+              <div className="px-3 py-1.5 bg-brand/10 border border-brand/20 rounded-full text-xs font-medium text-brand">
+                {filters.platform}
+              </div>
+            )}
+            {filters.genre !== 'all' && (
+              <div className="px-3 py-1.5 bg-brand/10 border border-brand/20 rounded-full text-xs font-medium text-brand">
+                {filters.genre}
+              </div>
+            )}
+            {filters.minRating > 0 && (
+              <div className="px-3 py-1.5 bg-brand/10 border border-brand/20 rounded-full text-xs font-medium text-brand">
+                Rating: {filters.minRating}+
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -448,6 +457,8 @@ export default function NoSteamGamesPage() {
 
       {/* Modal */}
       <GameModal game={modalGame} origin={modalOrigin} onCloseAction={closeModal} locale={locale} />
-    </div>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
