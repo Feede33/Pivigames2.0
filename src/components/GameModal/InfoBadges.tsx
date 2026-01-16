@@ -28,7 +28,11 @@ export default function InfoBadges({ loadingSteam, steamData, steamError, gameRa
       ) : (
         <>
           <span className="text-green-500 font-bold text-sm md:text-[15px]">
-            {steamData?.metacritic ? `${steamData.metacritic}% Rating` : `${Math.round(gameRating * 10)}% Rating`}
+            {steamData?.metacritic 
+              ? `${steamData.metacritic}% Rating` 
+              : gameRating > 0 
+                ? `${Math.round(gameRating * 10)}% Rating` 
+                : 'N/A'}
           </span>
           <span className="text-gray-400 text-xs md:text-sm">
             {steamData?.release_year || gameYear || new Date().getFullYear()}

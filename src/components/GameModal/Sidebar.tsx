@@ -86,7 +86,11 @@ export default function Sidebar({
                 size={12}
                 className="xs:w-3.5 xs:h-3.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4"
               />
-              {steamData?.metacritic ? `${steamData.metacritic}/100 (Metacritic)` : `${gameRating}/10`}
+              {steamData?.metacritic 
+                ? `${steamData.metacritic}/100 (Metacritic)` 
+                : gameRating > 0 
+                  ? `${gameRating.toFixed(1)}/10` 
+                  : 'N/A'}
             </span>
           </p>
           <p className="text-gray-500 text-[10px] xs:text-xs sm:text-xs md:text-sm">

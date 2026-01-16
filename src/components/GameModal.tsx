@@ -370,7 +370,7 @@ export default function GameModal({ game, onCloseAction, locale = 'es' }: Props)
 
             {/* Comment Section - Full width */}
             <div className="comment-section-full-width">
-              <CommentSection gameId={game.id} />
+              <CommentSection gameId={game.id} t={t} />
             </div>
           </div>
         </div>

@@ -63,10 +63,14 @@ export default function GamesGrid({ games, loading, t, onGameClickAction, loaded
                 {game.title}
               </h4>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Star fill="yellow" stroke="yellow" strokeWidth={0.5} size={12} className="md:w-[14px] md:h-[14px]" />
-                  <span className="text-white font-bold text-lg line-clamp-2 group-hover:text-green-400 transition-colors md:text-xs">{game.rating}</span>
-                </span>
+                {game.rating > 0 ? (
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Star fill="yellow" stroke="yellow" strokeWidth={0.5} size={12} className="md:w-[14px] md:h-[14px]" />
+                    <span className="text-white font-bold text-lg line-clamp-2 group-hover:text-green-400 transition-colors md:text-xs">{game.rating.toFixed(1)}</span>
+                  </span>
+                ) : (
+                  <span className="text-xs text-muted-foreground">N/A</span>
+                )}
                 <span className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1 rounded-md font-bold text-sm shadow-lg">FREE</span>
               </div>
             </div>

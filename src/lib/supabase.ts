@@ -199,13 +199,17 @@ export async function enrichGameWithSteamData(
     // Usar header_image o wallpaper como fallback si library_600x900 no existe
     const imageFallback = steamData.header_image || wallpaperUrl || '';
     
-    // Obtener rating: priorizar Metacritic, luego RAWG, luego fallback
-    let rating = 7.5; // Valor por defecto
+    // Obtener rating: priorizar Metacritic, luego RAWG, luego 0 (sin rating)
+    let rating = 0; // Sin rating por defecto
     
-    if (steamData.metacritic) {
+    if (steamData.metacritic && steamData.metacritic > 0) {
       rating = steamData.metacritic / 10;
+      console.log(`✓ Metacritic rating for ${steamData.name}: ${rating}`);
     } else if (steamData.rawg_rating && steamData.rawg_rating > 0) {
       rating = steamData.rawg_rating;
+      console.log(`✓ RAWG rating for ${steamData.name}: ${rating}`);
+    } else {
+      console.log(`⚠ No rating available for ${steamData.name}`);
     }
     
     return {
