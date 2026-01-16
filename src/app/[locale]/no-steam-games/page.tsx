@@ -28,12 +28,16 @@ import {
 } from '@/lib/supabase';
 import { useTranslations, type Locale } from '@/lib/i18n';
 
+// Force dynamic rendering to avoid prerendering issues with SidebarProvider
+export const dynamic = 'force-dynamic';
+
 export default function NoSteamGamesPage() {
   const params = useParams();
   const locale = (params?.locale as Locale) || 'es';
   const t = useTranslations(locale);
   const { user } = useAuth();
 
+  const [mounted, setMounted] = useState(false);
   const [modalGame, setModalGame] = useState<GameWithSteamData | null>(null);
   const [modalOrigin, setModalOrigin] = useState<{
     x: number;
@@ -55,6 +59,11 @@ export default function NoSteamGamesPage() {
     minRating: 0,
   });
   const GAMES_PER_PAGE = 100;
+
+  // Ensure component is mounted before rendering sidebar
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Obtener el total de juegos sin Steam al inicio
   useEffect(() => {
@@ -194,6 +203,11 @@ export default function NoSteamGamesPage() {
     setFilters((prev) => ({ ...prev, ...newFilters }));
     setCurrentPage(0); // Reset to first page when filters change
   };
+
+  // Don't render sidebar until mounted to avoid SSR issues
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <SidebarProvider defaultOpen={true}>

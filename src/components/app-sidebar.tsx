@@ -37,7 +37,19 @@ type AppSidebarProps = {
   locale?: 'es' | 'en';
 };
 
-export function AppSidebar({ filters, onFilterChangeAction, locale = 'es' }: AppSidebarProps) {
+export function AppSidebar({ 
+  filters: filtersProp, 
+  onFilterChangeAction, 
+  locale = 'es' 
+}: AppSidebarProps) {
+  // Ensure filters always has a value
+  const filters = filtersProp || { 
+    orderBy: 'popularity' as const, 
+    platform: 'all', 
+    genre: 'all', 
+    minRating: 0 
+  };
+
   const t = {
     es: {
       title: 'Filtros',
@@ -161,7 +173,7 @@ export function AppSidebar({ filters, onFilterChangeAction, locale = 'es' }: App
               {orderByItems.map((item) => (
                 <SidebarMenuItem key={item.value}>
                   <SidebarMenuButton
-                    isActive={filters?.orderBy === item.value}
+                    isActive={filters.orderBy === item.value}
                     onClick={() => onFilterChangeAction?.({ orderBy: item.value })}
                     tooltip={item.title}
                   >
@@ -184,7 +196,7 @@ export function AppSidebar({ filters, onFilterChangeAction, locale = 'es' }: App
               {platformItems.map((item) => (
                 <SidebarMenuItem key={item.value}>
                   <SidebarMenuButton
-                    isActive={filters?.platform === item.value}
+                    isActive={filters.platform === item.value}
                     onClick={() => onFilterChangeAction?.({ platform: item.value })}
                     tooltip={item.title}
                   >
@@ -207,7 +219,7 @@ export function AppSidebar({ filters, onFilterChangeAction, locale = 'es' }: App
               {genreItems.map((item) => (
                 <SidebarMenuItem key={item.value}>
                   <SidebarMenuButton
-                    isActive={filters?.genre === item.value}
+                    isActive={filters.genre === item.value}
                     onClick={() => onFilterChangeAction?.({ genre: item.value })}
                     tooltip={item.title}
                   >
@@ -232,7 +244,7 @@ export function AppSidebar({ filters, onFilterChangeAction, locale = 'es' }: App
                 min="0"
                 max="10"
                 step="0.5"
-                value={filters?.minRating || 0}
+                value={filters.minRating}
                 onChange={(e) =>
                   onFilterChangeAction?.({ minRating: parseFloat(e.target.value) })
                 }
@@ -241,7 +253,7 @@ export function AppSidebar({ filters, onFilterChangeAction, locale = 'es' }: App
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
                 <span>0</span>
                 <span className="font-semibold text-brand">
-                  {filters?.minRating || 0}+
+                  {filters.minRating}+
                 </span>
                 <span>10</span>
               </div>
