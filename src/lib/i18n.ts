@@ -6,7 +6,7 @@ export const translations = {
       discover: 'Categorias',
       browse: 'No Steam Games',
       offers: 'Historial de Precios',
-      popular: "Popular in 2025"
+      popular: 'Popular in 2025'
     },
     hero: {
       match: 'Match',
@@ -95,6 +95,7 @@ export const translations = {
       discover: 'Discover',
       browse: 'Browse',
       offers: 'Offers & Price History',
+      popular: 'Popular in 2025',
     },
     hero: {
       match: 'Match',
@@ -183,6 +184,7 @@ export const translations = {
       discover: 'Descobrir',
       browse: 'Explorar',
       offers: 'Ofertas e Histórico de Preços',
+      popular: 'Popular em 2025',
     },
     hero: {
       match: 'Compatibilidade',
@@ -271,6 +273,7 @@ export const translations = {
       discover: 'Découvrir',
       browse: 'Parcourir',
       offers: 'Offres et Historique des Prix',
+      popular: 'Populaire en 2025',
     },
     hero: {
       match: 'Correspondance',
@@ -359,6 +362,7 @@ export const translations = {
       discover: 'Entdecken',
       browse: 'Durchsuchen',
       offers: 'Angebote & Preisverlauf',
+      popular: 'Beliebt in 2025',
     },
     hero: {
       match: 'Übereinstimmung',
@@ -447,6 +451,7 @@ export const translations = {
       discover: 'Scopri',
       browse: 'Sfoglia',
       offers: 'Offerte e Storico Prezzi',
+      popular: 'Popolare nel 2025',
     },
     hero: {
       match: 'Corrispondenza',
@@ -535,6 +540,7 @@ export const translations = {
       discover: 'Открыть',
       browse: 'Обзор',
       offers: 'Предложения и История Цен',
+      popular: 'Популярное в 2025',
     },
     hero: {
       match: 'Совпадение',
@@ -623,6 +629,7 @@ export const translations = {
       discover: '発見',
       browse: '閲覧',
       offers: 'オファーと価格履歴',
+      popular: '2025年の人気',
     },
     hero: {
       match: 'マッチ',
@@ -711,6 +718,7 @@ export const translations = {
       discover: '발견',
       browse: '탐색',
       offers: '제안 및 가격 기록',
+      popular: '2025년 인기',
     },
     hero: {
       match: '일치',
@@ -799,6 +807,7 @@ export const translations = {
       discover: '发现',
       browse: '浏览',
       offers: '优惠和价格历史',
+      popular: '2025年热门',
     },
     hero: {
       match: '匹配',
@@ -887,6 +896,7 @@ export const translations = {
       discover: 'اكتشف',
       browse: 'تصفح',
       offers: 'العروض وتاريخ الأسعار',
+      popular: 'الأكثر شعبية في 2025',
     },
     hero: {
       match: 'تطابق',
