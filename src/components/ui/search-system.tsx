@@ -297,7 +297,7 @@ export function SearchSystem({ games, allGamesCache, onGameClickAction, locale =
                       <h4 className="font-semibold text-xs md:text-sm truncate">{game.title}</h4>
                       <p className="text-[10px] md:text-xs text-muted-foreground truncate">{game.genre}</p>
                     </div>
-                    <div className="text-[10px] md:text-xs text-green-500 font-bold flex-shrink-0">FREE</div>
+                    <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1 rounded-md font-bold text-sm shadow-lg">FREE</div>
                   </div>
                 ))}
               </div>
