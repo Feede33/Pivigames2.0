@@ -570,58 +570,29 @@
 .steam-requirements {
   font-size: 0.875rem;
   color: #d1d5db;
-  line-height: 1.8;
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
-/* Lista de requisitos formateada */
-.steam-requirements .requirements-list {
+.steam-requirements ul {
   list-style: none;
-  padding: 0;
+  padding-left: 0;
   margin: 0;
 }
 
-.steam-requirements .requirements-list li {
+.steam-requirements li {
+  margin-bottom: 0.5rem;
   display: flex;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
-  line-height: 1.8;
-  padding-left: 1.25rem;
-  position: relative;
+  align-items: flex-start;
 }
 
-.steam-requirements .requirements-list li::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  color: #9ca3af;
-  font-weight: bold;
-}
-
-.steam-requirements .requirements-list li strong {
-  color: #ffffff;
+.steam-requirements strong {
   font-weight: 600;
-  flex-shrink: 0;
-}
-
-.steam-requirements ul,
-.steam-requirements ul.bb_ul {
-  list-style: disc;
-  padding-left: 1.5rem;
-  margin: 0.75rem 0;
-}
-
-.steam-requirements ul li,
-.steam-requirements ul.bb_ul li {
-  margin-bottom: 0.75rem;
-  line-height: 1.8;
-  padding-left: 0.5rem;
-}
-
-/* Convertir strong/b en items de lista visual */
-.steam-requirements strong,
-.steam-requirements b {
-  color: #ffffff;
-  font-weight: 600;
+  color: #fff;
+  display: inline-block;
+  min-width: fit-content;
+  margin-right: 0.25rem;
 }
 
 /* Ocultar br tags para mejor espaciado */
@@ -629,7 +600,6 @@
   display: none;
 }
 
-/* Texto después de strong también como bullet */
 .steam-requirements p {
   margin: 0;
   padding: 0;

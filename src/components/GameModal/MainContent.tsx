@@ -154,7 +154,7 @@ export default function MainContent({
                     onClick={() => onMediaClick(item)}
                   >
                     <div
-                      className="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full bg-cover bg-center group-hover:scale-115 transition-transform duration-300"
                       style={{ backgroundImage: `url(${proxySteamImage(item.src)})` }}
                     />
                     {/* Indicador de video */}
@@ -241,7 +241,11 @@ export default function MainContent({
               <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.minimum}</h4>
               {steamData?.pc_requirements?.minimum ? (
                 <div
-                  className="steam-requirements text-sm text-gray-300"
+                  className="steam-requirements text-sm text-gray-300 space-y-2"
+                  style={{
+                    lineHeight: '1.6',
+                    wordBreak: 'break-word' // Evita que el texto se corte
+                  }}
                   dangerouslySetInnerHTML={{ __html: formatSteamRequirements(steamData.pc_requirements.minimum) }}
                 />
               ) : (
@@ -256,7 +260,11 @@ export default function MainContent({
               <h4 className="text-gray-400 text-sm font-semibold mb-3">{t.modal.recommended}</h4>
               {steamData?.pc_requirements?.recommended ? (
                 <div
-                  className="steam-requirements text-sm text-gray-300"
+                  className="steam-requirements text-sm text-gray-300 space-y-2"
+                  style={{
+                    lineHeight: '1.6',
+                    wordBreak: 'break-word' // Evita que el texto se corte
+                  }}
                   dangerouslySetInnerHTML={{ __html: formatSteamRequirements(steamData.pc_requirements.recommended) }}
                 />
               ) : (
