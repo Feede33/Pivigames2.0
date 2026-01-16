@@ -27,6 +27,7 @@ import {
   type GameWithSteamData,
   getSteamSpecials,
 } from '@/lib/supabase';
+import { getRawgRating } from '@/lib/rawg';
 import { useTranslations, type Locale } from '@/lib/i18n';
 
 // Tipo para ofertas de Steam con datos enriquecidos
@@ -367,6 +368,17 @@ export default function Home() {
       if (response.ok) {
         const steamData = await response.json();
 
+        // Obtener rating de RAWG si no hay Metacritic
+        let rating = 7.5;
+        if (steamData.metacritic) {
+          rating = steamData.metacritic / 10;
+        } else {
+          const rawgRating = await getRawgRating(steamData.name || special.name);
+          if (rawgRating > 0) {
+            rating = rawgRating;
+          }
+        }
+
         const fullGame: GameWithSteamData = {
           id: special.id,
           steam_appid: special.id.toString(),
@@ -374,7 +386,7 @@ export default function Home() {
           genre: steamData.genres?.join(', ') || t.common.unknown,
           image: special.capsule_image,
           cover_image: special.header_image,
-          rating: steamData.metacritic ? steamData.metacritic / 10 : 7.5,
+          rating,
           wallpaper: steamData.background || special.header_image,
           description: steamData.short_description || '',
           trailer:

@@ -1,4 +1,5 @@
 import { createBrowserClient } from '@supabase/ssr';
+import { getRawgRating } from './rawg';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -199,6 +200,19 @@ export async function enrichGameWithSteamData(
     // Usar header_image o wallpaper como fallback si library_600x900 no existe
     const imageFallback = steamData.header_image || wallpaperUrl || '';
     
+    // Obtener rating de RAWG si no hay Metacritic
+    let rating = 7.5; // Valor por defecto
+    
+    if (steamData.metacritic) {
+      rating = steamData.metacritic / 10;
+    } else {
+      // Intentar obtener rating de RAWG
+      const rawgRating = await getRawgRating(steamData.name || game.title || '');
+      if (rawgRating > 0) {
+        rating = rawgRating;
+      }
+    }
+    
     return {
       ...game,
       title: steamData.name || game.title || 'Unknown Game',
@@ -206,7 +220,7 @@ export async function enrichGameWithSteamData(
       image: verticalCover, // Portada vertical para grids
       image_fallback: imageFallback, // Fallback si library_600x900 no existe
       cover_image: steamData.header_image || '', // Header horizontal para carruseles
-      rating: steamData.metacritic ? steamData.metacritic / 10 : 7.5,
+      rating,
       wallpaper: wallpaperUrl,
       description: steamData.short_description || '',
       trailer: steamData.videos?.[0]?.mp4?.max || steamData.videos?.[0]?.mp4?.['480'] || '',
