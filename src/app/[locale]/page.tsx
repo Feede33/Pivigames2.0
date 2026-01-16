@@ -623,7 +623,20 @@ export default function Home() {
               </PaginationContent>
             </Pagination>
 
-
+            {/* RAWG.io Credits */}
+            <div className="text-center mt-6 text-sm text-muted-foreground">
+              <p>
+                Powered by{' '}
+                <a
+                  href="https://rawg.io/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline font-medium"
+                >
+                  RAWG.io
+                </a>
+              </p>
+            </div>
           </div>
         )}
       </div>
