@@ -67,7 +67,7 @@ export default function GamesGrid({ games, loading, t, onGameClickAction, loaded
                   <Star fill="yellow" stroke="yellow" strokeWidth={0.5} size={12} className="md:w-[14px] md:h-[14px]" />
                   <span className="text-[10px] md:text-xs">{game.rating}</span>
                 </span>
-                <span className="text-xs md:text-sm font-bold text-green-500">FREE</span>
+                <span className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1 rounded-md font-bold text-sm shadow-lg">FREE</span>
               </div>
             </div>
           </div>
