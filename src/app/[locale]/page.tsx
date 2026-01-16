@@ -630,7 +630,15 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="text-primary hover:underline font-medium"
                 >
-                  RAWG.io
+                  RAWG.io, 
+                </a>
+                <a
+                  href="https://www.metacritic.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline font-medium"
+                >
+                  Metacritic
                 </a>
               </p>
             </div>
