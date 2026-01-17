@@ -410,7 +410,7 @@ export default function Home() {
             <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-brand">Pegasusgames</h1>
 
             {/* Desktop Menu */}
-            <div className="hidden lg:flex gap-6 text-sm animate-fade-in animate-duration-500 animate-delay-300'
+            {/* <div className="hidden lg:flex gap-6 text-sm animate-fade-in animate-duration-500 animate-delay-300'
 ">
               <a href="#" className="hover:text-muted-foreground transition">
                 {t.nav.discover}
@@ -425,7 +425,7 @@ export default function Home() {
                 {t.nav.popular}
               </a>
 
-            </div>
+            </div> */}
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 flex-shrink-0">
@@ -458,7 +458,7 @@ export default function Home() {
         </div>
 
         {/* Mobile Menu Dropdown */}
-        {mobileMenuOpen && (
+        {/* {mobileMenuOpen && (
           <div className="lg:hidden absolute top-full left-0 right-0 mt-2 mx-4 bg-background/95 backdrop-blur-lg border border-border rounded-lg shadow-2xl overflow-hidden animate-fade-in animate-duration-200">
             <div className="p-4 space-y-2">
               <a
@@ -484,14 +484,14 @@ export default function Home() {
               </a>
 
               {/* Botón de Login en móvil - solo si no hay usuario */}
-              {!user && (
+              {/* {!user && (
                 <div className="pt-2 border-t border-border/50">
                   <FuturisticLoginButtonMobile onClickAction={() => setMobileMenuOpen(false)} />
                 </div>
               )}
             </div>
           </div>
-        )}
+        )} */}
       </nav>
 
       {/* Hero Slider */}

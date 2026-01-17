@@ -9,6 +9,10 @@ import {
   Calendar,
   Users,
   Trophy,
+  ChevronDown,
+  MoreVertical,
+  RefreshCw,
+  X,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -23,6 +27,18 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { Button } from '@/components/ui/button';
 
 type FilterOptions = {
   orderBy: 'popularity' | 'rating' | 'name' | 'downloads' | 'release_date';
@@ -34,12 +50,14 @@ type FilterOptions = {
 type AppSidebarProps = {
   filters?: FilterOptions;
   onFilterChangeAction?: (filters: Partial<FilterOptions>) => void;
+  onResetFiltersAction?: () => void;
   locale?: 'es' | 'en';
 };
 
 export function AppSidebar({ 
   filters: filtersProp, 
-  onFilterChangeAction, 
+  onFilterChangeAction,
+  onResetFiltersAction,
   locale = 'es' 
 }: AppSidebarProps) {
   // Ensure filters always has a value
@@ -76,6 +94,9 @@ export function AppSidebar({
       stats: 'Estadísticas',
       totalGames: 'Total de juegos',
       withDownloads: 'Con descargas',
+      resetFilters: 'Restablecer filtros',
+      clearAll: 'Limpiar todo',
+      options: 'Opciones',
     },
     en: {
       title: 'Filters',
@@ -102,6 +123,9 @@ export function AppSidebar({
       stats: 'Statistics',
       totalGames: 'Total games',
       withDownloads: 'With downloads',
+      resetFilters: 'Reset filters',
+      clearAll: 'Clear all',
+      options: 'Options',
     },
   };
 
@@ -156,81 +180,133 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
-        <div className="flex items-center gap-2 px-2 py-2">
-          <Filter className="size-5" />
-          <span className="font-semibold text-lg group-data-[collapsible=icon]:hidden">
-            {translations.title}
-          </span>
+        <div className="flex items-center justify-between px-2 py-2">
+          <div className="flex items-center gap-2">
+            <Filter className="size-5" />
+            <span className="font-semibold text-lg group-data-[collapsible=icon]:hidden">
+              {translations.title}
+            </span>
+          </div>
+          
+          {/* Dropdown Menu for Options */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="size-8 group-data-[collapsible=icon]:hidden"
+              >
+                <MoreVertical className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={onResetFiltersAction}>
+                <RefreshCw className="size-4 mr-2" />
+                {translations.resetFilters}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onResetFiltersAction}>
+                <X className="size-4 mr-2" />
+                {translations.clearAll}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </SidebarHeader>
 
       <SidebarContent>
-        {/* Order By */}
-        <SidebarGroup>
-          <SidebarGroupLabel>{translations.orderBy}</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {orderByItems.map((item) => (
-                <SidebarMenuItem key={item.value}>
-                  <SidebarMenuButton
-                    isActive={filters.orderBy === item.value}
-                    onClick={() => onFilterChangeAction?.({ orderBy: item.value })}
-                    tooltip={item.title}
-                  >
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {/* Order By - Collapsible */}
+        <Collapsible defaultOpen className="group/collapsible">
+          <SidebarGroup>
+            <SidebarGroupLabel asChild>
+              <CollapsibleTrigger className="flex w-full items-center justify-between hover:bg-sidebar-accent rounded-md transition-colors">
+                {translations.orderBy}
+                <ChevronDown className="size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+              </CollapsibleTrigger>
+            </SidebarGroupLabel>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {orderByItems.map((item) => (
+                    <SidebarMenuItem key={item.value}>
+                      <SidebarMenuButton
+                        isActive={filters.orderBy === item.value}
+                        onClick={() => onFilterChangeAction?.({ orderBy: item.value })}
+                        tooltip={item.title}
+                      >
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
 
         <SidebarSeparator />
 
-        {/* Platform */}
-        <SidebarGroup>
-          <SidebarGroupLabel>{translations.platform}</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {platformItems.map((item) => (
-                <SidebarMenuItem key={item.value}>
-                  <SidebarMenuButton
-                    isActive={filters.platform === item.value}
-                    onClick={() => onFilterChangeAction?.({ platform: item.value })}
-                    tooltip={item.title}
-                  >
-                    <Gamepad2 className="size-4" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {/* Platform - Collapsible */}
+        <Collapsible defaultOpen className="group/collapsible">
+          <SidebarGroup>
+            <SidebarGroupLabel asChild>
+              <CollapsibleTrigger className="flex w-full items-center justify-between hover:bg-sidebar-accent rounded-md transition-colors">
+                {translations.platform}
+                <ChevronDown className="size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+              </CollapsibleTrigger>
+            </SidebarGroupLabel>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {platformItems.map((item) => (
+                    <SidebarMenuItem key={item.value}>
+                      <SidebarMenuButton
+                        isActive={filters.platform === item.value}
+                        onClick={() => onFilterChangeAction?.({ platform: item.value })}
+                        tooltip={item.title}
+                      >
+                        <Gamepad2 className="size-4" />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
 
         <SidebarSeparator />
 
-        {/* Genre */}
-        <SidebarGroup>
-          <SidebarGroupLabel>{translations.genre}</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {genreItems.map((item) => (
-                <SidebarMenuItem key={item.value}>
-                  <SidebarMenuButton
-                    isActive={filters.genre === item.value}
-                    onClick={() => onFilterChangeAction?.({ genre: item.value })}
-                    tooltip={item.title}
-                  >
-                    <Trophy className="size-4" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {/* Genre - Collapsible */}
+        <Collapsible defaultOpen className="group/collapsible">
+          <SidebarGroup>
+            <SidebarGroupLabel asChild>
+              <CollapsibleTrigger className="flex w-full items-center justify-between hover:bg-sidebar-accent rounded-md transition-colors">
+                {translations.genre}
+                <ChevronDown className="size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+              </CollapsibleTrigger>
+            </SidebarGroupLabel>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {genreItems.map((item) => (
+                    <SidebarMenuItem key={item.value}>
+                      <SidebarMenuButton
+                        isActive={filters.genre === item.value}
+                        onClick={() => onFilterChangeAction?.({ genre: item.value })}
+                        tooltip={item.title}
+                      >
+                        <Trophy className="size-4" />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
 
         <SidebarSeparator />
 
