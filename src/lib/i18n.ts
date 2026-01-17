@@ -88,6 +88,12 @@ export const translations = {
       result: 'resultado',
       results: 'resultados',
     },
+    pagination: {
+      previous: 'Anterior',
+      next: 'Siguiente',
+      cached: 'Página cacheada (carga instantánea)',
+      loading: 'Precargando...',
+    },
   },
   // English
   en: {
@@ -176,6 +182,12 @@ export const translations = {
       showing: 'Showing',
       result: 'result',
       results: 'results',
+    },
+    pagination: {
+      previous: 'Previous',
+      next: 'Next',
+      cached: 'Cached page (instant load)',
+      loading: 'Preloading...',
     },
   },
   // Português
@@ -266,6 +278,12 @@ export const translations = {
       result: 'resultado',
       results: 'resultados',
     },
+    pagination: {
+      previous: 'Anterior',
+      next: 'Próximo',
+      cached: 'Página em cache (carregamento instantâneo)',
+      loading: 'Pré-carregando...',
+    },
   },
   // Français
   fr: {
@@ -354,6 +372,12 @@ export const translations = {
       showing: 'Affichage de',
       result: 'résultat',
       results: 'résultats',
+    },
+    pagination: {
+      previous: 'Précédent',
+      next: 'Suivant',
+      cached: 'Page en cache (chargement instantané)',
+      loading: 'Préchargement...',
     },
   },
   // Deutsch
@@ -444,6 +468,12 @@ export const translations = {
       result: 'Ergebnis',
       results: 'Ergebnisse',
     },
+    pagination: {
+      previous: 'Zurück',
+      next: 'Weiter',
+      cached: 'Zwischengespeicherte Seite (sofortiges Laden)',
+      loading: 'Vorladen...',
+    },
   },
   // Italiano
   it: {
@@ -532,6 +562,12 @@ export const translations = {
       showing: 'Mostrando',
       result: 'risultato',
       results: 'risultati',
+    },
+    pagination: {
+      previous: 'Precedente',
+      next: 'Successivo',
+      cached: 'Pagina in cache (caricamento istantaneo)',
+      loading: 'Precaricamento...',
     },
   },
   // Русский
@@ -622,6 +658,12 @@ export const translations = {
       result: 'результат',
       results: 'результатов',
     },
+    pagination: {
+      previous: 'Назад',
+      next: 'Вперёд',
+      cached: 'Кэшированная страница (мгновенная загрузка)',
+      loading: 'Предзагрузка...',
+    },
   },
   // 日本語
   ja: {
@@ -710,6 +752,12 @@ export const translations = {
       showing: '表示中',
       result: '件',
       results: '件',
+    },
+    pagination: {
+      previous: '前へ',
+      next: '次へ',
+      cached: 'キャッシュされたページ（即座に読み込み）',
+      loading: '事前読み込み中...',
     },
   },
   // 한국어
@@ -800,6 +848,12 @@ export const translations = {
       result: '개 결과',
       results: '개 결과',
     },
+    pagination: {
+      previous: '이전',
+      next: '다음',
+      cached: '캐시된 페이지 (즉시 로드)',
+      loading: '미리 로드 중...',
+    },
   },
   // 中文简体
   zh: {
@@ -889,6 +943,12 @@ export const translations = {
       result: '个结果',
       results: '个结果',
     },
+    pagination: {
+      previous: '上一页',
+      next: '下一页',
+      cached: '已缓存页面（即时加载）',
+      loading: '预加载中...',
+    },
   },
   // العربية
   ar: {
@@ -977,6 +1037,12 @@ export const translations = {
       showing: 'عرض',
       result: 'نتيجة',
       results: 'نتائج',
+    },
+    pagination: {
+      previous: 'السابق',
+      next: 'التالي',
+      cached: 'صفحة مخزنة مؤقتًا (تحميل فوري)',
+      loading: 'التحميل المسبق...',
     },
   },
 } as const;

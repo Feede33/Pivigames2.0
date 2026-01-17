@@ -530,7 +530,9 @@ export default function Home() {
                       goToPage(currentPage - 1);
                     }}
                     className={`${currentPage === 0 ? 'pointer-events-none opacity-50' : 'cursor-pointer'} text-xs md:text-sm px-2 md:px-3`}
-                  />
+                  >
+                    {t.pagination?.previous || 'Anterior'}
+                  </PaginationPrevious>
                 </PaginationItem>
 
                 {/* Primera página */}
@@ -576,7 +578,7 @@ export default function Home() {
                         }}
                         isActive={currentPage === pageNumber}
                         className={`cursor-pointer relative text-xs md:text-sm w-8 h-8 md:w-10 md:h-10 ${isCached && pageNumber !== currentPage ? 'ring-1 ring-green-500/50' : ''}`}
-                        title={isCached ? 'Página cacheada (carga instantánea)' : isPrefetching ? 'Precargando...' : ''}
+                        title={isCached ? (t.pagination?.cached || 'Página cacheada (carga instantánea)') : isPrefetching ? (t.pagination?.loading || 'Precargando...') : ''}
                       >
                         {pageNumber + 1}
                         {isPrefetching && (
@@ -618,7 +620,9 @@ export default function Home() {
                       goToPage(currentPage + 1);
                     }}
                     className={`${currentPage >= Math.ceil(totalGamesCount / GAMES_PER_PAGE) - 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'} text-xs md:text-sm px-2 md:px-3`}
-                  />
+                  >
+                    {t.pagination?.next || 'Siguiente'}
+                  </PaginationNext>
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
